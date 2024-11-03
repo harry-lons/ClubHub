@@ -9,7 +9,7 @@ const MyComponent: React.FC = () => {
 
     return (
         <div>
-            <h1>Detailed Event page</h1>
+            <h1>Events page</h1>
         </div>
     );
 };
