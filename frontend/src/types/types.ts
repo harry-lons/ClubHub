@@ -1,9 +1,12 @@
 export type Event =
 {
 	id: string;
+	title: string;
 	club_id : string;
 	location: string;
-	time: Date;
+	begin_time: Date;
+	end_time: Date;
+	recurrence: [ boolean, number, Date|null ];
 	summary: string;
 	details: { [key: string]: any };
 	type: string;
