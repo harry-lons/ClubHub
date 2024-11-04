@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginSignup from './pages/LoginSignup/LoginSignup';
 import Events from './pages/Events';
-import DetailedEvent from './pages/DetailedEvent';
+import DetailedEvent from './pages/DetailedEvent/DetailedEvent';
 import './App.css';
 
 function App() {
