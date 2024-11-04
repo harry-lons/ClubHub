@@ -1,0 +1,32 @@
+export const dummyEventsList = [
+    {
+        id: "1",
+        club_id : "Club 1",
+        title: "Club Meeting 1-1",
+        location: "Price Center",
+        time: new Date( 2024, 10, 4, 18, 30, 0, 0),
+        summary: "Event is happening in Price Center!",
+        details: {},
+        type: "event",
+    },
+    {
+        id: "2",
+        club_id : "Club 2",
+        title: "Club Meeting 1-2",
+        location: "Geisel",
+        time: new Date( 2024, 10, 8, 19, 0, 0, 0),
+        summary: "Event is happening in Geisel!",
+        details: {},
+        type: "event",
+    },
+    {
+        id: "3",
+        club_id : "Club 3",
+        title: "Club Meeting 1-3",
+        location: "CSE Basement",
+        time: new Date( 2024, 10, 15, 18, 0, 0, 0),
+        summary: "Event is happening in the CSE Basement!",
+        details: {},
+        type: "event",
+    },
+ ]
