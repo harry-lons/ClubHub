@@ -8,8 +8,11 @@ const MyComponent: React.FC = () => {
     });
 
     return (
-        <div>
-            <h1>Detailed Event page</h1>
+        <div className="event-detail">
+            <div className="Description">{currentEvent.summary}</div>
+            <div className="Time">{currentEvent.time.toString()}</div>
+            <div className="Location">{currentEvent.location}</div>
+            <div className="EventType">{currentEvent.type}</div>
         </div>
     );
 };
