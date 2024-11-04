@@ -1,0 +1,24 @@
+.events-list-container {
+    background-image: url('../../../public/gradientBackground.png');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    width: 100%;            
+}
+
+@media (min-width: 600px) {
+    .events-list {
+        display: grid;
+        grid-template-columns: 700px 1fr;
+        gap: 20px;
+        color: white;
+    }
+}
+
+.event-date {
+
+}
+
+.event-info {
+    
+}

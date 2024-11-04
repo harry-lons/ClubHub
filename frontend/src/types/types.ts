@@ -2,6 +2,7 @@ export type Event =
 {
 	id: string;
 	club_id : string;
+	title: string;
 	location: string;
 	time: Date;
 	summary: string;

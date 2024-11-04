@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Event } from '../../types/types';
 
-const MyComponent: React.FC = () => {
+const MyComponent: React.FC<Event> = (currentEvent: Event) => {
 
     // Effect hook
     useEffect(() => {
