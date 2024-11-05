@@ -2,22 +2,33 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginSignup from './pages/LoginSignup/LoginSignup';
 import Events from './pages/Events';
-import DetailedEvent from './pages/DetailedEvent';
+import DetailedEvent from './pages/DetailedEvent/DetailedEvent';
+import { AddEventForm } from './pages/AddEventForm/AddEventForm';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import './App.css';
+import { AuthProvider } from './context/AuthContext'
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <Routes>
-          <Route path="/" element={<LoginSignup which="LOG IN"/>} />
-          <Route path="/login" element={<LoginSignup which="LOG IN"/>} />
-          <Route path="/signup" element={<LoginSignup which="SIGN UP" />} />
-          <Route path="/events" element={<Events />} />
-          <Route path="/events/:id" element={<DetailedEvent />} />
-        </Routes>
-      </div>
-    </Router>
+    <AuthProvider>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Router>
+        <div className="App">
+          <Routes>
+            <Route path="/" element={<LoginSignup which="LOG IN"/>} />
+            <Route path="/login" element={<LoginSignup which="LOG IN"/>} />
+            <Route path="/signup" element={<LoginSignup which="SIGN UP" />} />
+            <Route path="/events" element={<Events />} />
+            {/* <Route path="/events/:id" element={<DetailedEvent />} /> */}
+            <Route path="/events/:id" element={<DetailedEvent />} />
+            <Route path="/club/addEvent" element={<AddEventForm/>} />
+          </Routes>
+        </div>
+      </Router>
+      </LocalizationProvider>
+    </AuthProvider>
+
   );
 }
 

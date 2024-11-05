@@ -1,0 +1,60 @@
+#event-detail-container {
+    width: 100%;
+}
+
+#event-detail-container h2, p {
+    margin: 0;
+}
+
+.event-detail-header {
+    display: block;
+    width: 100%;
+    height: 200px;
+    background-image: url('../../../public/gradientBackground.png');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.back-button {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    font-size: 26px;
+    color: white;
+    background-color: transparent;
+    border: none;
+}
+
+.event-identity-container {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    padding: 20px;
+}
+
+.event-title-container {
+    display: flex;
+}
+
+.rsvp-button {
+    margin-left: 10px;
+    font-size: 20px;
+    color: white;
+    background-color: #43BD28;
+    border: none;
+    border-radius: 8px;
+}
+
+.event-club {
+    margin-top: 10px;
+}
+
+.event-info-container {
+    text-align: left;
+    padding: 20px;
+}
+
+.event-picture {
+    width: 300px;
+}
