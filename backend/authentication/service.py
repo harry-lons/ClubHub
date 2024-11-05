@@ -1,14 +1,15 @@
 from datetime import timedelta
-from multiprocessing import Value
-from typing import Annotated, Dict, Optional
+from typing import Annotated, Dict
 
 import jwt
-from fastapi import APIRouter, Depends, FastAPI, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jwt.exceptions import InvalidTokenError
 from passlib.context import CryptContext
 
-from .schemas import BearerToken, User, UserInDB
+from .constants import BAD_CREDIENTIALS_EXCEPTION
+from .schemas import BearerToken, UserLogin
+from ..identities.schemas import User
 
 # creds: username1:password
 fake_users_db = {
@@ -20,7 +21,6 @@ fake_users_db = {
 
 app = APIRouter()
 
-# app = FastAPI()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
@@ -37,24 +37,24 @@ def get_password_hash(password) -> str:
     return pwd_context.hash(password)
 
 
-def get_user_from_db(db, username: str) -> UserInDB:
+def get_user_from_db(db, username: str) -> UserLogin:
     """Returns a User information from the database.
     Throws ValueError if the user does not exist.
     """
     if username not in db:
         raise ValueError()
-    user = UserInDB(**db[username])
+    user = UserLogin(**db[username])
     return user
 
 
-def authenticate_user(db, username: str, entered_passwd: str) -> UserInDB:
+def authenticate_user(db, username: str, entered_passwd: str) -> UserLogin:
     """Returns the user record for a given username and password.
     If incorrect credientials, throws ValueError"""
 
     # get user data from db based on username
     if username not in db:
         raise ValueError()
-    user = UserInDB(**db[username])
+    user = UserLogin(**db[username])
 
     if not verify_password(entered_passwd, user.hashed_password):
         raise ValueError()
@@ -72,12 +72,6 @@ def create_access_token(data: Dict, expires_in: timedelta) -> str:
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> User:
     """Validates a given (bearer) token. If the token is correct, returns
     the user the token corresponds to."""
-
-    BAD_CREDIENTIALS_EXCEPTION = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Bad authentication credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
 
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -102,7 +96,7 @@ async def login_for_access_token(
     try:
         user = authenticate_user(fake_users_db, form_data.username, form_data.password)
     except ValueError:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        raise BAD_CREDIENTIALS_EXCEPTION
 
     # create new session token and add to database
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -115,6 +109,6 @@ async def login_for_access_token(
 @app.get("/whoami/", response_model=User)
 async def read_users_me(
     current_user: Annotated[User, Depends(get_current_user)],
-):
+) -> User:
     """Returns the current logged in user."""
     return current_user
