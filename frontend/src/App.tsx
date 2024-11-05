@@ -3,10 +3,14 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginSignup from './pages/LoginSignup/LoginSignup';
 import Events from './pages/Events';
 import DetailedEvent from './pages/DetailedEvent/DetailedEvent';
+import { AddEventForm } from './pages/AddEventForm/AddEventForm';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import './App.css';
 
 function App() {
   return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
     <Router>
       <div className="App">
         <Routes>
@@ -16,9 +20,11 @@ function App() {
           <Route path="/events" element={<Events />} />
           {/* <Route path="/events/:id" element={<DetailedEvent />} /> */}
           <Route path="/events-detail-example" element={<DetailedEvent />} />
+          <Route path="/club/addEvent" element={<AddEventForm/>} />
         </Routes>
       </div>
     </Router>
+    </LocalizationProvider>
   );
 }
 
