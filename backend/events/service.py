@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends
 
 # from ..app import app
 from .schemas import Event, EventCalendarData
-from .constants import fake_event_1, fake_event_2, fake_event_3, mock_events
+from .constants import fake_event_1, mock_events
 
 app = APIRouter()
 

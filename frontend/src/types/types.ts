@@ -32,5 +32,5 @@ export type Club =
 	id : string;
 	name: string;
 	board_members: string[];
-	contact_email: string[];
+	contact_email: string | string[];
 };

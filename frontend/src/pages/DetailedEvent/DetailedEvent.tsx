@@ -1,22 +1,49 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useState,useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom";
 import { Event } from "../../types/types";
 import { Club } from "../../types/types";
 import { exampleEvent, exampleClub } from "../../constants/constants";
+import { TextField, Button, MenuItem } from '@mui/material';
 import "./DetailedEvent.css"
-
+import {AuthContext} from "../../context/AuthContext"
+import { fetchEventById } from "../../utils/event-details-utils";
+import { fetchClubById } from "../../utils/club-utils";
 import exampleFlyer from "../../constants/flyer.jpg";
 
 
 const DetailedEvent: React.FC = () => {
-    // const {id} = useParams();
-    // const event = Event[].find((event)=>event.id === id); //After database implemented
-    // if(!event){
-    //     return <p>Event Not Found</p >
-    // }
+    const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
+    const authContext = useContext(AuthContext);
+    
+    const [event, setEvent] = useState<Event> (exampleEvent);
+    const [club, setClub] = useState<Club> (exampleClub);
 
-    const event = exampleEvent;
-    const club = exampleClub;
+    useEffect(() => {
+        if (!id) return;
+        loadEvent();
+        loadClub();
+    }, [id]);
+
+    const loadEvent = async () => {
+        try {
+            const event_ = await fetchEventById(Number(id)); // Convert id to a number
+            setEvent(event_);
+        } catch (err: any) {
+            console.error("Error loading event:", err.message);
+        }
+    };
+    
+    
+
+    const loadClub = async () => {
+        try {
+            const club_ = await fetchClubById(event.club_id); // Convert id to a number
+            setClub(club_);
+        } catch (err: any) {
+            console.error("Error loading club:", err.message);
+        }
+    };
 
     const handleTime = (begin_time: Date, end_time: Date) => {
 
@@ -57,9 +84,7 @@ const DetailedEvent: React.FC = () => {
             return(<p>Yes. Recur {recurrenceDescription(recurrence[1])}. End Date {recurrence[2]?.getFullYear()}-{recurrence[2]?.getMonth()}-{recurrence[2]?.getDate()}</p >);
         }
     }
-    const handleClubInfo = (club_id: string) =>{
 
-    }
     const handleFollowClick = (event_id: string)=>{
 
     }
@@ -69,7 +94,7 @@ const DetailedEvent: React.FC = () => {
     // //try to represent the list in a nice way
     // }
 
-    const navigate = useNavigate();
+
 
     const BackButton: React.FC = () => {
         const handleBack = () => {
@@ -85,9 +110,7 @@ const DetailedEvent: React.FC = () => {
 
     const RSVPButton : React.FC = () => {
         return (
-            <button className="rsvp-button">
-                RSVP
-            </button>
+            <Button variant="contained" style={{ backgroundColor: '#43BD28', color: '#FFFFFF' }} onClick={()=>handleFollowClick}>RSVP</Button>
         );
     };
     
@@ -135,7 +158,13 @@ const DetailedEvent: React.FC = () => {
                 </div>
                 <div className = "event-contact">
                     <h3>Contact Information</h3>
-                    <p></p >
+                    {Array.isArray(club.contact_email) ? (
+                        club.contact_email.map((email, index) => (
+                        <p key={index}>{email}</p>
+                        ))
+                    ) : (
+                    <p>{club.contact_email}</p>
+                    )}
                 </div>
                 <div className="event-attendees"></div>
                 
@@ -143,6 +172,7 @@ const DetailedEvent: React.FC = () => {
             </div>
         </div>
     );
-};
+    };
+
 
 export default DetailedEvent;

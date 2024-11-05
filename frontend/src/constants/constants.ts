@@ -1,5 +1,5 @@
 import { Event, Club } from "../types/types";
-
+export const API_BASE_URL = "http://localhost:8000";
 export const exampleEvent = {
 	id: "001",
     title: "Creative Writing Workshop: Unleash Your Imagination!",
