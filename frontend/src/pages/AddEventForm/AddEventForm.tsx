@@ -101,6 +101,7 @@ export const AddEventForm= ()=>{
             </div>
             <div className="event-description">
                 <h3>Description</h3>
+                {/* Make the Description Container Bigger! */}
                 <TextField required type="text"
                 className="form-control"
                 id="description"
