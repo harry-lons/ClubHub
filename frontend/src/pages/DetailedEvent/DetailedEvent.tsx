@@ -6,7 +6,7 @@ import { exampleEvent, exampleClub } from "../../constants/constants";
 import { TextField, Button, MenuItem } from '@mui/material';
 import "./DetailedEvent.css"
 import {AuthContext} from "../../context/AuthContext"
-import { fetchEventById } from "../../utils/event-details-utils";
+import { fetchEventById } from "../../utils/event-utils";
 import { fetchClubById } from "../../utils/club-utils";
 import exampleFlyer from "../../constants/flyer.jpg";
 
