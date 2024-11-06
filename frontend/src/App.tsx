@@ -8,6 +8,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import './App.css';
 import { AuthProvider } from './context/AuthContext'
+import { NavBar } from './pages/NavBar/NavBar';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             {/* <Route path="/events/:id" element={<DetailedEvent />} /> */}
             <Route path="/events/:id" element={<DetailedEvent />} />
             <Route path="/club/addEvent" element={<AddEventForm/>} />
+            <Route path="/navbar" element={<NavBar/>} />
           </Routes>
         </div>
       </Router>
