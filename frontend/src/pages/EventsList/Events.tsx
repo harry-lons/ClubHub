@@ -4,11 +4,11 @@ import { useState } from "react";
 import "./Events.css";
 import { Grid, Card, CardContent, Typography } from '@mui/material';
 
-const MyComponent: React.FC = () => {
-    const [events,Setevents] = useState(dummyEventsList);
+const Events: React.FC = () => {
+    const [events,setEvents] = useState(dummyEventsList);
 
     const groupedEvents = events.reduce((acc: Record<string, Event[]>, event: any) => {
-        const dateKey = event.time.toDateString();
+        const dateKey = event.begin_time.toDateString();
         if (!acc[dateKey]) {
           acc[dateKey] = [];
         }
@@ -28,7 +28,7 @@ const MyComponent: React.FC = () => {
                             {events.map((event) => (
                                 <div className="event-info">
                                     <div className="event-time">
-                                        {event.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        {event.begin_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </div>
                                     <div className="event-details">
                                         <p className="event-title">{event.title}</p>
@@ -45,4 +45,4 @@ const MyComponent: React.FC = () => {
     );
 };
 
-export default MyComponent;
+export default Events;
