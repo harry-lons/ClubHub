@@ -22,7 +22,6 @@ function App() {
             <Route path="/login" element={<LoginSignup which="LOG IN"/>} />
             <Route path="/signup" element={<LoginSignup which="SIGN UP" />} />
             <Route path="/events" element={<Events />} />
-            {/* <Route path="/events/:id" element={<DetailedEvent />} /> */}
             <Route path="/events/:id" element={<DetailedEvent />} />
             <Route path="/club/addEvent" element={<AddEventForm/>} />
             <Route path="/navbar" element={<NavBar/>} />
