@@ -1,32 +1,8 @@
 export const dummyEventsList = [
-    {
-        id: "1",
-        club_id : "Club 1",
-        title: "Club Meeting 1-1",
-        location: "Price Center",
-        time: new Date( 2024, 10, 4, 18, 30, 0, 0),
-        summary: "Event is happening in Price Center!",
-        details: {},
-        type: "event",
-    },
-    {
-        id: "2",
-        club_id : "Club 2",
-        title: "Club Meeting 1-2",
-        location: "Geisel",
-        time: new Date( 2024, 10, 8, 19, 0, 0, 0),
-        summary: "Event is happening in Geisel!",
-        details: {},
-        type: "event",
-    },
-    {
-        id: "3",
-        club_id : "Club 3",
-        title: "Club Meeting 1-3",
-        location: "CSE Basement",
-        time: new Date( 2024, 10, 15, 18, 0, 0, 0),
-        summary: "Event is happening in the CSE Basement!",
-        details: {},
-        type: "event",
-    },
- ]
+    { time: new Date("2024-10-28T17:00:00"), title: "Event Name 1", club_id: "Club 1", location: "CSE Building" },
+    { time: new Date("2024-10-28T18:00:00"), title: "Event Name 2", club_id: "Club 2", location: "Price Center" },
+    { time: new Date("2024-10-29T18:00:00"), title: "Event Name 3", club_id: "Club 3", location: "Geisel" },
+    { time: new Date("2024-10-30T18:30:00"), title: "Event Name 4", club_id: "Club 4", location: "Library" },
+    { time: new Date("2024-10-30T18:45:00"), title: "Event Name 5", club_id: "Club 5", location: "Student Center" },
+    { time: new Date("2024-11-01T18:00:00"), title: "Event Name 6", club_id: "Club 6", location: "Recreation Center" }
+  ];
