@@ -25,7 +25,7 @@ export const NavBar = () => {
   };
 
   return (
-    <AppBar position="sticky" sx={{ bgcolor: '#3E29BC' }}>
+    <AppBar position="sticky" sx={{ bgcolor: '#3E29BC', boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.2)' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Diversity2Icon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
