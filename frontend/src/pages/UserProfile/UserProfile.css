@@ -33,3 +33,28 @@ body {
     border-radius: 8px; /* Optional: add slight rounding for a polished look */
     background-color: white; /* Ensures card stands out */
 }
+.pastEventContainer{
+    justify-content: center; /* Center horizontally */
+    padding: 0;
+    margin-top: 5rem;
+    margin-left: 8rem; /* Aligns with ProfileCard's left margin */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 1000;
+    height: 700px; /* Match the height of ProfileCardContainer */
+    box-sizing: border-box; 
+}
+.textContainer{
+    padding: 0;
+    margin-top: 1;
+    color: white;
+    text-align: center;
+}
+
+/* EventCard container */
+.eventCardContainer {
+    margin-top: 0;
+    padding: 0; /* Optional: adds some padding inside the container */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Adds shadow effect */
+}

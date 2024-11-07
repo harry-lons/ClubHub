@@ -3,16 +3,15 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { exampleUser } from "../../constants/constants";
 import { User } from '../../types/types';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-
-export const ProfileCard = () => {
-    const user = exampleUser as User; 
-
+interface ProfileCardProps {
+  user: User;
+}
+export const ProfileCard: React.FC<ProfileCardProps> = ({ user }) =>{  
     return (
         <Card sx={{ width: 350, height: 700, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <AccountCircleIcon 
