@@ -1,15 +1,19 @@
 from datetime import datetime
-from typing import List, Optional, Dict
+from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field
+
+
+class EventID(BaseModel):
+    id: int
 
 
 # If we don't want strict fields (e. don't want to have to actually
 # specify location=None, and want the ability to leave it out, then
 # we can do Optional[str] = Field(default=None) using Field
 # from pydantic
-class Event(BaseModel):
-    id: int
+class Event(EventID):
+    # id: int
     title: str
     club_id: int
     location: str = Field(default="")
@@ -43,3 +47,7 @@ class EventCalendarData(BaseModel):
 class RSVP(BaseModel):
     user_id: int
     event_id: int
+
+
+class EventIDList(BaseModel):
+    events: List[int]
