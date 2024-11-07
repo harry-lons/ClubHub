@@ -1,5 +1,9 @@
-from .schemas import EventModel, EventCalendarData
 from datetime import datetime
+from enum import Enum
+
+from fastapi import HTTPException, status
+
+from .schemas import EventCalendarData, EventModel
 
 fake_event_1 = EventModel(
     id=1,
@@ -7,7 +11,7 @@ fake_event_1 = EventModel(
     club_id=5,
     location="Earth",
     begin_time=datetime(2024, 11, 3, 5),
-    end_time=datetime(2024,11,3,6),
+    end_time=datetime(2024, 11, 3, 6),
     recurrence=False,
     type="other",
 )
@@ -28,6 +32,28 @@ fake_event_1 = EventModel(
 #     type="food",
 # )
 
-mock_events = EventCalendarData(events=[fake_event_1, 
-                                        # fake_event_2, fake_event_3
-                                        ])
+mock_events = EventCalendarData(
+    events=[
+        fake_event_1,
+        # fake_event_2, fake_event_3
+    ]
+)
+
+## RSVPs
+
+
+class UserGoingStatus(Enum):
+    ATTENDING = 1
+    NOT_ATTENDING = 2
+    TENTATIVE = 3
+
+
+USER_ALREADY_RSVP = HTTPException(
+    status_code=status.HTTP_409_CONFLICT,
+    detail="User is already RSVP'd for this event. Unable to add entry.",
+)
+
+USER_NOT_RSVP = HTTPException(
+    status_code=status.HTTP_409_CONFLICT,
+    detail="User is not currently RSVP'd for this event. Unable to delete entry.",
+)

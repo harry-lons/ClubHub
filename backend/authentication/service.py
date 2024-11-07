@@ -7,14 +7,17 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jwt.exceptions import InvalidTokenError
 from passlib.context import CryptContext
 
+from ..identities.schemas import User
 from .constants import BAD_CREDIENTIALS_EXCEPTION
 from .schemas import BearerToken, UserLogin
-from ..identities.schemas import User
 
 # creds: username1:password
 fake_users_db = {
     "username1": {
+        "id": 5,
         "username": "username1",
+        "first_name": "First",
+        "last_name": "Last",
         "hashed_password": "$argon2id$v=19$m=65536,t=3,p=4$KYUwppQyxjgnBIBQyrkXAg$OmDVsUIY90aOTyvp0kbrtLuSKsSaewP64MfSDEwH7+w",
     }
 }
