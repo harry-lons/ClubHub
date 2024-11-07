@@ -1,5 +1,4 @@
 import { Event, Club,User } from "../types/types";
-import { Event, Club,User } from "../types/types";
 export const API_BASE_URL = "http://localhost:8000";
 export const exampleEvent = {
 	id: "001",
