@@ -31,3 +31,7 @@ class UserAndClubs(User):
 
 class ClubWithBoardMembers(Club):
     board_members: List[UserID]
+
+
+class UserProfilePictureImgKey(BaseModel):
+    key: str
