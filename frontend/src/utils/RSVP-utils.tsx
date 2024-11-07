@@ -26,7 +26,7 @@ export const deleteRSVP = async (id: string): Promise<void> => { //id should be 
 };
 
 // Function to get all expenses from the backend. Method: GET
-export const fetchRSVP = async (): Promise<RSVP> => { 
+export const fetchRSVP = async (): Promise<RSVP[]> => { 
 	const response = await fetch(`${API_BASE_URL}/RSVP`);
 	if (!response.ok) {
     	throw new Error('Failed to fetch expenses');
