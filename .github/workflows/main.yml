@@ -7,7 +7,7 @@ on:
     branches: [main]  # Run the tests on pull requests targeting the 'main' branch
 
 jobs:
-  tests:
+  frontend_tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,3 +20,22 @@ jobs:
         run: |
           cd frontend
           npm test
+
+  backend_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install Dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt
+
+      - name: Run Python Tests
+        run: |
+          cd backend
+          pytest --maxfail=0 --disable-warnings -q
