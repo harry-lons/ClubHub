@@ -1,4 +1,4 @@
-import { Event, Club } from "../types/types";
+import { Event, Club,User } from "../types/types";
 export const API_BASE_URL = "http://localhost:8000";
 export const exampleEvent = {
 	id: "001",
@@ -19,4 +19,11 @@ export const exampleClub =
 	name: "The Literary Society",
 	board_members: ["Member 1"],
 	contact_email: ["contact@example.com"]
+};
+export const exampleUser = {
+	id : "001",
+	username: "abababa",
+	first_name: "Diana",
+	last_name: "Wu",
+	followed_clubs: ["001","002"]
 };

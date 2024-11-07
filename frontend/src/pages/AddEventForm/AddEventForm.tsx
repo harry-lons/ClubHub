@@ -26,6 +26,8 @@ export const AddEventForm= ()=>{
         event.preventDefault();
     
         //pass params back to the backed API
+        //Alert 1. Title & Location & Time cannot be empty
+        //Alert if is recurrence, Stop time > endtime  
         //navigate to club-side edit event page
         //club id should be a context
 	//recurrence: [ boolean, number, Date|null ];
