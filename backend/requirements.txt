@@ -1,3 +1,4 @@
 fastapi[standard]
 passlib[argon2]
 pyjwt
+pytest
