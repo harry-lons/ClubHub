@@ -9,7 +9,7 @@ export type Event =
 	recurrence: [ boolean, number, Date|null ];
 	summary: string;
 	pictures: { [key: string]: string };
-	type: string;
+	type: string[];
 };
 
 export type RSVP = 
