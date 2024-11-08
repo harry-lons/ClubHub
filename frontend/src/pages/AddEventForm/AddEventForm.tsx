@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom";
-import { Event } from "../../types/types";
+import { Event, EventType } from "../../types/types";
 import { Club } from "../../types/types";
 import DatePicker from "react-datepicker";
 import { DateField, DateTimePicker} from "@mui/x-date-pickers";
@@ -29,7 +29,7 @@ export const AddEventForm= ()=>{
         begin_time: new Date(),
         end_time: new Date(),
         summary: "",
-        type: [] as string[],
+        type: [] as EventType[],
         recur: false,
         frequency: -1,
         stop_date: new Date(),
@@ -82,7 +82,7 @@ export const AddEventForm= ()=>{
             begin_time: new Date(),
             end_time: new Date(),
             summary: "",
-            type: [] as string[],
+            type: [] as EventType[],
             recur: false,
             frequency: -1,
             stop_date: new Date(),
@@ -90,7 +90,8 @@ export const AddEventForm= ()=>{
         setFormData(newFormData);
       };
     
-    const eventTypes = [
+
+      const eventTypes = [
         { value: 'social', label: 'Social Event' },
         { value: 'workshop', label: 'Workshop' },
         { value: 'networking', label: 'Networking Event' },
@@ -101,7 +102,16 @@ export const AddEventForm= ()=>{
         { value: 'cultural', label: 'Cultural Event' },
         { value: 'recreational', label: 'Recreational Outing' },
         { value: 'generalMeeting', label: 'General Meeting' },
-        { value: 'academic', label: 'Academic' }
+        { value: 'academic', label: 'Academic' },
+        { value: 'orientation', label: 'Orientation/Welcome Event' },
+        { value: 'careerDevelopment', label: 'Career Development' },
+        { value: 'volunteering', label: 'Volunteering' },
+        { value: 'panel', label: 'Panel Discussion' },
+        { value: 'celebration', label: 'Celebration/Festival' },
+        { value: 'sports', label: 'Sports Event' },
+        { value: 'arts', label: 'Arts & Performance' },
+        { value: 'training', label: 'Training Session' },
+        { value: 'research', label: 'Research Presentation' }
     ];
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -115,9 +125,10 @@ export const AddEventForm= ()=>{
         const {
             target: { value },
         } = event;
+        const valuesArray = typeof value === 'string' ? value.split(',') : value;
         setFormData({
             ...formData,
-            type: typeof value === 'string' ? value.split(',') : value,
+            type: valuesArray.map(item => item.trim() as EventType)
         });
     };
     const handleBeginTimeChange = (date: Dayjs) => {
@@ -201,7 +212,7 @@ export const AddEventForm= ()=>{
                         >
                         {eventTypes.map((t) => (
                             <MenuItem key={t.label} value={t.label}>
-                            <Checkbox checked={formData.type.includes(t.label)} />
+                            <Checkbox checked={formData.type.includes(t.label as EventType)} />
                             <ListItemText primary={t.label} />
                             </MenuItem>
                         ))}
