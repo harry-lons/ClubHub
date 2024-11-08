@@ -12,11 +12,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Initialize Backend
+      - name: Install Backend dependencies
         run: |
-          # Start backend server in the background
-          pip install -r /backend/requirements.txt # install pip modules
-          fastapi dev /backend/src/app.py &  # run the backend
+          cd backend
+          pip install -r requirements.txt
+      - name: Run backend
+        run: |
+          cd backend
+          fastapi dev src/app.py
       - name: Install npm Dependencies
         run: |
           cd frontend
