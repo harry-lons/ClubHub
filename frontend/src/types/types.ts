@@ -34,6 +34,28 @@ export type EventType =
     | "training"
     | "research";
 
+export type EventType = 
+    | "social"
+    | "workshop"
+    | "networking"
+    | "fundraiser"
+    | "competition"
+    | "seminar"
+    | "communityService"
+    | "cultural"
+    | "recreational"
+    | "generalMeeting"
+    | "academic"
+    | "orientation"
+    | "careerDevelopment"
+    | "volunteering"
+    | "panel"
+    | "celebration"
+    | "sports"
+    | "arts"
+    | "training"
+    | "research";
+
 export type RSVP = 
 {
 	user_id: string;
