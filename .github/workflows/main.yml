@@ -12,6 +12,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - name: Setup Environment
+        run: |
+          cd frontend
+          touch .env
+          echo "REACT_APP_BACKEND_URL=http://localhost:8000" >> .env
       - name: Install Backend dependencies
         run: |
           cd backend
@@ -40,9 +45,6 @@ jobs:
       - name: Unit Test
         run: |
           cd frontend
-          touch .env
-          # Collect environment vars from repo vars
-          echo "REACT_APP_BACKEND_URL=${{ vars.REACT_APP_BACKEND_URL }}" >> .env
           npm test
       - name: Cleanup backend
         if: always()  # Run this step even if previous steps fail
