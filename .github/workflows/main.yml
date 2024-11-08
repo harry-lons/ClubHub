@@ -19,14 +19,15 @@ jobs:
       - name: Run backend
         run: |
           cd backend
-          fastapi dev src/app.py
+          nohup python -m uvicorn src.app:app --reload > backend.log 2>&1 &
+          echo $! > backend.pid  # Save the process ID
       - name: Install npm Dependencies
         run: |
           cd frontend
           npm install
       - name: Wait for Backend to be Ready
+        timeout-minutes: 2  # Add timeout to prevent infinite wait
         run: |
-          # Wait until the backend is fully ready (ASSUMES PORT 8000)
           while ! nc -z localhost 8000; do
             echo "Waiting for backend to be ready..."
             sleep 2
@@ -35,6 +36,12 @@ jobs:
         run: |
           cd frontend
           npm test
+      - name: Cleanup backend
+        if: always()  # Run this step even if previous steps fail
+        run: |
+          if [ -f backend/backend.pid ]; then
+            kill $(cat backend/backend.pid)
+          fi
 
   backend_tests:
     runs-on: ubuntu-latest
