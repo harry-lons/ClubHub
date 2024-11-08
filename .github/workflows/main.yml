@@ -16,7 +16,7 @@ jobs:
         run: |
           cd frontend
           touch .env
-          echo "REACT_APP_BACKEND_URL=http://localhost:8000" >> .env
+          echo "REACT_APP_BACKEND_URL=http://127.0.0.1:8000" >> .env
       - name: Install Backend dependencies
         run: |
           cd backend
@@ -24,8 +24,8 @@ jobs:
       - name: Run backend
         run: |
           cd backend
-          nohup python -m uvicorn src.app:app --reload > backend.log 2>&1 &
-          echo $! > backend.pid  # Save the process ID
+          python -m uvicorn src.app:app --host 0.0.0.0 --port 8000 --reload > backend.log 2>&1 &
+          echo $! > backend.pid
       - name: Install npm Dependencies
         run: |
           cd frontend
@@ -39,7 +39,7 @@ jobs:
           done
       - name: Try backend request
         run: |
-          curl -X POST http://localhost:8000/token \
+          curl -X POST http://127.0.0.1:8000/token \
           -F "username=username1" \
           -F "password=password"
       - name: Unit Test
