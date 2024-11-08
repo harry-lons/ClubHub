@@ -15,7 +15,7 @@ jobs:
       - name: Initialize Backend
         run: |
           # Start backend server in the background
-          pip install -r /backend/src/requirements.txt # install pip modules
+          pip install -r /backend/requirements.txt # install pip modules
           fastapi dev /backend/src/app.py &  # run the backend
       - name: Install npm Dependencies
         run: |
