@@ -12,10 +12,22 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Install Dependencies
+      - name: Initialize Backend
+        run: |
+          # Start backend server in the background
+          pip install -r /backend/src/requirements.txt # install pip modules
+          fastapi dev /backend/src/app.py &  # run the backend
+      - name: Install npm Dependencies
         run: |
           cd frontend
           npm install
+      - name: Wait for Backend to be Ready
+        run: |
+          # Wait until the backend is fully ready (ASSUMES PORT 8000)
+          while ! nc -z localhost 8000; do
+            echo "Waiting for backend to be ready..."
+            sleep 2
+          done
       - name: Unit Test
         run: |
           cd frontend
