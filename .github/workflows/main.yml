@@ -35,6 +35,8 @@ jobs:
       - name: Unit Test
         run: |
           cd frontend
+          touch .env
+          echo "REACT_APP_BACKEND_URL=${{ secrets.REACT_APP_BACKEND_URL }}" >> .env
           npm test
       - name: Cleanup backend
         if: always()  # Run this step even if previous steps fail
