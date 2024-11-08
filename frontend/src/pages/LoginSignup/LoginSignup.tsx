@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import './LoginSignup.css';
 import LoginSignupCard from './LoginSignupCard';
-import { Grid, Card, CardContent, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 
 interface LoginSignupProps {
     which: string; 
