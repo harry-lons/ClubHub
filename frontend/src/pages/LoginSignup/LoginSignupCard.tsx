@@ -81,6 +81,7 @@ const LoginSignupCard: React.FC<LoginSignupCardProps> = ({ which }) => {
                         Email
                     </p>
                     <TextField
+                        data-testid='emailInput'
                         variant="outlined"
                         fullWidth
                         type="email"
@@ -93,6 +94,7 @@ const LoginSignupCard: React.FC<LoginSignupCardProps> = ({ which }) => {
                         Password
                     </p>
                     <OutlinedInput
+                        data-testid='passwordInput'
                         id="outlined-adornment-password"
                         fullWidth
                         type={showPassword ? 'text' : 'password'}
