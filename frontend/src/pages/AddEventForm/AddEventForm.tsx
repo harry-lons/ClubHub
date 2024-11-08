@@ -11,6 +11,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { FormControl,Switch,FormGroup,FormControlLabel,InputLabel,OutlinedInput,ListItemText,Checkbox } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import "react-datepicker/dist/react-datepicker.css";
+import { createEvent } from "../../utils/event-utils";
 
 
 export const AddEventForm= ()=>{
@@ -56,10 +57,23 @@ export const AddEventForm= ()=>{
         setErrors(newErrors);
 
         if (!Object.values(newErrors).includes(true)) {
-            // TODO: Handle form submission logic here
-            // pass params back to the backend API
+            // TODO:
             // navigate to club-side edit event page
             // club id should be a context
+            const newEvent: Event =
+            {
+                id: `${formData.title}-${Date.now()}`,
+                title: formData.title,
+                club_id : "CLUB ID PLACE HOLDER",
+                location: formData.location,
+                begin_time: formData.begin_time,
+                end_time: formData.end_time,
+                recurrence: [ formData.recur, formData.frequency, formData.stop_date ],
+                summary: formData.summary,
+                pictures: { },
+                type: formData.type,
+            };
+            createEvent(newEvent);
         }
     
         const newFormData = {
