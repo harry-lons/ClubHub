@@ -32,6 +32,11 @@ jobs:
             echo "Waiting for backend to be ready..."
             sleep 2
           done
+      - name: Try backend request
+        run: |
+          curl -X POST http://localhost:8000/token \
+          -F "username=username1" \
+          -F "password=password"
       - name: Unit Test
         run: |
           cd frontend
