@@ -1,75 +1,99 @@
+/* Container for the entire events list */
 .events-list-container {
-    background-image: url('../../../public/gradientBackground.png');
+    background: url('../../../public/gradientBackground.png'); /* Gradient background */
     background-size: cover;
     background-position: center;
-    height: 100vh;
-    width: 100%;    
+    background-attachment: fixed;
+    background-repeat: repeat-y; /*infinite scroll*/
+    width: 100%;
     display: flex;
     justify-content: center;
-    align-items: center;
-}
-
-   /* Main container styling (contains the events text detail) */
-   .events-list {
-    gap: 20px;
-    width: 100%; /* Adjust width as needed */
-    max-width: 900px;
-    padding: 20px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    overflow-y: auto;
-    max-height: 500px; /* Setting a max height to make it scrollable
-                          could re-adjust if needed               */
-  }
-
-/* Full Day styling */
-.event-item {
+    align-items: flex-start; /* Aligns to the top */
+    padding-top: 20px; /* Adds some space at the top */
+ }
+ 
+ 
+ .events-list{
+    margin-top: 200px;  /* moves the list down */
+    width: 80%;
+ }
+ 
+ 
+ /* Container for individual date blocks */
+ .event-item {
     display: grid;
-    grid-template-columns: 1fr 3fr; /* Two columns: Date + Time and Event Details */
+    grid-template-columns: 20% auto; /* Two columns: Date and Details */
     gap: 20px;
-  }
-
-/* Date column styling */
-.event-date-column {
+    margin-bottom: 50px; /* Adds space between events */
+    padding: 10px;
+ }
+ 
+ 
+ /* Date column styling */
+ .event-date-column {
     font-weight: bold;
-    font-size: 18px;
-    color: #333;
-    margin-top: 15px;
-    padding-right: 10px;
-    border-bottom: 1px solid #ddd;
-}
-
-/* Event details column styling */
-.event-details-column {
-    padding-left: 10px;
-}
-
-/* Individual event info styling */
-.event-info {
-    display: grid;
-    grid-template-columns: 1fr 3fr;
-    gap: 10px;
-    padding: 20px 0;
-    border-bottom: 1px solid #ddd;
-}
-
-/* Date and time styling */
-.event-time {
+    font-size: 25px;
+    color: #fff;
+    border-right: 2px solid #cfcfcf; /* vertical line  divider */
+    padding-right: 35px;
+    text-align: right;
+    width: 100%;
+ }
+ 
+ 
+ /* Event details styling */
+ .event-details-column {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10%;
+ }
+ 
+ 
+ /* Individual event card styling */
+ .event-info {
+    background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent white */
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+    width: 82%;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    color: #fff;
+    margin-bottom: 25px;
+ }
+ 
+ 
+ /* Date and time styling */
+ .event-time {
     font-weight: bold;
-}
+    margin-right: 15px;
+    color: #ffcb47; /* Optional: highlight time */
+    flex-shrink: 0;
+    width: 15%;
+    text-align: right;
+ }
 
-/* Event title and club+location styling */
-.event-title {
+ .event-details {
+    text-align: center;
+    width: 80%;
+ }
+ 
+ 
+ /* Event title styling */
+ .event-title {
     font-weight: bold;
-    margin: 0;
-    padding-bottom: 20px;
-}
-
-
-.event-club-location {
-    color: #666;
-}
+    font-size: 20px;
+    margin-bottom: 5px;
+    color: #fff;
+ }
+ 
+ 
+ /* Club and location styling */
+ .event-club-location {
+    color: #e1e1e1;
+    font-size: 15px;
+ }
+ 
+ 
+ 
+ 
