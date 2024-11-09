@@ -1,11 +1,11 @@
 import { Event } from "../../types/types";
-import { dummyEventsList } from "../../constants/constants";
+import { exampleEventList } from "../../constants/constants";
 import { useState } from "react";
 import "./Events.css";
 import { Grid, Card, CardContent, Typography } from '@mui/material';
 
 const Events: React.FC = () => {
-    const [events,setEvents] = useState(dummyEventsList);
+    const [events,setEvents] = useState(exampleEventList);
 
     const groupedEvents = events.reduce((acc: Record<string, Event[]>, event: any) => {
         const dateKey = event.begin_time.toDateString();
