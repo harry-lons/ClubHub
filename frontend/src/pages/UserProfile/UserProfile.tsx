@@ -25,8 +25,7 @@ export const UserProfile = () => {
                     <div className = "eventCardContainer">
                         <EventCard user = {user} events = {events}/>
                     </div>
-                </div>  
-                
+                </div>     
             </div>
         </div>
     );
