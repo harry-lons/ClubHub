@@ -12,14 +12,46 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Install Dependencies
+      - name: Setup Environment
+        run: |
+          cd frontend
+          touch .env
+          echo "REACT_APP_BACKEND_URL=http://127.0.0.1:8000" >> .env
+      - name: Install Backend dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt
+      - name: Run backend
+        run: |
+          cd backend
+          python -m uvicorn src.app:app --host 0.0.0.0 --port 8000 --reload > backend.log 2>&1 &
+          echo $! > backend.pid
+      - name: Install npm Dependencies
         run: |
           cd frontend
           npm install
+      - name: Wait for Backend to be Ready
+        timeout-minutes: 2  # Add timeout to prevent infinite wait
+        run: |
+          while ! nc -z localhost 8000; do
+            echo "Waiting for backend to be ready..."
+            sleep 2
+          done
+      - name: Try backend request
+        run: |
+          curl -X POST http://127.0.0.1:8000/token \
+          -F "username=username1" \
+          -F "password=password"
       - name: Unit Test
         run: |
           cd frontend
           npm test
+      - name: Cleanup backend
+        if: always()  # Run this step even if previous steps fail
+        run: |
+          if [ -f backend/backend.pid ]; then
+            kill $(cat backend/backend.pid)
+          fi
 
   backend_tests:
     runs-on: ubuntu-latest
