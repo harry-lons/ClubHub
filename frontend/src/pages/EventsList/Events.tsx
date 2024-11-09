@@ -27,7 +27,7 @@ const Events: React.FC = () => {
                             </div >
                             <div className="event-details-column">
                                 {events.map((event) => (
-                                    <div className="event-info">
+                                    <div className="event-info" onClick={() => {console.log(event.club_id)}}>
                                         <div className="event-time">
                                             {event.begin_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                         </div>
