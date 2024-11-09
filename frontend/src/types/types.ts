@@ -9,8 +9,30 @@ export type Event =
 	recurrence: [ boolean, number, Date|null ];
 	summary: string;
 	pictures: { [key: string]: string };
-	type: string;
+	type: EventType[];
 };
+
+export type EventType = 
+    | "social"
+    | "workshop"
+    | "networking"
+    | "fundraiser"
+    | "competition"
+    | "seminar"
+    | "communityService"
+    | "cultural"
+    | "recreational"
+    | "generalMeeting"
+    | "academic"
+    | "orientation"
+    | "careerDevelopment"
+    | "volunteering"
+    | "panel"
+    | "celebration"
+    | "sports"
+    | "arts"
+    | "training"
+    | "research";
 
 export type RSVP = 
 {

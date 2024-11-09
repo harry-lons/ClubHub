@@ -22,3 +22,18 @@ export const fetchEventById = async (eventId: number): Promise<Event> => {
 
     return event;
 };
+
+// Function to create an event in the backend. Method: POST
+export const createEvent = async (event: Event): Promise<Event> => {
+	const response = await fetch(`${API_BASE_URL}/event`, {
+    	method: "POST",
+    	headers: {
+        	"Content-Type": "application/json",
+    	},
+    	body: JSON.stringify(event),
+	});
+	if (!response.ok) {
+    	throw new Error("Failed to create event");
+	}
+	return response.json();
+};
