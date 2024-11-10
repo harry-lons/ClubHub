@@ -2,7 +2,10 @@ import { Event } from "../../types/types";
 import { exampleEventList } from "../../constants/constants";
 import { useState } from "react";
 import "./Events.css";
-import { Grid, Card, CardContent, Typography } from '@mui/material';
+import { Grid, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
+import { NavBar } from "../NavBar/NavBar";
+import { fetchEventById } from "../../utils/event-utils";
+import { fetchClubById } from "../../utils/club-utils";
 
 const Events: React.FC = () => {
     const [events,setEvents] = useState(exampleEventList);
@@ -17,11 +20,25 @@ const Events: React.FC = () => {
     }, {});
     
     return (
-        <div className="events-list-container">
-            {/* <Grid container className="events-list-grid"> */}
-                <div className="events-list">
+        <Grid container rowSpacing={4} className="events-list-container">
+            <div className="navbar-container">
+                <NavBar />
+            </div>
+            <Grid item xs={9.5} sx={{display: 'flex', justifyContent: 'flex-end'}}>
+                <FormGroup>
+                    <FormControlLabel control={<Checkbox sx={{color: 'white', '&.Mui-checked': {color: 'white',},}}/>} label="RSVP Events" sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}} />
+                </FormGroup>
+            </Grid>
+            <Grid item xs={.2}/>
+            <Grid item xs={2.3}>
+                <FormGroup>
+                    <FormControlLabel control={<Checkbox sx={{color: 'white', '&.Mui-checked': {color: 'white',},}}/>} label="Followed Events" sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}} />
+                </FormGroup>
+            </Grid>
+            <Grid item xs={12}>
+                <Grid container rowSpacing={4} className="events-list">
                     {Object.entries(groupedEvents).map(([date, events]) => (
-                        <div key={date} className="event-item">
+                        <Grid item xs={12} key={date} className="event-item">
                             <div className="event-date-column">
                                 <h3>{date}</h3>
                             </div >
@@ -38,23 +55,11 @@ const Events: React.FC = () => {
                                     </div>
                                 ))}
                             </div>
-                        </div>
+                        </Grid>
                     ))}
-                </div>
-                {/* <Grid item xs={1}/>
-                <Grid item xs={2.5}>
-                    <Grid container>
-                        <Grid item xs={12} style={{background:"red"}}>hi</Grid>
-                        <Grid item xs={12} style={{background:"blue"}}>hi</Grid>
-                    </Grid>
                 </Grid>
-                <Grid item xs={0.5}/>
-                <Grid item xs={7} style={{background:"white"}}>
-
-                </Grid>
-                <Grid item xs={1}/> */}
-            {/* </Grid> */}
-        </div>  
+            </Grid>
+        </Grid>
     );
 };
 
