@@ -33,7 +33,7 @@ from sqlalchemy.orm import sessionmaker
 Session = sessionmaker(bind=engine)
 session = Session()
 
-Base.metadata.create_all(engine)
+# Base.metadata.create_all(engine)
 
 try:
     result = conn.execute(
@@ -50,15 +50,23 @@ except Exception as e:
 
 db = PostgresDatabase(session=session)
 
-db.create(
-    Accounts,
-    {
-        "id": "lidsuf",
-        "email": "example@example.com",
-        "hashed_password": "a",
-        "account_type": "b",
-        "profile_picture": "a",
-    },
-)
+# db.add_user("example@example.com", "a", first_name="g", last_name="p")
+
+# db._create(
+#     Accounts,
+#     {
+#         "id": "lidsuf",
+#         "email": "example@example.com",
+#         "hashed_password": "a",
+#         "account_type": "b",
+#         "profile_picture": "a",
+#     },
+# )
+
+print("Testing queries")
+print(db.get_user_from_email("example@example.com"))
+
+# x = db._get_by(Accounts, email="example@example.com")
+# print(x.id)
 
 conn.close()
