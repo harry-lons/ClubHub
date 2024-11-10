@@ -1,5 +1,37 @@
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Tuple
+
+from .models import *
+
+
+class IAuth(ABC):
+    """Interface for Database queries relating to authentication"""
+
+    @abstractmethod
+    def add_user(
+        self, email: str, hashed_pass: str, first_name: str, last_name: str
+    ) -> str:
+        pass
+
+    @abstractmethod
+    def add_organization(self, email: str, hashed_pass: str, name: str) -> str:
+        pass
+
+    @abstractmethod
+    def get_user_from_id(self, id: str) -> Tuple[Accounts, UserAccounts]:
+        pass
+
+    @abstractmethod
+    def get_user_from_email(self, email: str) -> Tuple[Accounts, UserAccounts]:
+        pass
+
+    @abstractmethod
+    def get_org_from_id(self, id: str) -> Tuple[Accounts, ClubAccounts]:
+        pass
+
+    @abstractmethod
+    def get_org_from_email(self, email: str) -> Tuple[Accounts, ClubAccounts]:
+        pass
 
 
 class IDatabase(ABC):
