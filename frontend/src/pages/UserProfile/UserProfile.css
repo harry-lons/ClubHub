@@ -1,5 +1,5 @@
 /* Container for the entire app */
-body {
+.userProfile {
     margin: 0;
     background: linear-gradient(135deg, #3E29BC, #783698); /* Set background for the entire body */
 }
