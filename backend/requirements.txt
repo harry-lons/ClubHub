@@ -2,3 +2,5 @@ fastapi[standard]
 passlib[argon2]
 pyjwt
 pytest
+SQLAlchemy
+psycopg[binary,pool]
