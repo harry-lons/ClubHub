@@ -8,21 +8,45 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { AuthContext } from '../../context/AuthContext';
+import { API_BASE_URL } from '../../constants/constants';
+import { CardMedia } from '@mui/material';
 interface ProfileCardProps {
   user: User;
 }
-export const ProfileCard: React.FC<ProfileCardProps> = ({ user }) =>{  
+import UploadProfilePicture from './UploadProfilePicture';
+
+export const ProfileCard: React.FC<ProfileCardProps> = ({ user }) =>{ 
+    const {token} = React.useContext(AuthContext);
+
+    React.useEffect(() => {
+        loadPic();
+    }, []);
+
+    const loadPic = async () => {
+        try{
+        const picture = await fetch (`${API_BASE_URL}/myself/profile_pictire`,{
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`, 
+              'Content-Type': 'image/png', 
+            },
+          })
+        }catch(err: any){
+
+        }
+    };
+
     return (
         <Card sx={{ width: 350, height: 700, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <AccountCircleIcon 
-                sx={{ 
-                    fontSize: 260, 
-                    color:  'gray',
-                    margin : '8px auto', 
-                    marginTop: '8px auto',
-                    marginBottom: '-16px'
-                }} 
-            />
+            {/* <CardMedia
+                sx={{ height: 140 }}
+                image={picture}
+                title="green iguana"
+            /> */}
+
+            <UploadProfilePicture />
+
             <CardContent>
                 <Typography gutterBottom variant="h5" component="div" textAlign="center">
                     {user.first_name} {user.last_name}
