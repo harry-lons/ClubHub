@@ -178,7 +178,7 @@ export const AddEventForm= ()=>{
                         sx={{ width: '24ch' }}
                     ></TextField>
                 </div>
-                <div className="event-description">
+                <div className="add-event-description">
                     <h3>Event Summary</h3>
                         <TextField
                         multiline
@@ -191,7 +191,7 @@ export const AddEventForm= ()=>{
                         sx={{ width: '36ch' }}
                     ></TextField>
                 </div>
-                <div className="event-type">
+                <div className="add-event-type">
                     <h3>Event Type</h3>
                     <FormControl sx={{ width: '36ch' }}>
                         <Select
@@ -219,7 +219,7 @@ export const AddEventForm= ()=>{
                         </Select>
                     </FormControl>
                 </div>
-                <div className="event-location">
+                <div className="add-event-location">
                     <h3>Location</h3>
                     <TextField
                         type="text"
@@ -232,7 +232,7 @@ export const AddEventForm= ()=>{
                         sx={{ width: '24ch' }}
                     ></TextField>
                 </div>
-                <div className="event-timing">
+                <div className="add-event-time">
                         <h3>Date & Time</h3>
                         <div style={{ display: "flex", gap: "16px", marginBottom: "16px" }}>
                         <DateTimePicker label="Begin Time" value={dayjs(formData.begin_time)}
@@ -245,7 +245,7 @@ export const AddEventForm= ()=>{
                             minDateTime={dayjs(formData.begin_time)}/>
                         </div>
                 </div>
-                <div className="event-recurring">
+                <div className="add-event-recurring">
                     <h3>Recurring</h3>
                     <FormGroup>
                         <FormControlLabel control={<Switch color="secondary" onChange={()=>(setFormData({...formData, recur: !formData.recur}))}/>} label="Event Recurring" />
