@@ -29,8 +29,8 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
     };
 
     const handleSubmitForm = async (event: React.MouseEvent<HTMLButtonElement>) => {
-        let endpointURL = process.env.REACT_APP_BACKEND_URL;
-        if (!endpointURL) {
+        let baseURL = process.env.REACT_APP_BACKEND_URL;
+        if (!baseURL) {
             console.error('Backend URL is not defined');
             return;
         }
@@ -38,9 +38,22 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
         const formData = new FormData();
         formData.append('username', enteredUsername);
         formData.append('password', enteredPassword);
+
+        if(!accountType || (accountType !== 'USER' && accountType !== 'CLUB')) {
+            // Something went very wrong, just go back to / with error
+            console.error("Lost state on whether this was club or user login!");
+            window.location.href = '/';
+        }
+        // Convert to lowercase for consistency
+        let lcAccount = accountType?.toLowerCase();
+
+        // Determine the specific backend endpoint based on what type of account this is
+
+        // TODO: Switch to the commented version once backend club login is implemented
+
+        // let tokenURL = `${baseURL}/${lcAccount}/login`;
+        const tokenURL = `${baseURL}/token`;
         
-        // Set the request url to be backend/token
-        const tokenURL = `${endpointURL}/token`;
         try {
             const response = await fetch(tokenURL, {
                 method: 'POST',
@@ -83,10 +96,11 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
                 </p>
                 <div className='loginsignup-input-wrap'>
                     <p className='roboto-regular'>
-                        Club Email
+                        Email
                     </p>
                     <TextField
                         variant="outlined"
+                        data-testid="emailInput"
                         fullWidth
                         type="email"
                         onChange={handleUsernameChange}
@@ -100,6 +114,7 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
                     <OutlinedInput
                         id="outlined-adornment-password"
                         fullWidth
+                        data-testid="passwordInput"
                         type={showPassword ? 'text' : 'password'}
                         value={enteredPassword}
                         onChange={handlePasswordChange}
