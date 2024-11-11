@@ -4,10 +4,24 @@ import { EventCard } from "./EventCard";
 import { NavBar } from "../NavBar/NavBar";
 import { User,Event} from "../../types/types";
 import { exampleUser,exampleEventList } from "../../constants/constants";
+import React, { useContext, useState,useEffect } from "react"
 import "./UserProfile.css"
+import { fetchEvents } from "../../utils/event-utils";
 export const UserProfile = () => {
     const user = exampleUser as User;
     const events = exampleEventList as Event[];
+    
+    useEffect(() => {
+        loadEvent();
+    }, []);
+
+    const loadEvent = async () => {
+        try {
+            const events = await fetchEvents(); 
+        } catch (err: any) {
+            console.error("Error loading event:", err.message);
+        }
+    };
     return (
         <div className="userProfilePageContainer">
             

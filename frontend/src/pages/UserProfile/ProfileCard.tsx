@@ -46,6 +46,16 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ user }) =>{
                 image={picture}
                 title="green iguana"
             /> */}
+            <AccountCircleIcon 
+                sx={{
+                    fontSize: 260, 
+                    color:  'gray',
+                    margin : '8px auto', 
+                    marginTop: '8px auto',
+                    marginBottom: '-16px',
+                    height: '100px'
+                }} 
+            />
 
             <UploadProfilePicture />
 
@@ -56,7 +66,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ user }) =>{
                 <Card 
                     sx={{ 
                         width: '100%', 
-                        height: '100%', 
+                        height: '140px', 
                         backgroundColor:'rgba(218, 198, 238, 0.6)', 
                         margin: '0 auto', 
                         display: 'flex', 
