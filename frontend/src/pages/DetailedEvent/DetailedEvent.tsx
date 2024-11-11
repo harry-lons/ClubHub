@@ -1,14 +1,16 @@
 import React, { useContext, useState,useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom";
-import { Event } from "../../types/types";
-import { Club } from "../../types/types";
+import { Event, Club, RSVP} from "../../types/types";
 import { exampleEvent, exampleClub } from "../../constants/constants";
 import { TextField, Button, MenuItem } from '@mui/material';
 import "./DetailedEvent.css"
 import {AuthContext} from "../../context/AuthContext"
 import { fetchEventById } from "../../utils/event-utils";
 import { fetchClubById } from "../../utils/club-utils";
+import { fetchRSVP, createRSVP, deleteRSVP } from "../../utils/RSVP-utils";
 import exampleFlyer from "../../constants/flyer.jpg";
+import Alert from '@mui/material/Alert';
+import CheckIcon from '@mui/icons-material/Check';
 
 
 const DetailedEvent: React.FC = () => {
@@ -18,11 +20,24 @@ const DetailedEvent: React.FC = () => {
     
     const [event, setEvent] = useState<Event> (exampleEvent);
     const [club, setClub] = useState<Club> (exampleClub);
+    const [rsvp, setRsvp] = useState(false);
+    const userid = "001";//NEED CHANGE!!!!!
+
+    const loadUserID = async () => {
+        let endpointURL = process.env.REACT_APP_BACKEND_URL;
+        if (!endpointURL) {
+            console.error('Backend URL is not defined');
+            return;
+        }
+        
+    }
+
 
     useEffect(() => {
         if (!id) return;
         loadEvent();
         loadClub();
+        loadRSVP();
     }, [id]);
 
     const loadEvent = async () => {
@@ -34,7 +49,6 @@ const DetailedEvent: React.FC = () => {
         }
     };
     
-    
 
     const loadClub = async () => {
         try {
@@ -42,6 +56,14 @@ const DetailedEvent: React.FC = () => {
             setClub(club_);
         } catch (err: any) {
             console.error("Error loading club:", err.message);
+        }
+    };
+    const loadRSVP = async () => {
+        try {
+            const RSVPList = await fetchRSVP(); // Convert id to a number
+            RSVPList.forEach((rl)=> {if(rl.event_id === event.id){setRsvp(true);}});
+        } catch (err: any) {
+            console.error("Error loading RSVP:", err.message);
         }
     };
 
@@ -84,10 +106,6 @@ const DetailedEvent: React.FC = () => {
             return(<p>Yes. Recur {recurrenceDescription(recurrence[1])}. End Date {recurrence[2]?.getFullYear()}-{recurrence[2]?.getMonth()}-{recurrence[2]?.getDate()}</p >);
         }
     }
-
-    const handleFollowClick = (event_id: string)=>{
-
-    }
     // const handleAttendees = (event_id: string) =>{
     // implement after database is set
     // //search through the same event_id
@@ -109,8 +127,37 @@ const DetailedEvent: React.FC = () => {
     };
 
     const RSVPButton : React.FC = () => {
+        const toggleRSVP = async () => {
+            setRsvp(!rsvp);
+
+            if (!rsvp) {
+                const newRSVP: RSVP = {
+                    user_id: userid,
+                    event_id: event.id
+                };
+                const successful = await createRSVP(newRSVP);
+                if(successful){
+                    <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
+                        You have successfully RSVPed to this event! Looking forward to see you there!
+                    </Alert>
+                }else{
+                    <Alert severity="error">RSVP unsuccessful please contact webpage administrator</Alert>
+                }
+            } else {
+                const successful = await deleteRSVP(event.id);
+                if(successful){
+                    <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
+                        You have successfully canceled RSVP to this event!
+                    </Alert>
+                }else{
+                    <Alert severity="error">Cancel RSVP unsuccessful please contact webpage administrator</Alert>
+                }
+            }
+        }
         return (
-            <Button variant="contained" style={{ backgroundColor: '#43BD28', color: '#FFFFFF' }} onClick={()=>handleFollowClick}>RSVP</Button>
+            <Button className="rsvp-button" variant="contained" onClick={()=>toggleRSVP}>
+                {rsvp? 'Cancel RSVP' : 'RSVP' }
+            </Button>
         );
     };
     
