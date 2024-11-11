@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginSignup from './pages/LoginSignup/LoginSignup';
-import Events from './pages/Events';
+import Events from './pages/EventsList/Events';
 import DetailedEvent from './pages/DetailedEvent/DetailedEvent';
 import { AddEventForm } from './pages/AddEventForm/AddEventForm';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
