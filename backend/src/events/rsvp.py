@@ -8,20 +8,23 @@ from .schemas import EventIDList
 definitely_a_database = set()
 
 
-async def rsvp_user_create(user_id: int, event_id: int):
-    """RSVPs a person to the event"""
+async def rsvp_user_create(user_id: int, event_id: int) -> bool:
+    """RSVPs a person to the event. Returns a boolean representing whether the transaction
+    was successful."""
     entry = (user_id, event_id, UserGoingStatus.ATTENDING)
     if entry in definitely_a_database:
-        raise USER_ALREADY_RSVP
+        return False
     definitely_a_database.add(entry)
+    return True
 
 
 async def rsvp_user_delete(user_id: int, event_id: int):
     """Removes a RSVP from an event"""
     entry = (user_id, event_id, UserGoingStatus.ATTENDING)
     if entry not in definitely_a_database:
-        raise USER_NOT_RSVP
+        return False
     definitely_a_database.remove(entry)
+    return True
 
 
 async def rsvp_user_get(user_id: int) -> EventIDList:
