@@ -9,7 +9,7 @@ export const UserProfile = () => {
     const user = exampleUser as User;
     const events = exampleEventList as Event[];
     return (
-        <div className="appContainer">
+        <div className="userProfilePageContainer">
             
             <div className="navbarContainer">
                 <NavBar />
@@ -20,7 +20,7 @@ export const UserProfile = () => {
                 </div>
                 <div className = "pastEventContainer">
                     <div className = "textContainer">
-                        <h2>My Past Events</h2>
+                        <h3>My Past Events</h3>
                     </div>
                     <div className = "eventCardContainer">
                         <EventCard user = {user} events = {events}/>
