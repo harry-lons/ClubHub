@@ -15,7 +15,7 @@ export const EventCard: React.FC<EventCardProps> = ({ user,events}) =>{
     const today = new Date();
     
     return(
-    <Card sx={{ width: 1000, height: 640, display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+    <Card sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
         backgroundColor: 'rgba(255, 255, 255, 0.8)',overflowY: 'auto'}}>
         
         <CardContent>
