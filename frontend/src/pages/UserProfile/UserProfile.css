@@ -58,3 +58,56 @@
     height: 90%;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
+
+ /* Event details styling */
+ .event-details-column {
+    display: flex;
+    flex-direction: column;
+    margin-left: 5%;
+ }
+ 
+ 
+ /* Individual event card styling */
+ .event-info {
+    background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent white */
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+    width: 85%;
+    display: flex;
+    align-items: center;
+    color: #fff;
+    margin-bottom: 25px;
+ }
+ 
+ 
+ /* Date and time styling */
+ .event-time {
+    font-weight: bold;
+    margin-right: 15px;
+    color: #ffcb47; /* Optional: highlight time */
+    flex-shrink: 0;
+    width: 10%;
+    text-align: right;
+ }
+
+ .event-details {
+    text-align: center;
+    width: 80%;
+ }
+ 
+ 
+ /* Event title styling */
+ .event-title {
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 5px;
+    color: #fff;
+ }
+ 
+ 
+ /* Club and location styling */
+ .event-club-location {
+    color: #e1e1e1;
+    font-size: 15px;
+ }

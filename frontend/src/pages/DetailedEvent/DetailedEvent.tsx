@@ -17,20 +17,12 @@ const DetailedEvent: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const authContext = useContext(AuthContext);
+    // const { userId } = useContext(AuthContext);
     
     const [event, setEvent] = useState<Event> (exampleEvent);
     const [club, setClub] = useState<Club> (exampleClub);
     const [rsvp, setRsvp] = useState(false);
-    const userid = "001";//NEED CHANGE!!!!!
-
-    const loadUserID = async () => {
-        let endpointURL = process.env.REACT_APP_BACKEND_URL;
-        if (!endpointURL) {
-            console.error('Backend URL is not defined');
-            return;
-        }
-        
-    }
+    const userId = "001";
 
 
     useEffect(() => {
@@ -132,7 +124,7 @@ const DetailedEvent: React.FC = () => {
 
             if (!rsvp) {
                 const newRSVP: RSVP = {
-                    user_id: userid,
+                    user_id: userId,
                     event_id: event.id
                 };
                 const successful = await createRSVP(newRSVP);
