@@ -18,19 +18,19 @@ class IAuth(ABC):
         pass
 
     @abstractmethod
-    def get_user_from_id(self, id: str) -> Tuple[Accounts, UserAccounts]:
+    def get_user_from_id(self, id: str) -> UserAccounts:
         pass
 
     @abstractmethod
-    def get_user_from_email(self, email: str) -> Tuple[Accounts, UserAccounts]:
+    def get_user_from_email(self, email: str) -> UserAccounts:
         pass
 
     @abstractmethod
-    def get_org_from_id(self, id: str) -> Tuple[Accounts, ClubAccounts]:
+    def get_org_from_id(self, id: str) -> ClubAccounts:
         pass
 
     @abstractmethod
-    def get_org_from_email(self, email: str) -> Tuple[Accounts, ClubAccounts]:
+    def get_org_from_email(self, email: str) -> ClubAccounts:
         pass
 
 

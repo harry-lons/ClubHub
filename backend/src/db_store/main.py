@@ -3,7 +3,6 @@ from sqlalchemy.engine import URL
 from sqlalchemy.orm import declarative_base
 
 from .models import (
-    Accounts,
     Base,
     ClubAccounts,
     ClubBoardMembers,
@@ -33,7 +32,7 @@ from sqlalchemy.orm import sessionmaker
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# Base.metadata.create_all(engine)
+Base.metadata.create_all(engine)
 
 try:
     result = conn.execute(
@@ -50,7 +49,7 @@ except Exception as e:
 
 db = PostgresDatabase(session=session)
 
-# db.add_user("example@example.com", "a", first_name="g", last_name="p")
+db.add_user("example@example.com", "a", first_name="g", last_name="p")
 
 # db._create(
 #     Accounts,
