@@ -41,3 +41,9 @@ class UserSignup(BaseModel):
     last_name: str
     username: str
     password: str
+
+
+class ClubSignup(BaseModel):
+    email: str
+    password: str
+    name: str

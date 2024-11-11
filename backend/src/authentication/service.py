@@ -10,7 +10,7 @@ from passlib.context import CryptContext
 from ..database import DB
 from ..identities.schemas import User
 from .constants import BAD_CREDIENTIALS_EXCEPTION
-from .schemas import BearerToken, UserLogin, UserSignup
+from .schemas import BearerToken, ClubSignup, UserLogin, UserSignup
 from .utils import useracc_to_user
 
 ## TODO: implement the merged(UserLogin and UserSignup) class across all the functions
@@ -27,8 +27,12 @@ from .utils import useracc_to_user
 
 app = APIRouter()
 
-oauth2_scheme_user_login = OAuth2PasswordBearer(tokenUrl="/user/login")
-oauth2_scheme_club_login = OAuth2PasswordBearer(tokenUrl="/club/login")
+oauth2_scheme_user_login = OAuth2PasswordBearer(
+    tokenUrl="/user/login", scheme_name="user"
+)
+oauth2_scheme_club_login = OAuth2PasswordBearer(
+    tokenUrl="/club/login", scheme_name="club"
+)
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
@@ -90,9 +94,15 @@ def authenticate_user2(email: str, entered_passwd: str) -> UserLogin:
     return user
 
 
-"""
-checks if username is new to the database then hashes the password if all goes through
-"""
+def authenticate_club(email: str, entered_pw: str) -> str:
+    try:
+        club_acc = DB.db.get_org_from_email(email)
+    except ValueError as e:
+        raise ValueError("Club with email not in database") from e
+
+    if not verify_password(entered_pw, club_acc.hashed_password):
+        raise ValueError()
+    return club_acc.email
 
 
 def authenticate_signup(db, username: str, password: str) -> str:
@@ -115,6 +125,9 @@ async def get_current_user(
     """Validates a given (bearer) token. If the token is correct, returns
     the user the token corresponds to."""
 
+    # TODO change this
+    # ! Make sure not to allow user and club accounts with the same email to access eachother by
+    # manipulating requests (use the "type" attribute of payload)
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
@@ -131,7 +144,22 @@ async def get_current_user(
     return user
 
 
-@app.post("/user/login")
+async def get_current_logged_in_club(
+    token: Annotated[str, Depends(oauth2_scheme_club_login)]
+) -> str:
+    """Returns the currently loged in user's email"""
+    # ! This is a development TEST function that should not make it to production
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise BAD_CREDIENTIALS_EXCEPTION
+        return username
+    except InvalidTokenError:
+        raise BAD_CREDIENTIALS_EXCEPTION
+
+
+@app.post("/user/login", tags=["user"])
 async def user_login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ) -> BearerToken:
@@ -143,12 +171,15 @@ async def user_login(
     # create new session token and add to database
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user.username}, expires_in=access_token_expires
+        data={"sub": user.username, "type": "user"}, expires_in=access_token_expires
     )
     return BearerToken(access_token=access_token, token_type="bearer")
 
 
-@app.post("/user/signup")
+@app.post(
+    "/user/signup",
+    tags=["user"],
+)
 async def user_signup(info: UserSignup) -> str:
     try:
         DB.db.get_user_from_email(info.username)
@@ -161,9 +192,49 @@ async def user_signup(info: UserSignup) -> str:
     return uuid
 
 
-@app.get("/whoami/", response_model=User)
+@app.post("/club/login", tags=["club"])
+async def club_login(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+) -> BearerToken:
+    try:
+        club_email = authenticate_club(form_data.username, form_data.password)
+    except ValueError:
+        raise BAD_CREDIENTIALS_EXCEPTION
+
+    # create new session token and add to database
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": club_email, "type": "club"}, expires_in=access_token_expires
+    )
+    return BearerToken(access_token=access_token, token_type="bearer")
+
+
+@app.post("/club/signup", tags=["club"])
+async def club_signup(info: ClubSignup):
+    """Create a new club account."""
+    try:
+        DB.db.get_org_from_email(info.email)
+        raise ValueError("This email is already associated with a club account.")
+    except ValueError:
+        # If the email doesn't exist in the database, continue
+        pass
+
+    hashed_pw = get_password_hash(info.password)
+    club_uuid = DB.db.add_organization(info.email, hashed_pw, info.name)
+    return club_uuid
+
+
+@app.get("/user/whoami/", response_model=User, tags=["user"])
 async def read_users_me(
     current_user: Annotated[User, Depends(get_current_user)],
 ) -> User:
+    # TODO Change this
     """Returns the current logged in user."""
     return current_user
+
+
+@app.get("club/whoami", response_model=str, tags=["club"])
+async def user_whoami(
+    current_club: Annotated[str, Depends(get_current_logged_in_club)]
+) -> str:
+    return current_club
