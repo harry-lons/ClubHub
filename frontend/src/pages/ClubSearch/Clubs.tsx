@@ -41,18 +41,19 @@ const Clubs: React.FC = () => {
                     />
                 </div>
             </div>
-          
-            <div className="clubs-list">
-                {filteredClubs.map((club, index) => (
-                    <div key={index} className="club-card">
-                        <div className="club-logo" style={{ backgroundColor: club.logoColor }}></div>
-                        <div className="club-details">
-                            <p className="club-name">{club.clubName}</p>
+            <div className="clubs-list-container">
+                <div className="clubs-list">
+                    {filteredClubs.map((club, index) => (
+                        <div key={index} className="club-card">
+                            <div className="club-logo" style={{ backgroundColor: club.logoColor }}></div>
+                            <div className="club-details">
+                                <p className="club-name">{club.clubName}</p>
 
+                            </div>
+                            <p className="club-description">{club.description}</p>
                         </div>
-                        <p className="club-description">{club.description}</p>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
         </div>
     );
