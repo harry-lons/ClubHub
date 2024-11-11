@@ -9,8 +9,10 @@ from passlib.context import CryptContext
 
 from ..identities.schemas import User
 from .constants import BAD_CREDIENTIALS_EXCEPTION
-from .schemas import BearerToken, UserLogin
+from .schemas import BearerToken, UserLogin, UserSignup
 
+
+## TODO: implement the merged(UserLogin and UserSignup) class across all the functions
 # creds: username1:password
 fake_users_db = {
     "username1": {
@@ -63,6 +65,33 @@ def authenticate_user(db, username: str, entered_passwd: str) -> UserLogin:
         raise ValueError()
     return user
 
+def authenticate_user2(db, username: str, entered_passwd: str) -> UserLogin:
+    """Returns the user record for a given username and password.
+    If incorrect credientials, throws ValueError"""
+    # THIS IS FOR THE NEW FUNCTION, WITH DATABASE INTEGRATION
+
+    # get user data from db based on username
+
+    # TODO figure out how to have db be our postgress database
+    # 1  we can call the function db.get_user_by_email(...) to get the user and the hashed password
+    # 2  compare the entered password to the hashed_password (similar to below with `verify_password()`
+    # 3  we create and return a UserLogin object (or we can change our API to return something more convinent)
+
+    if username not in db:
+        raise ValueError()
+    user = UserLogin(**db[username])
+
+    if not verify_password(entered_passwd, user.hashed_password):
+        raise ValueError()
+    return user
+
+'''
+checks if username is new to the database then hashes the password if all goes through
+'''
+def authenticate_signup(db, username: str, password: str)-> str:
+    if username in db:
+        raise ValueError("Username already exists!")
+    return get_password_hash(password)
 
 def create_access_token(data: Dict, expires_in: timedelta) -> str:
     """Creates a jwt token from data."""
@@ -108,6 +137,25 @@ async def login_for_access_token(
     )
     return BearerToken(access_token=access_token, token_type="bearer")
 
+@app.post("/user/login")
+async def user_login(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+) -> BearerToken:
+    # todo change these to email
+    # todo replace fake_users_db with actual database
+    try:
+        user = authenticate_user2(fake_users_db, form_data.username, form_data.password)
+    except ValueError:
+        raise BAD_CREDIENTIALS_EXCEPTION
+
+
+    # create new session token and add to database
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.username}, expires_in=access_token_expires
+    )
+    return BearerToken(access_token=access_token, token_type="bearer")
+
 
 @app.get("/whoami/", response_model=User)
 async def read_users_me(
@@ -115,3 +163,20 @@ async def read_users_me(
 ) -> User:
     """Returns the current logged in user."""
     return current_user
+
+'''
+End-point for user sign-ups; involves authenticating the signup 
+before adding the authenticated new user to the database
+'''
+@app.post("/user/signup")
+async def user_signup(user: UserSignup):
+    ## checks if username was everused before
+    hashed_password = authenticate_signup(fake_users_db, user.username, user.password) ## uses the fake_user_db
+    if len(list(fake_users_db.keys())) > 0:
+        fake_users_db[user.username] = {"id":fake_users_db[list(fake_users_db.keys())[-1]]["id"]+1, \
+                                        "username": user.username, \
+                                        "first_name": user.first_name, "last_name": user.last_name, "password": hashed_password}
+    else:
+        fake_users_db[user.username] = {"id": 0, \
+                                        "username": user.username, \
+                                        "first_name": user.first_name, "last_name": user.last_name, "password": hashed_password}
