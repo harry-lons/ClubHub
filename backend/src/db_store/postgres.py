@@ -18,22 +18,16 @@ class PostgresDatabase(IAuth):
         try:
             account_id = str(uuid.uuid4())
             # TODO add default profile picture
-            account = Accounts(
+            account = UserAccounts(
                 id=account_id,
                 email=email,
                 hashed_password=hashed_pass,
-                account_type="user",
                 profile_picture="",
-            )
-
-            user_account = UserAccounts(
-                id=account_id,
                 first_name=first_name,
                 last_name=last_name,
             )
 
             self.session.add(account)
-            self.session.add(user_account)
             self.session.commit()
 
             return account_id
@@ -48,18 +42,15 @@ class PostgresDatabase(IAuth):
         try:
             account_id = str(uuid.uuid4())
             # TODO add default profile picture
-            account = Accounts(
+            account = ClubAccounts(
                 id=account_id,
                 email=email,
                 hashed_password=hashed_pass,
-                account_type="organization",
                 profile_picture="",
+                name=name,
             )
 
-            org_account = ClubAccounts(id=account_id, name=name)
-
             self.session.add(account)
-            self.session.add(org_account)
             self.session.commit()
 
             return account_id
@@ -68,44 +59,29 @@ class PostgresDatabase(IAuth):
             self.session.rollback()
             raise ValueError(f"Server error")
 
-    def get_user_from_id(self, id: str) -> Tuple[Accounts, UserAccounts]:
-        acc = self._get_by(Accounts, id=id)
+    def get_user_from_id(self, id: str) -> UserAccounts:
+        acc = self._get_by(UserAccounts, id=id)
         if not acc:
             raise ValueError(f"Account with id {id} not found.")
-        user_acc = acc.user_account
-        if not user_acc:
-            raise ValueError(f"No corresponding user account attached to id")
-        return acc, user_acc
+        return acc
 
-    def get_user_from_email(self, email: str) -> Tuple[Accounts, UserAccounts]:
-        acc = self._get_by(Accounts, email=email)
+    def get_user_from_email(self, email: str) -> UserAccounts:
+        acc = self._get_by(UserAccounts, email=email)
         if not acc:
             raise ValueError(f"User with email {email} not found.")
-        user_acc = acc.user_account
-        if not user_acc:
-            raise ValueError(
-                f"No user account details found for account with email {email}."
-            )
+        return acc
 
-        return acc, user_acc
-
-    def get_org_from_id(self, id: str) -> Tuple[Accounts, ClubAccounts]:
-        acc = self._get_by(Accounts, id=id)
+    def get_org_from_id(self, id: str) -> ClubAccounts:
+        acc = self._get_by(ClubAccounts, id=id)
         if not acc:
             raise ValueError(f"Organization with id {id} not found.")
-        club_acc = acc.club_account
-        if not club_acc:
-            raise ValueError(f"No corresponding club account attached to id")
-        return acc, club_acc
+        return acc
 
-    def get_org_from_email(self, email: str) -> Tuple[Accounts, ClubAccounts]:
-        acc = self._get_by(Accounts, email=email)
+    def get_org_from_email(self, email: str) -> ClubAccounts:
+        acc = self._get_by(ClubAccounts, email=email)
         if not acc:
             raise ValueError(f"Organization with email {email} not found.")
-        club_acc = acc.club_account
-        if not club_acc:
-            raise ValueError(f"No corresponding club account attached to id")
-        return acc, club_acc
+        return acc
 
     def _get_by(self, model: Type[M], **filters) -> M:
         """Fetch an object by arbitrary filters. Returns an object of type `model`.

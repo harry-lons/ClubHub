@@ -1,33 +1,36 @@
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 Base = declarative_base()
 
 
-class Accounts(Base):
-    __tablename__ = "accounts"
+# class Accounts(Base):
+#     __tablename__ = "accounts"
 
-    id = Column(String, primary_key=True)
-    email = Column(String, nullable=False)
-    hashed_password = Column(String, nullable=False)
-    account_type = Column(String, nullable=False)
-    profile_picture = Column(String, nullable=False)
+#     id = Column(String, primary_key=True)
+#     email = Column(String, nullable=False)
+#     hashed_password = Column(String, nullable=False)
+#     account_type = Column(String, nullable=False)
+#     profile_picture = Column(String, nullable=False)
 
-    # One-to-one relationship with UserAccounts, ClubAccounts, and Objects
-    user_account = relationship("UserAccounts", back_populates="account", uselist=False)
-    club_account = relationship("ClubAccounts", back_populates="account", uselist=False)
+#     # One-to-one relationship with UserAccounts, ClubAccounts, and Objects
+#     user_account = relationship("UserAccounts", back_populates="account", uselist=False)
+#     club_account = relationship("ClubAccounts", back_populates="account", uselist=False)
 
 
 class UserAccounts(Base):
     __tablename__ = "user_accounts"
 
-    id = Column(String, ForeignKey("accounts.id"), primary_key=True)
-    first_name = Column(String, nullable=False)
-    last_name = Column(String, nullable=False)
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    email: Mapped[str] = mapped_column(String, nullable=False)
+    hashed_password: Mapped[str] = mapped_column(String, nullable=False)
+    first_name: Mapped[str] = mapped_column(String, nullable=False)
+    last_name: Mapped[str] = mapped_column(String, nullable=False)
+    profile_picture: Mapped[str] = mapped_column(String, nullable=False)
 
     # Relationship back to Accounts
-    account = relationship("Accounts", back_populates="user_account")
+    # account = relationship("Accounts", back_populates="user_account")
 
     # Many-to-many relationship with Events (RSVPs)
     events = relationship("Events", secondary="user_rsvps", back_populates="attendees")
@@ -41,11 +44,14 @@ class UserAccounts(Base):
 class ClubAccounts(Base):
     __tablename__ = "club_accounts"
 
-    id = Column(String, ForeignKey("accounts.id"), primary_key=True)
+    id = Column(String, primary_key=True)
+    email = Column(String, nullable=False)
+    hashed_password = Column(String, nullable=False)
+    profile_picture = Column(String, nullable=False)
     name = Column(String, nullable=False)
 
     # Each ClubAccount has an Account
-    account = relationship("Accounts", back_populates="club_account")
+    # account = relationship("Accounts", back_populates="club_account")
 
     # Has many Events
     events = relationship("Events", back_populates="club")
