@@ -31,7 +31,7 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
     const handleSubmitForm = async (event: React.MouseEvent<HTMLButtonElement>) => {
         let baseURL = process.env.REACT_APP_BACKEND_URL;
         if (!baseURL) {
-            console.error('Backend URL is not defined');
+            console.error('Backend base URL is not defined. Check your .env file');
             return;
         }
         // Create form-data from state
