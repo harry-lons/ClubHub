@@ -29,15 +29,21 @@ async def event(id: int) -> Event:
 @app.post("/rsvp/{event_id}")
 async def rsvp_enter(
     current_user: Annotated[User, Depends(auth_service.get_current_user)], event_id: int
-) -> None:
-    await rsvp_user_create(current_user.id, event_id)
+) -> bool:
+    """RSVPs the currently loged in user to the event `event_id`. Returns a boolean determining
+    whether adding is successful."""
+    res = await rsvp_user_create(current_user.id, event_id)
+    return res
 
 
 @app.delete("/rsvp/{event_id}")
 async def rsvp_delete(
     current_user: Annotated[User, Depends(auth_service.get_current_user)], event_id: int
 ) -> None:
-    await rsvp_user_delete(current_user.id, event_id)
+    """Removes a RSVP of the currently loged in user to event `event_id`. Returns a boolean
+    determining whether the operation was successful."""
+    res = await rsvp_user_delete(current_user.id, event_id)
+    return res
 
 
 @app.get("/rsvp/", response_model=EventIDList)
