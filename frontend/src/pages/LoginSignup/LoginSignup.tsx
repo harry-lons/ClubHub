@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import './LoginSignup.css';
-import LoginSignupCard from './LoginSignupCard';
+import LoginCard from './LoginCard';
+import SignupCard from './SignupCard';
 import { Grid } from '@mui/material';
 
 interface LoginSignupProps {
@@ -22,7 +23,16 @@ const LoginSignup: React.FC<LoginSignupProps> = ({ which }) => {
 
                 {/* Right Side - Card */}
                 <Grid item xs={3.5} style={{ display: 'flex', justifyContent: 'center', fontFamily:'Roboto' }}>
-                    <LoginSignupCard which={which}/>
+                    {
+                        // Determine which card/props to put up based on the prop
+                        which === 'LOG IN' ?
+                        <LoginCard accountType={'USER'}/> : 
+                        which === 'CLUB LOG IN' ?
+                        <LoginCard accountType={'CLUB'}/> :
+                        which === 'SIGN UP' ?
+                        <SignupCard accountType={'USER'}/> :
+                        null
+                    }
                 </Grid>
             </Grid>
         </div>

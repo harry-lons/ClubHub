@@ -4,10 +4,10 @@ import { Card, CardContent, TextField, InputAdornment, IconButton, OutlinedInput
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { AuthContext } from '../../context/AuthContext';
 
-interface LoginSignupCardProps {
-    which?: string; // Define whether this is a login card or signup card
+interface SignupCardProps {
+    accountType?: string; // Define whether this is a user or club login
 }
-const LoginSignupCard: React.FC<LoginSignupCardProps> = ({ which }) => {
+const SignupCard: React.FC<SignupCardProps> = ({ accountType }) => {
     const [showPassword, setShowPassword] = React.useState(false);
     const [enteredUsername, setEnteredUsername] = React.useState("");
     const [enteredPassword, setEnteredPassword] = React.useState("");
@@ -39,33 +39,7 @@ const LoginSignupCard: React.FC<LoginSignupCardProps> = ({ which }) => {
         formData.append('username', enteredUsername);
         formData.append('password', enteredPassword);
 
-        // Set the request url to be backend/token
-        const tokenURL = `${endpointURL}/token`;
-        try {
-            const response = await fetch(tokenURL, {
-                method: 'POST',
-                body: formData
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const data = await response.json();
-            console.log('Response:', data);
-
-            // Check if the response contains a token
-            if (data.access_token) {
-                console.log('Token received:', data.access_token);
-                saveToken(data.access_token);  // Store the token in context
-                navigate('/events');     // Redirect to /events page
-            } else {
-                console.error('No token found in the response');
-            }
-
-        } catch (error) {
-            console.error('There was a problem with the fetch operation:', error);
-        }
+        // TODO: Send backend request to sign up (add the user to the database)
     };
 
     const handleMouseUpPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -75,13 +49,15 @@ const LoginSignupCard: React.FC<LoginSignupCardProps> = ({ which }) => {
         <Card style={{ width: '100%' }}>
             <CardContent style={{ alignItems: 'left', textAlign: 'left', padding: 40 }}>
                 {/* roboto medium, override font size to 18 as per figma */}
-                <p className='roboto-medium' style={{ fontSize: 18, marginBottom: 40 }}>{which}</p>
+                <p className='roboto-medium' style={{ fontSize: 18, marginBottom: 40 }}>
+                    SIGN UP {accountType === 'CLUB' ? '(club)' : null
+                    }
+                </p>
                 <div className='loginsignup-input-wrap'>
                     <p className='roboto-regular'>
                         Email
                     </p>
                     <TextField
-                        data-testid='emailInput'
                         variant="outlined"
                         fullWidth
                         type="email"
@@ -94,7 +70,6 @@ const LoginSignupCard: React.FC<LoginSignupCardProps> = ({ which }) => {
                         Password
                     </p>
                     <OutlinedInput
-                        data-testid='passwordInput'
                         id="outlined-adornment-password"
                         fullWidth
                         type={showPassword ? 'text' : 'password'}
@@ -123,10 +98,10 @@ const LoginSignupCard: React.FC<LoginSignupCardProps> = ({ which }) => {
                     id='logsign-submit-button'
                     onClick={handleSubmitForm}
                 >
-                    {which}
+                    SIGN UP
                 </Button>
             </CardContent>
         </Card>
     )
 }
-export default LoginSignupCard;
+export default SignupCard;
