@@ -45,7 +45,17 @@ describe('Login', () => {
 
         // Assert that navigation to the /events page happens upon successful login
         await waitFor(() => {
-            expect(screen.getByText(/Events/i)).toBeInTheDocument();
+
+            // Check for the existence of navbar
+            const NavbarTexts = screen.getAllByText('SoCalSocial');
+            expect(NavbarTexts).toHaveLength(2);
+            NavbarTexts.forEach(text => expect(text).toBeInTheDocument());
+
+            // Check for the existence of RSVP Events checkbox filter
+            expect(screen.getByText('RSVP Events')).toBeInTheDocument();
+
+            // Check for the existence of Followed Events checkbox filter
+            expect(screen.getByText('Followed Events')).toBeInTheDocument();
         });
     });
 })
