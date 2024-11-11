@@ -44,11 +44,11 @@ class UserAccounts(Base):
 class ClubAccounts(Base):
     __tablename__ = "club_accounts"
 
-    id = Column(String, primary_key=True)
-    email = Column(String, nullable=False)
-    hashed_password = Column(String, nullable=False)
-    profile_picture = Column(String, nullable=False)
-    name = Column(String, nullable=False)
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    email: Mapped[str] = mapped_column(String, nullable=False)
+    hashed_password: Mapped[str] = mapped_column(String, nullable=False)
+    profile_picture: Mapped[str] = mapped_column(String, nullable=False)
+    name: Mapped[str] = mapped_column(String, nullable=False)
 
     # Each ClubAccount has an Account
     # account = relationship("Accounts", back_populates="club_account")
