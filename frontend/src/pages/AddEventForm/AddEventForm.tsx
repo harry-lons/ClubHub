@@ -165,7 +165,7 @@ export const AddEventForm= ()=>{
                 <BackButton />
             </div>
             <div className="event-info-container">
-                <div className = "event-title">
+                <div className = "add-event-title">
                     <h3>Event Title</h3>
                     <TextField
                         type="text"
@@ -232,7 +232,7 @@ export const AddEventForm= ()=>{
                         sx={{ width: '24ch' }}
                     ></TextField>
                 </div>
-                <div className="event-time">
+                <div className="event-timing">
                         <h3>Date & Time</h3>
                         <div style={{ display: "flex", gap: "16px", marginBottom: "16px" }}>
                         <DateTimePicker label="Begin Time" value={dayjs(formData.begin_time)}
