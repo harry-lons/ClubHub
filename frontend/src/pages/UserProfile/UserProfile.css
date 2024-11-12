@@ -1,7 +1,10 @@
-/* Container for the entire app */
-.userProfile {
+.userProfilePageContainer {
+    width: 100%;
+    height: 100%;
     margin: 0;
-    background: linear-gradient(135deg, #3E29BC, #783698); /* Set background for the entire body */
+    padding: 0;
+    display: flex;
+    overflow: hidden;
 }
 
 .navbarContainer {
@@ -10,51 +13,101 @@
     top: 0;
     z-index: 1000;
     background-color: #4A3F8C; /* Matches NavBar color */
+    height: 4rem;
 }
 
-/* Main content */
 .userProfile {
     flex: 1;
+    background: linear-gradient(135deg, #3E29BC, #783698);
+    width: 100%;
+    padding-top: 4rem;
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    margin: 0;
+    height: calc(100% - 4rem);
+    align-items: center;
+}
+
+.profileCardContainer {
+    height: 80%;
+    width: 30%;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    padding-top: 4rem; /* Offset to avoid overlap with NavBar */
-    padding-left: 2rem; /* Slightly offset the ProfileCard */
-    box-sizing: border-box;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    padding-left: 2rem;
 }
 
-
-/* ProfileCard container */
-.profileCardContainer {
-    padding: 0; /* Zero padding */
-    margin-top: 5rem;
-    margin-left: 4rem;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Adds shadow effect */
-    border-radius: 8px; /* Optional: add slight rounding for a polished look */
-    background-color: white; /* Ensures card stands out */
-}
-.pastEventContainer{
-    justify-content: center; /* Center horizontally */
-    padding: 0;
-    margin-top: 5rem;
-    margin-left: 8rem; /* Aligns with ProfileCard's left margin */
+.pastEventContainer {
+    width: 70%;
+    height: 80%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 1000;
-    height: 700px; /* Match the height of ProfileCardContainer */
-    box-sizing: border-box; 
-}
-.textContainer{
-    padding: 0;
-    margin-top: 1;
-    color: white;
-    text-align: center;
+    padding-right: 2rem;
 }
 
-/* EventCard container */
-.eventCardContainer {
-    margin-top: 0;
-    padding: 0; /* Optional: adds some padding inside the container */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Adds shadow effect */
+.textContainer{
+    color: white;
+    text-align: center;
+    height: 10%;
 }
+
+.eventCardContainer {
+    width: 100%;
+    height: 90%;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+ /* Event details styling */
+ .event-details-column {
+    display: flex;
+    flex-direction: column;
+    margin-left: 5%;
+ }
+ 
+ 
+ /* Individual event card styling */
+ .event-info {
+    background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent white */
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+    width: 85%;
+    display: flex;
+    align-items: center;
+    color: #fff;
+    margin-bottom: 25px;
+ }
+ 
+ 
+ /* Date and time styling */
+ .event-time {
+    font-weight: bold;
+    margin-right: 15px;
+    color: #ffcb47; /* Optional: highlight time */
+    flex-shrink: 0;
+    width: 10%;
+    text-align: right;
+ }
+
+ .event-details {
+    text-align: center;
+    width: 80%;
+ }
+ 
+ 
+ /* Event title styling */
+ .event-title {
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 5px;
+    color: #fff;
+ }
+ 
+ 
+ /* Club and location styling */
+ .event-club-location {
+    color: #e1e1e1;
+    font-size: 15px;
+ }
