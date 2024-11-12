@@ -10,6 +10,7 @@ import './App.css';
 import { AuthProvider } from './context/AuthContext'
 import { NavBar } from './pages/NavBar/NavBar';
 import { UserProfile } from './pages/UserProfile/UserProfile';
+import Clubs from './pages/ClubSearch/Clubs';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
             <Route path="/club/addEvent" element={<AddEventForm/>} />
             <Route path="/navbar" element={<NavBar/>} />
             <Route path="/profile" element={<UserProfile/>} /> {/* Test Route */}
+            <Route path="/clubs" element={<Clubs/>} />
           </Routes>
         </div>
       </Router>
