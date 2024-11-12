@@ -4,10 +4,10 @@ import { Card, CardContent, TextField, InputAdornment, IconButton, OutlinedInput
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { AuthContext } from '../../context/AuthContext';
 
-interface LoginSignupCardProps {
-    which?: string; // Define whether this is a login card or signup card
+interface LoginCardProps {
+    accountType?: string; // Define whether this is a user or club login
 }
-const LoginSignupCard: React.FC<LoginSignupCardProps> = ({ which }) => {
+const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
     const [showPassword, setShowPassword] = React.useState(false);
     const [enteredUsername, setEnteredUsername] = React.useState("");
     const [enteredPassword, setEnteredPassword] = React.useState("");
@@ -29,9 +29,9 @@ const LoginSignupCard: React.FC<LoginSignupCardProps> = ({ which }) => {
     };
 
     const handleSubmitForm = async (event: React.MouseEvent<HTMLButtonElement>) => {
-        let endpointURL = process.env.REACT_APP_BACKEND_URL;
-        if (!endpointURL) {
-            console.error('Backend URL is not defined');
+        let baseURL = process.env.REACT_APP_BACKEND_URL;
+        if (!baseURL) {
+            console.error('Backend base URL is not defined. Check your .env file');
             return;
         }
         // Create form-data from state
@@ -39,8 +39,21 @@ const LoginSignupCard: React.FC<LoginSignupCardProps> = ({ which }) => {
         formData.append('username', enteredUsername);
         formData.append('password', enteredPassword);
 
-        // Set the request url to be backend/token
-        const tokenURL = `${endpointURL}/token`;
+        if(!accountType || (accountType !== 'USER' && accountType !== 'CLUB')) {
+            // Something went very wrong, just go back to / with error
+            console.error("Lost state on whether this was club or user login!");
+            window.location.href = '/';
+        }
+        // Convert to lowercase for consistency
+        let lcAccount = accountType?.toLowerCase();
+
+        // Determine the specific backend endpoint based on what type of account this is
+
+        // TODO: Switch to the commented version once backend club login is implemented
+
+        // let tokenURL = `${baseURL}/${lcAccount}/login`;
+        const tokenURL = `${baseURL}/token`;
+        
         try {
             const response = await fetch(tokenURL, {
                 method: 'POST',
@@ -60,10 +73,12 @@ const LoginSignupCard: React.FC<LoginSignupCardProps> = ({ which }) => {
                 saveToken(data.access_token);  // Store the token in context
                 navigate('/events');     // Redirect to /events page
             } else {
+                // Handle (unexpected) incorrect response from backend
                 console.error('No token found in the response');
             }
 
         } catch (error) {
+            // Handle other error codes (401 unauthorized, etc)
             console.error('There was a problem with the fetch operation:', error);
         }
     };
@@ -75,14 +90,17 @@ const LoginSignupCard: React.FC<LoginSignupCardProps> = ({ which }) => {
         <Card style={{ width: '100%' }}>
             <CardContent style={{ alignItems: 'left', textAlign: 'left', padding: 40 }}>
                 {/* roboto medium, override font size to 18 as per figma */}
-                <p className='roboto-medium' style={{ fontSize: 18, marginBottom: 40 }}>{which}</p>
+                <p className='roboto-medium' style={{ fontSize: 18, marginBottom: 40 }}>
+                    LOG IN {accountType === 'CLUB' ? 'AS CLUB' : null
+                    }
+                </p>
                 <div className='loginsignup-input-wrap'>
                     <p className='roboto-regular'>
                         Email
                     </p>
                     <TextField
-                        data-testid='emailInput'
                         variant="outlined"
+                        data-testid="emailInput"
                         fullWidth
                         type="email"
                         onChange={handleUsernameChange}
@@ -94,9 +112,9 @@ const LoginSignupCard: React.FC<LoginSignupCardProps> = ({ which }) => {
                         Password
                     </p>
                     <OutlinedInput
-                        data-testid='passwordInput'
                         id="outlined-adornment-password"
                         fullWidth
+                        data-testid="passwordInput"
                         type={showPassword ? 'text' : 'password'}
                         value={enteredPassword}
                         onChange={handlePasswordChange}
@@ -123,10 +141,10 @@ const LoginSignupCard: React.FC<LoginSignupCardProps> = ({ which }) => {
                     id='logsign-submit-button'
                     onClick={handleSubmitForm}
                 >
-                    {which}
+                    LOG IN
                 </Button>
             </CardContent>
         </Card>
     )
 }
-export default LoginSignupCard;
+export default LoginCard;
