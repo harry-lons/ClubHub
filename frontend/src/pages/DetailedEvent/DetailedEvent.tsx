@@ -160,12 +160,12 @@ const DetailedEvent: React.FC = () => {
             </div>
             <div className="event-identity-container">
                 <div className="event-title-container">
-                        <div className="event-title">
+                        <div className="event-detail-title">
                             <h2>{event.title}</h2>
                         </div>
                         <RSVPButton />
                 </div>
-                <div className="event-club">
+                <div className="event-detail-club">
                     <p>From {club.name}</p>
                 </div>
                 
@@ -175,15 +175,15 @@ const DetailedEvent: React.FC = () => {
                     <h3>Description</h3>
                     <p>{event.summary}</p >
                 </div>
-                <div className="event-type">
+                <div className="event-detail-type">
                     <h3>Type</h3>
                     <p>{event.type}</p >
                 </div>
-                <div className="event-location">
+                <div className="event-detail-location">
                     <h3>Location</h3>
                     <p>{event.location}</p >
                 </div>
-                <div className="event-time">
+                <div className="event-detail-time">
                     <h3>Date & Time</h3>
                     {handleTime(event.begin_time, event.end_time)}
                 </div>
@@ -191,11 +191,11 @@ const DetailedEvent: React.FC = () => {
                     <h3>Recurring</h3>
                     {handleRecur(event.recurrence)}
                 </div>
-                <div className="event-pictures">
+                <div className="event-detail-pictures">
                     <h3>Pictures</h3>
                     <img src={exampleFlyer} className="event-picture"/>
                 </div>
-                <div className = "event-contact">
+                <div className = "event-detail-contact">
                     <h3>Contact Information</h3>
                     {Array.isArray(club.contact_email) ? (
                         club.contact_email.map((email, index) => (
@@ -205,7 +205,7 @@ const DetailedEvent: React.FC = () => {
                     <p>{club.contact_email}</p>
                     )}
                 </div>
-                <div className="event-attendees"></div>
+                <div className="event-detail-attendees"></div>
                 
                 <div></div>
             </div>
