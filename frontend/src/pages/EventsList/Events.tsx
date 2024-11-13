@@ -4,12 +4,14 @@ import { useState, useEffect, useContext } from "react";
 import "./Events.css";
 import { Grid, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
 import { NavBar } from "../NavBar/NavBar";
-import { fetchEventList } from "../../utils/eventlist-utils";
+import { fetchEvents } from "../../utils/event-utils";
 import { fetchClubById } from "../../utils/club-utils";
+import { AuthContext } from "../../context/AuthContext";
 
 const Events: React.FC = () => {
     const [events,setEvents] = useState(exampleEventList);
     const [club, setClub] = useState<Club> ();
+    const context = useContext(AuthContext);
 
     useEffect(() => {
         loadEventList();
@@ -17,7 +19,7 @@ const Events: React.FC = () => {
 
     const loadEventList = async () => {
         try {
-            const eventlist = await fetchEventList();
+            const eventlist = await fetchEvents(context.token);
             setEvents(eventlist);
         } catch (err: any) {
             console.error("Error loading event list:", err.message);

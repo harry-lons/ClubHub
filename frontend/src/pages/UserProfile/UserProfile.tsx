@@ -7,9 +7,11 @@ import { exampleUser,exampleEventList } from "../../constants/constants";
 import React, { useContext, useState,useEffect } from "react"
 import "./UserProfile.css"
 import { fetchEvents } from "../../utils/event-utils";
+import { AuthContext } from "../../context/AuthContext";
 export const UserProfile = () => {
     const user = exampleUser as User;
     const events = exampleEventList as Event[];
+    const context = useContext(AuthContext);
     
     useEffect(() => {
         loadEvent();
@@ -17,7 +19,7 @@ export const UserProfile = () => {
 
     const loadEvent = async () => {
         try {
-            const events = await fetchEvents(); 
+            const events = await fetchEvents(context.token); 
         } catch (err: any) {
             console.error("Error loading event:", err.message);
         }

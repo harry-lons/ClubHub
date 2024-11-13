@@ -1,10 +1,10 @@
 /* Container for the entire events list */
 .background {
-    background: url('../../../public/gradientBackground.png'); /* Gradient background */
+    background: url('../../../public/gradientBackground.png');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    background-repeat: repeat-y; /* infinite scroll */
+    background-repeat: repeat-y;
     width: 100%;
     height: 100vh;
     position: fixed;
@@ -12,12 +12,6 @@
 }
 
 .events-list-container {
-    background: url('../../../public/gradientBackground.png'); /* Gradient background */
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    background-repeat: repeat-y; /* infinite scroll */
-    width: 100%;
     display: flex;
     justify-content: center;
     align-items: flex-start; /* Aligns to the top */
