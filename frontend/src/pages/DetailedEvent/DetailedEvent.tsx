@@ -12,8 +12,11 @@ import exampleFlyer from "../../constants/flyer.jpg";
 import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
 
+interface DetailedEventProps {
+    which: string; 
+}
 
-const DetailedEvent: React.FC = () => {
+const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const {token} = useContext(AuthContext);
@@ -108,7 +111,7 @@ const DetailedEvent: React.FC = () => {
 
     const BackButton: React.FC = () => {
         const handleBack = () => {
-        navigate(-1); // Navigates to the previous page
+            navigate(-1); // Navigates to the previous page
         };
 
         return (
@@ -152,6 +155,18 @@ const DetailedEvent: React.FC = () => {
             </Button>
         );
     };
+
+    const EditButton : React.FC = () => {
+        const handleEdit = () => {
+            navigate(`/club/addEvent/${id}`);
+        }
+
+        return (
+            <Button className="edit-button" variant="contained" onClick={()=>handleEdit}>
+                Edit
+            </Button>
+        );
+    }
     
     return (
         <div id="event-detail-container">
@@ -163,7 +178,13 @@ const DetailedEvent: React.FC = () => {
                         <div className="event-detail-title">
                             <h2>{event.title}</h2>
                         </div>
-                        <RSVPButton />
+                        {
+                            which == "CLUB" ?
+                            <EditButton /> :
+                            which == "USER" ?
+                            <RSVPButton /> :
+                            null
+                        }
                 </div>
                 <div className="event-detail-club">
                     <p>From {club.name}</p>

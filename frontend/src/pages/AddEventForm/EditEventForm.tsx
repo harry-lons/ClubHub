@@ -11,11 +11,12 @@ import dayjs, { Dayjs } from "dayjs";
 import { FormControl,Switch,FormGroup,FormControlLabel,InputLabel,OutlinedInput,ListItemText,Checkbox } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import "react-datepicker/dist/react-datepicker.css";
-import { createEvent } from "../../utils/event-utils";
+import { updateEvent, fetchEventById } from "../../utils/event-utils";
+import { exampleEvent } from "../../constants/constants";
 
 
-export const AddEventForm= ()=>{
-
+export const EditEventForm = ()=>{
+    const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const BackButton: React.FC = () => {
         const handleBack = () => { navigate(-1); };
@@ -23,16 +24,26 @@ export const AddEventForm= ()=>{
         return (<button onClick={handleBack} className="back-button">&lt;</button>);
     };
 
+    const [event, setEvent] = useState<Event> (exampleEvent);
+    const loadEvent = async () => {
+        try {
+            const event_ = await fetchEventById(Number(id)); // Convert id to a number
+            setEvent(event_);
+        } catch (err: any) {
+            console.error("Error loading event:", err.message);
+        }
+    };
+
     const [formData, setFormData] = useState({
-        title: "",
-        location: "",
-        begin_time: new Date(),
-        end_time: new Date(),
-        summary: "",
-        type: [] as EventType[],
-        recur: false,
-        frequency: -1,
-        stop_date: new Date(),
+        title: event.title,
+        location: event.location,
+        begin_time: event.begin_time,
+        end_time: event.end_time,
+        summary: event.summary,
+        type: event.type,
+        recur: event.recurrence[0],
+        frequency: event.recurrence[1],
+        stop_date: event.recurrence[2],
 	    // pictures: { [key: string]: string };
     });
 
@@ -73,7 +84,7 @@ export const AddEventForm= ()=>{
                 pictures: { },
                 type: formData.type,
             };
-            const eventID = createEvent(newEvent);
+            const eventID = updateEvent(newEvent);
             navigate(`/club/events/${eventID}`);
         }
     
