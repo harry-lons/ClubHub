@@ -49,7 +49,7 @@ except Exception as e:
 
 db = PostgresDatabase(session=session)
 
-db.add_user("example@example.com", "a", first_name="g", last_name="p")
+db.add_user("username1@example.com", "$argon2id$v=19$m=65536,t=3,p=4$KYUwppQyxjgnBIBQyrkXAg$OmDVsUIY90aOTyvp0kbrtLuSKsSaewP64MfSDEwH7+w", first_name="f", last_name="l")
 
 # db._create(
 #     Accounts,
@@ -63,7 +63,7 @@ db.add_user("example@example.com", "a", first_name="g", last_name="p")
 # )
 
 print("Testing queries")
-print(db.get_user_from_email("example@example.com"))
+print(db.get_user_from_email("username1@example.com"))
 
 # x = db._get_by(Accounts, email="example@example.com")
 # print(x.id)
