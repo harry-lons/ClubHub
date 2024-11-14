@@ -9,7 +9,13 @@ from passlib.context import CryptContext
 
 from ..database import DB
 from ..identities.schemas import User
-from .constants import BAD_CREDIENTIALS_EXCEPTION
+from .constants import (
+    BAD_CREDIENTIALS_EXCEPTION,
+    LOGIN_BAD_EMAIL,
+    LOGIN_BAD_PASSWORD,
+    LOGIN_SIGNUP_OTHER_ERROR,
+    SIGNUP_EMAIL_EXISTS,
+)
 from .schemas import BearerToken, ClubSignup, UserLogin, UserSignup
 from .utils import useracc_to_user
 
@@ -64,11 +70,11 @@ def authenticate_user(db, username: str, entered_passwd: str) -> UserLogin:
 
     # get user data from db based on username
     if username not in db:
-        raise ValueError()
+        raise LOGIN_BAD_EMAIL
     user = UserLogin(**db[username])
 
     if not verify_password(entered_passwd, user.hashed_password):
-        raise ValueError()
+        raise LOGIN_BAD_PASSWORD
     return user
 
 
@@ -79,7 +85,7 @@ def authenticate_user2(email: str, entered_passwd: str) -> UserLogin:
     try:
         user_acc = DB.db.get_user_from_email(email)
     except ValueError as e:
-        raise ValueError("User with email not in database") from e
+        raise LOGIN_BAD_EMAIL
 
     user = UserLogin(
         id=user_acc.id,
@@ -90,7 +96,7 @@ def authenticate_user2(email: str, entered_passwd: str) -> UserLogin:
     )
 
     if not verify_password(entered_passwd, user.hashed_password):
-        raise ValueError()
+        raise LOGIN_BAD_PASSWORD
     return user
 
 
@@ -98,16 +104,16 @@ def authenticate_club(email: str, entered_pw: str) -> str:
     try:
         club_acc = DB.db.get_org_from_email(email)
     except ValueError as e:
-        raise ValueError("Club with email not in database") from e
+        raise LOGIN_BAD_EMAIL
 
     if not verify_password(entered_pw, club_acc.hashed_password):
-        raise ValueError()
+        raise LOGIN_BAD_PASSWORD
     return club_acc.email
 
 
 def authenticate_signup(db, username: str, password: str) -> str:
     if username in db:
-        raise ValueError("Username already exists!")
+        raise SIGNUP_EMAIL_EXISTS
     return get_password_hash(password)
 
 
@@ -182,7 +188,7 @@ async def user_login(
     try:
         user = authenticate_user2(form_data.username, form_data.password)
     except ValueError:
-        raise BAD_CREDIENTIALS_EXCEPTION
+        raise LOGIN_SIGNUP_OTHER_ERROR
 
     # create new session token and add to database
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -199,7 +205,7 @@ async def user_login(
 async def user_signup(info: UserSignup) -> str:
     try:
         DB.db.get_user_from_email(info.username)
-        raise ValueError("This email is already associated with an account")
+        raise SIGNUP_EMAIL_EXISTS
     except ValueError:
         # This email isn't in the database. Continue
         pass
@@ -215,7 +221,7 @@ async def club_login(
     try:
         club_email = authenticate_club(form_data.username, form_data.password)
     except ValueError:
-        raise BAD_CREDIENTIALS_EXCEPTION
+        raise LOGIN_SIGNUP_OTHER_ERROR
 
     # create new session token and add to database
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -230,7 +236,7 @@ async def club_signup(info: ClubSignup):
     """Create a new club account."""
     try:
         DB.db.get_org_from_email(info.email)
-        raise ValueError("This email is already associated with a club account.")
+        raise SIGNUP_EMAIL_EXISTS
     except ValueError:
         # If the email doesn't exist in the database, continue
         pass
@@ -249,8 +255,9 @@ async def read_users_me(
     return current_user
 
 
-@app.get("club/whoami", response_model=str, tags=["club"])
+@app.get("/club/whoami", response_model=str, tags=["club"])
 async def user_whoami(
-    current_club: Annotated[str, Depends(get_current_logged_in_club)]
+    current_club_id: Annotated[str, Depends(get_current_logged_in_club)]
 ) -> str:
-    return current_club
+    """Returns the id of the club that is logged in"""
+    return current_club_id
