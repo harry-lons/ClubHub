@@ -27,7 +27,7 @@ function App() {
             <Route path="/events" element={<Events />} />
             <Route path="/events/:id" element={<DetailedEvent which="USER"/>} />
             <Route path="/club/addEvent" element={<AddEventForm/>} />
-            <Route path="/club/addEvent/:id" element={<EditEventForm/>} />
+            <Route path="/club/editEvent/:id" element={<EditEventForm/>} />
             <Route path="/club/events/:id" element={<DetailedEvent which="CLUB"/>} />
             <Route path="/navbar" element={<NavBar/>} />
             <Route path="/profile" element={<UserProfile/>} /> {/* Test Route */}

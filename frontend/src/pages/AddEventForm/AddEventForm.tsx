@@ -12,10 +12,12 @@ import { FormControl,Switch,FormGroup,FormControlLabel,InputLabel,OutlinedInput,
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import "react-datepicker/dist/react-datepicker.css";
 import { createEvent } from "../../utils/event-utils";
+import {AuthContext} from "../../context/AuthContext"
 
 
 export const AddEventForm= ()=>{
 
+    const {token} = useContext(AuthContext);
     const navigate = useNavigate();
     const BackButton: React.FC = () => {
         const handleBack = () => { navigate(-1); };
@@ -73,7 +75,7 @@ export const AddEventForm= ()=>{
                 pictures: { },
                 type: formData.type,
             };
-            const eventID = createEvent(newEvent);
+            const eventID = createEvent(token, newEvent);
             navigate(`/club/events/${eventID}`);
         }
     

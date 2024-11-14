@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom";
 import { Event, EventType } from "../../types/types";
 import { Club } from "../../types/types";
@@ -13,10 +13,12 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import "react-datepicker/dist/react-datepicker.css";
 import { updateEvent, fetchEventById } from "../../utils/event-utils";
 import { exampleEvent } from "../../constants/constants";
+import {AuthContext} from "../../context/AuthContext"
 
 
 export const EditEventForm = ()=>{
     const { id } = useParams<{ id: string }>();
+    const {token} = useContext(AuthContext);
     const navigate = useNavigate();
     const BackButton: React.FC = () => {
         const handleBack = () => { navigate(-1); };
@@ -33,6 +35,11 @@ export const EditEventForm = ()=>{
             console.error("Error loading event:", err.message);
         }
     };
+
+    useEffect(() => {
+        if (!id) return;
+        loadEvent();
+    }, [id]);
 
     const [formData, setFormData] = useState({
         title: event.title,
@@ -73,7 +80,7 @@ export const EditEventForm = ()=>{
             // club id should be a context
             const newEvent: Event =
             {
-                id: `${formData.title}-${Date.now()}`,
+                id: `${id}`,
                 title: formData.title,
                 club_id : "CLUB ID PLACE HOLDER",
                 location: formData.location,
@@ -84,7 +91,7 @@ export const EditEventForm = ()=>{
                 pictures: { },
                 type: formData.type,
             };
-            const eventID = updateEvent(newEvent);
+            const eventID = updateEvent(token, newEvent);
             navigate(`/club/events/${eventID}`);
         }
     
