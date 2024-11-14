@@ -16,7 +16,7 @@ import CheckIcon from '@mui/icons-material/Check';
 const DetailedEvent: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const authContext = useContext(AuthContext);
+    const {token} = useContext(AuthContext);
     // const { userId } = useContext(AuthContext);
     
     const [event, setEvent] = useState<Event> (exampleEvent);
@@ -52,7 +52,7 @@ const DetailedEvent: React.FC = () => {
     };
     const loadRSVP = async () => {
         try {
-            const RSVPList = await fetchRSVP(); // Convert id to a number
+            const RSVPList = await fetchRSVP(token); // Convert id to a number
             RSVPList.forEach((rl)=> {if(rl.event_id === event.id){setRsvp(true);}});
         } catch (err: any) {
             console.error("Error loading RSVP:", err.message);
@@ -127,7 +127,7 @@ const DetailedEvent: React.FC = () => {
                     user_id: userId,
                     event_id: event.id
                 };
-                const successful = await createRSVP(newRSVP);
+                const successful = await createRSVP(token,newRSVP);
                 if(successful){
                     <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
                         You have successfully RSVPed to this event! Looking forward to see you there!
@@ -136,7 +136,7 @@ const DetailedEvent: React.FC = () => {
                     <Alert severity="error">RSVP unsuccessful please contact webpage administrator</Alert>
                 }
             } else {
-                const successful = await deleteRSVP(event.id);
+                const successful = await deleteRSVP(token,event.id);
                 if(successful){
                     <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
                         You have successfully canceled RSVP to this event!
