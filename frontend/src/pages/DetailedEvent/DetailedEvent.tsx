@@ -158,11 +158,11 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
 
     const EditButton : React.FC = () => {
         const handleEdit = () => {
-            navigate(`/club/addEvent/${id}`);
+            navigate(`/club/editEvent/${id}`);
         }
 
         return (
-            <Button className="edit-button" variant="contained" onClick={()=>handleEdit}>
+            <Button className="edit-button" variant="contained" onClick={handleEdit}>
                 Edit
             </Button>
         );
