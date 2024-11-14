@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Annotated, Dict
 
 import jwt
@@ -113,8 +113,9 @@ def authenticate_signup(db, username: str, password: str) -> str:
 
 def create_access_token(data: Dict, expires_in: timedelta) -> str:
     """Creates a jwt token from data."""
+    now = datetime.now()
     to_encode = data.copy()
-    to_encode.update({"expiry": expires_in})
+    to_encode.update({"expiry": (now + expires_in).timestamp()})
     token = jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
     return token
 
@@ -130,14 +131,19 @@ async def get_current_user(
     # manipulating requests (use the "type" attribute of payload)
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
+        email: str = payload.get("sub")
+        expiry_time_str: str = payload.get("expiry")
+        acc_type: str = payload.get("type")
+        if email is None or expiry_time_str is None or acc_type is None:
             raise BAD_CREDIENTIALS_EXCEPTION
-    except InvalidTokenError:
+        expiry_time: datetime = datetime.fromtimestamp(float(expiry_time_str))
+        if acc_type is not "user" or expiry_time <= datetime.now():
+            raise BAD_CREDIENTIALS_EXCEPTION
+    except InvalidTokenError or ValueError:
         raise BAD_CREDIENTIALS_EXCEPTION
 
     try:
-        user_from_db = DB.db.get_user_from_email(username)
+        user_from_db = DB.db.get_user_from_email(email)
         user = useracc_to_user(user_from_db)
     except ValueError:
         raise BAD_CREDIENTIALS_EXCEPTION
@@ -147,15 +153,25 @@ async def get_current_user(
 async def get_current_logged_in_club(
     token: Annotated[str, Depends(oauth2_scheme_club_login)]
 ) -> str:
-    """Returns the currently loged in user's email"""
+    """Returns the currently loged in user's id"""
     # ! This is a development TEST function that should not make it to production
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
+        email: str = payload.get("sub")
+        expiry_time_str: str = payload.get("expiry")
+        acc_type: str = payload.get("type")
+        if email is None or expiry_time_str is None or acc_type is None:
             raise BAD_CREDIENTIALS_EXCEPTION
-        return username
+        expiry_time: datetime = datetime.fromtimestamp(float(expiry_time_str))
+        if acc_type is not "club" or expiry_time <= datetime.now():
+            raise BAD_CREDIENTIALS_EXCEPTION
     except InvalidTokenError:
+        raise BAD_CREDIENTIALS_EXCEPTION
+
+    try:
+        org = DB.db.get_org_from_email(email)
+        return org.id
+    except ValueError:
         raise BAD_CREDIENTIALS_EXCEPTION
 
 
