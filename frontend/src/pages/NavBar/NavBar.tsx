@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -14,6 +15,7 @@ import Diversity2Icon from '@mui/icons-material/Diversity2';
 const pages = ['Events', 'Clubs', 'Profile'];
 
 export const NavBar = () => {
+  const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -22,6 +24,10 @@ export const NavBar = () => {
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
+  };
+  const handleNavigation = (page: string) => { // Add this function
+    handleCloseNavMenu();
+    navigate(`/${page}`);
   };
 
   return (
@@ -74,7 +80,7 @@ export const NavBar = () => {
               sx={{ display: { xs: 'block', md: 'none' } }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                <MenuItem key={page} onClick={() => handleNavigation(page)}>
                   <Typography sx={{ textAlign: 'center' }}>{page}</Typography>
                 </MenuItem>
               ))}
@@ -102,7 +108,7 @@ export const NavBar = () => {
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={handleCloseNavMenu}
+                onClick={() => handleNavigation(page)}
                 sx={{ my: 2, color: 'white', display: 'block', mr: 3 }}
               >
                 {page}

@@ -11,6 +11,7 @@ import { AuthProvider } from './context/AuthContext'
 import { NavBar } from './pages/NavBar/NavBar';
 import { UserProfile } from './pages/UserProfile/UserProfile';
 import Clubs from './pages/ClubSearch/Clubs';
+import { EditEventForm } from './pages/AddEventForm/EditEventForm';
 
 function App() {
   return (
@@ -24,8 +25,10 @@ function App() {
             <Route path="/signup" element={<LoginSignup which="SIGN UP" />} />
             <Route path="/club/login" element={<LoginSignup which="CLUB LOG IN" />} />
             <Route path="/events" element={<Events />} />
-            <Route path="/events/:id" element={<DetailedEvent />} />
+            <Route path="/events/:id" element={<DetailedEvent which="USER"/>} />
             <Route path="/club/addEvent" element={<AddEventForm/>} />
+            <Route path="/club/editEvent/:id" element={<EditEventForm/>} />
+            <Route path="/club/events/:id" element={<DetailedEvent which="CLUB"/>} />
             <Route path="/navbar" element={<NavBar/>} />
             <Route path="/profile" element={<UserProfile/>} /> {/* Test Route */}
             <Route path="/clubs" element={<Clubs/>} />

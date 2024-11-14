@@ -47,6 +47,16 @@
     width: 180px !important;
 }
 
+.edit-button {
+    margin-left: 10px !important;
+    font-size: 20px !important;
+    color: white !important;
+    background-color: #43BD28 !important;
+    border: none !important;
+    border-radius: 8px !important;
+    width: 180px !important;
+}
+
 .event-club {
     margin-top: 10px;
 }
@@ -58,4 +68,14 @@
 
 .event-picture {
     width: 300px;
+}
+
+p.event-detail-club-name-text{
+    text-decoration: none;
+    cursor: pointer;
+    margin: 0;
+  }
+  
+p.event-detail-club-name-text:hover{
+    text-decoration: underline;
 }

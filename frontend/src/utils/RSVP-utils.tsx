@@ -11,7 +11,7 @@ export const createRSVP = async (token: string,rsvp: RSVP): Promise<boolean> => 
     	body: JSON.stringify(rsvp),
 	});
 	if (!response.ok) {
-    	throw new Error("Failed to create expense");
+    	throw new Error("Failed to create RSVP");
 	}
 	return response.json();
 };
@@ -25,7 +25,7 @@ export const deleteRSVP = async (token:string,event_id: string): Promise<boolean
 		}
 	});
 	if (!response.ok) {
-    	throw new Error("Failed to delete expense");
+    	throw new Error("Failed to delete RSVP");
 	}
 	return response.json();
 };
@@ -39,7 +39,7 @@ export const fetchRSVP = async (token:string): Promise<RSVP[]> => {
         }
     })
 	if (!response.ok) {
-    	throw new Error('Failed to fetch expenses');
+    	throw new Error('Failed to fetch RSVP');
 	}
 
 	// Parsing the response to get the data

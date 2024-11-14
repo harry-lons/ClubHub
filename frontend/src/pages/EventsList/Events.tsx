@@ -1,4 +1,5 @@
 import { Event } from "../../types/types";
+import { useParams, useNavigate } from "react-router-dom";
 import { exampleEventList } from "../../constants/constants";
 import { useState } from "react";
 import "./Events.css";
@@ -8,6 +9,7 @@ import { fetchEventById } from "../../utils/event-utils";
 import { fetchClubById } from "../../utils/club-utils";
 
 const Events: React.FC = () => {
+    const navigate = useNavigate();
     const [events,setEvents] = useState(exampleEventList);
 
     const groupedEvents = events.reduce((acc: Record<string, Event[]>, event: any) => {
@@ -18,6 +20,9 @@ const Events: React.FC = () => {
         acc[dateKey].push(event);
         return acc;
     }, {});
+    const goToDetailPage=(event_id:string)=>{
+        navigate(`/events/${event_id}`);
+    }
     
     return (
         <Grid container rowSpacing={4} className="events-list-container">
@@ -49,7 +54,7 @@ const Events: React.FC = () => {
                                             {event.begin_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                         </div>
                                         <div className="event-details">
-                                            <p className="event-title">{event.title}</p>
+                                            <p className="event-title" onClick={()=>goToDetailPage(event.id)}>{event.title}</p>
                                             <p className="event-club-location">{event.club_id}, {event.location}</p>
                                         </div>
                                     </div>
