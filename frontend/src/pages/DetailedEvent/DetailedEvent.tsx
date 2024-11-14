@@ -150,7 +150,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
             }
         }
         return (
-            <Button className="rsvp-button" variant="contained" onClick={()=>toggleRSVP}>
+            <Button className="rsvp-button" variant="contained" onClick={toggleRSVP}>
                 {rsvp? 'Cancel RSVP' : 'RSVP' }
             </Button>
         );
