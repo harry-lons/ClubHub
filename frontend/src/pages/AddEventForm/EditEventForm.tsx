@@ -27,6 +27,13 @@ export const EditEventForm = ()=>{
     };
 
     const [event, setEvent] = useState<Event> (exampleEvent);
+
+
+    useEffect(() => {
+        if (!id) return;
+        loadEvent();
+    }, [id]);
+    
     const loadEvent = async () => {
         try {
             const event_ = await fetchEventById(Number(id)); // Convert id to a number
@@ -35,11 +42,6 @@ export const EditEventForm = ()=>{
             console.error("Error loading event:", err.message);
         }
     };
-
-    useEffect(() => {
-        if (!id) return;
-        loadEvent();
-    }, [id]);
 
     const [formData, setFormData] = useState({
         title: event.title,

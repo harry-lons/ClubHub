@@ -186,8 +186,9 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                             null
                         }
                 </div>
-                <div className="event-detail-club">
-                    <p>From {club.name}</p>
+                <div className="event-detail-club" style={{ display: 'flex', alignItems: 'center' }}>
+                    <p style={{ display: 'inline-block',marginRight: '5px' }}>From  </p>
+                    <p className="event-detail-club-name-text">{club.name}</p>
                 </div>
                 
             </div>

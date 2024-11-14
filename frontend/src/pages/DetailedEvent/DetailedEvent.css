@@ -69,3 +69,13 @@
 .event-picture {
     width: 300px;
 }
+
+p.event-detail-club-name-text{
+    text-decoration: none;
+    cursor: pointer;
+    margin: 0;
+  }
+  
+p.event-detail-club-name-text:hover{
+    text-decoration: underline;
+}
