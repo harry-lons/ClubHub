@@ -31,24 +31,25 @@ class DatabaseContainer:
         if self._database is not None:
             raise Exception("Database has already been initialized.")
         self._database = database
-        
+
     @property
     def connection(self):
         if self._connection is None:
             raise Exception("Database has not been initalized")
         else:
             return self._connection
-        
+
     @connection.setter
     def connection(self, connection):
         if self._connection is not None:
             raise Exception("Database has already been initialized.")
         self._connection = connection
-            
-    '''
-    Creates a Connection Object that allows for the 
+
+    """
+    Creates a Connection Object that allows for the
     execution of Postgres commands
-    '''
+    """
+
     def connect_db(self, url):
         engine = create_engine(url)
         self.connection = engine.connect()
