@@ -5,7 +5,7 @@ import SignupCard from './SignupCard';
 import { Grid } from '@mui/material';
 
 interface LoginSignupProps {
-    which: string; 
+    which: string;
 }
 
 const LoginSignup: React.FC<LoginSignupProps> = ({ which }) => {
@@ -22,16 +22,16 @@ const LoginSignup: React.FC<LoginSignupProps> = ({ which }) => {
                 <Grid item xs={7.5} />
 
                 {/* Right Side - Card */}
-                <Grid item xs={3.5} style={{ display: 'flex', justifyContent: 'center', fontFamily:'Roboto' }}>
+                <Grid item xs={3.5} style={{ display: 'flex', justifyContent: 'center', fontFamily: 'Roboto' }}>
                     {
                         // Determine which card/props to put up based on the prop
                         which === 'LOG IN' ?
-                        <LoginCard accountType={'USER'}/> : 
-                        which === 'CLUB LOG IN' ?
-                        <LoginCard accountType={'CLUB'}/> :
-                        which === 'SIGN UP' ?
-                        <SignupCard accountType={'USER'}/> :
-                        null
+                            <LoginCard accountType={'USER'} loginURL={'/user/login'} /> :
+                            which === 'CLUB LOG IN' ?
+                                <LoginCard accountType={'CLUB'} loginURL={'/club/login'} /> :
+                                which === 'SIGN UP' ?
+                                    <SignupCard accountType={'USER'} signupURL={'user/signup'} /> :
+                                    null
                     }
                 </Grid>
             </Grid>

@@ -6,8 +6,9 @@ import { AuthContext } from '../../context/AuthContext';
 
 interface LoginCardProps {
     accountType?: string; // Define whether this is a user or club login
+    loginURL: string;
 }
-const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
+const LoginCard: React.FC<LoginCardProps> = ({ accountType, loginURL }) => {
     const [showPassword, setShowPassword] = React.useState(false);
     const [enteredUsername, setEnteredUsername] = React.useState("");
     const [enteredPassword, setEnteredPassword] = React.useState("");
@@ -39,7 +40,7 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
         formData.append('username', enteredUsername);
         formData.append('password', enteredPassword);
 
-        if(!accountType || (accountType !== 'USER' && accountType !== 'CLUB')) {
+        if (!accountType || (accountType !== 'USER' && accountType !== 'CLUB')) {
             // Something went very wrong, just go back to / with error
             console.error("Lost state on whether this was club or user login!");
             window.location.href = '/';
@@ -52,8 +53,8 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
         // TODO: Switch to the commented version once backend club login is implemented
 
         // let tokenURL = `${baseURL}/${lcAccount}/login`;
-        const tokenURL = `${baseURL}/token`;
-        
+        const tokenURL = `${baseURL}${loginURL}`;
+
         try {
             const response = await fetch(tokenURL, {
                 method: 'POST',
