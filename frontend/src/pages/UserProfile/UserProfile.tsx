@@ -12,6 +12,7 @@ export const UserProfile = () => {
     const user = exampleUser as User;
     const [events, setEvents] = useState<Event[]>([]);
     const {token} = useContext(AuthContext);
+
     useEffect(() => {
         if(!token) return;
         loadEvent();
