@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, TextField, InputAdornment, IconButton, OutlinedInput, Button } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { AuthContext } from '../../context/AuthContext';
@@ -195,6 +195,13 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
                 >
                     LOG IN
                 </Button>
+                <div style={{ marginTop: 15 }}>
+                    <p>
+                        Don't have an account? <Link to="/signup" style={{ color: "#00aaaa" }}>
+                            Sign up
+                        </Link> instead.
+                    </p>
+                </div>
             </CardContent>
         </Card>
     )
