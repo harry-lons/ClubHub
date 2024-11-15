@@ -56,6 +56,12 @@ if __name__ == "__main__":
         first_name="f",
         last_name="l",
     )
+    db.add_user(
+        "email@gmail.com",
+        "$argon2id$v=19$m=65536,t=3,p=4$KYUwppQyxjgnBIBQyrkXAg$OmDVsUIY90aOTyvp0kbrtLuSKsSaewP64MfSDEwH7+w",
+        "First2",
+        "Last2",
+    )
 
     print("Testing queries")
     print(db.get_user_from_email("username1@example.com"))
