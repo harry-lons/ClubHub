@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, TextField, InputAdornment, IconButton, OutlinedInput, Button } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { AuthContext } from '../../context/AuthContext';
@@ -10,8 +10,10 @@ interface LoginCardProps {
 }
 const LoginCard: React.FC<LoginCardProps> = ({ accountType, loginURL }) => {
     const [showPassword, setShowPassword] = React.useState(false);
-    const [enteredUsername, setEnteredUsername] = React.useState("");
+    const [enteredEmail, setEnteredEmail] = React.useState("");
     const [enteredPassword, setEnteredPassword] = React.useState("");
+    const [badEmailWarning, setBadEmailWarning] = React.useState(false);
+    const [badPasswordWarning, setBadPasswordWarning] = React.useState(false);
     const { saveToken } = useContext(AuthContext);
     const navigate = useNavigate();
 
@@ -21,15 +23,46 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType, loginURL }) => {
         event.preventDefault();
     };
 
-    const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setEnteredUsername(event.target.value);
+    const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setEnteredEmail(event.target.value);
     };
 
     const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setEnteredPassword(event.target.value);
     };
 
+    const inputIsValid = () => {
+        var returnValue = true;
+        setBadEmailWarning(false);
+        setBadPasswordWarning(false);
+
+        if (enteredEmail === "") {
+            // No email entered
+            setBadEmailWarning(true);
+            returnValue = false;
+        }
+
+        // Regular expression to validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(enteredEmail)) {
+            // Invalid email format
+            setBadEmailWarning(true);
+            returnValue = false;
+        }
+
+        if (enteredPassword === "") {
+            setBadPasswordWarning(true);
+            returnValue = false;
+        }
+
+        return returnValue;
+    }
+
     const handleSubmitForm = async (event: React.MouseEvent<HTMLButtonElement>) => {
+        if (!inputIsValid()) {
+            // Failed input check, do not submit
+            return;
+        }
         let baseURL = process.env.REACT_APP_BACKEND_URL;
         if (!baseURL) {
             console.error('Backend base URL is not defined. Check your .env file');
@@ -37,7 +70,7 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType, loginURL }) => {
         }
         // Create form-data from state
         const formData = new FormData();
-        formData.append('username', enteredUsername);
+        formData.append('username', enteredEmail);
         formData.append('password', enteredPassword);
 
         if (!accountType || (accountType !== 'USER' && accountType !== 'CLUB')) {
@@ -91,11 +124,21 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType, loginURL }) => {
         <Card style={{ width: '100%' }}>
             <CardContent style={{ alignItems: 'left', textAlign: 'left', padding: 40 }}>
                 {/* roboto medium, override font size to 18 as per figma */}
-                <p className='roboto-medium' style={{ fontSize: 18, marginBottom: 40 }}>
-                    LOG IN {accountType === 'CLUB' ? 'AS CLUB' : null
+                <p className='roboto-medium' style={{ fontSize: 18, marginBottom: 20 }}>
+                    LOG IN {accountType === 'CLUB' ? '(club)' : null
                     }
                 </p>
-                <div className='loginsignup-input-wrap'>
+                <div style={{ marginTop: 15, marginBottom:15 }}>
+                    <p className="roboto-regular">
+                        <Link to={ accountType === 'CLUB' ? '/login' : '/club/login' } style={{ color: "#00cccccc" }}>
+                            Click here for { accountType === 'CLUB' ? 'user' : 'club' } login
+                        </Link> 
+                    </p>
+                </div>
+                <div className='loginsignup-input-wrap'
+                    // Override styles if there's an email warning above this
+                    style={badEmailWarning ? { marginBottom: 10 } : {}}
+                >
                     <p className='roboto-regular'>
                         Email
                     </p>
@@ -104,11 +147,20 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType, loginURL }) => {
                         data-testid="emailInput"
                         fullWidth
                         type="email"
-                        onChange={handleUsernameChange}
+                        onChange={handleEmailChange}
                     />
+                    {badEmailWarning ?
+                        <p
+                            style={{ color: "red", marginTop: 10 }}
+                        > Enter a valid email</p>
+                        :
+                        null
+                    }
                 </div>
 
-                <div className='loginsignup-input-wrap'>
+                <div className='loginsignup-input-wrap'
+                    style={badEmailWarning ? { marginBottom: 10 } : {}}
+                >
                     <p className='roboto-regular'>
                         Password
                     </p>
@@ -136,6 +188,13 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType, loginURL }) => {
                         }
                     />
                 </div>
+                {badPasswordWarning ?
+                    <p
+                        style={{ color: "red", marginTop: 10, marginBottom: 10 }}
+                    > Enter a password</p>
+                    :
+                    null
+                }
                 <Button
                     variant="contained"
                     fullWidth
@@ -144,6 +203,13 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType, loginURL }) => {
                 >
                     LOG IN
                 </Button>
+                <div style={{ marginTop: 15 }}>
+                    <p className="roboto-regular">
+                        Don't have an account? <Link to="/signup" style={{ color: "#00aaaa" }}>
+                            Sign up
+                        </Link> instead.
+                    </p>
+                </div>
             </CardContent>
         </Card>
     )

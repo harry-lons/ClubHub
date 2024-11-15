@@ -22,10 +22,14 @@ export const fetchEventById = async (eventId: number): Promise<Event> => {
 
     return event;
 };
-export const fetchEvents = async (): Promise<Event[]> => {
+export const fetchRSVPEvents = async (token: string): Promise<Event[]> => {
 
-    const response = await fetch(`${API_BASE_URL}/events`)
-    
+    const response = await fetch(`${API_BASE_URL}/events`, {
+        method: "GET",
+        headers: {
+            "Authorization" : `Bearer ${token}`
+        }
+    })
 
     if (!response.ok) {
         throw new Error("Failed to fetch events")
@@ -33,27 +37,63 @@ export const fetchEvents = async (): Promise<Event[]> => {
 
     const events: Event[] = await response.json();
     
-    // if (event.begin_time) {
-    //     event.begin_time = new Date(event.begin_time);  // Convert to Date object
-    // }
+    events.forEach((event)=>{
+        if (event.begin_time) {event.begin_time = new Date(event.begin_time); }
+        if (event.end_time) {event.end_time = new Date(event.end_time);}
+    })
 
-    // if (event.end_time) {
-    //     event.end_time = new Date(event.end_time);  // Convert to Date object
-    // }
+    return events;
+};
+export const fetchPastEvents = async (token: string): Promise<Event[]> => {
+
+    const response = await fetch(`${API_BASE_URL}/events/past`, { //NOTICE THIS CHANGE
+        method: "GET",
+        headers: {
+            "Authorization" : `Bearer ${token}`
+        }
+    })
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch events")
+    }    
+
+    const events: Event[] = await response.json();
+    
+    events.forEach((event)=>{
+        if (event.begin_time) {event.begin_time = new Date(event.begin_time); }
+        if (event.end_time) {event.end_time = new Date(event.end_time);}
+    })
 
     return events;
 };
 // Function to create an event in the backend. Method: POST
-export const createEvent = async (event: Event): Promise<Event> => {
+export const createEvent = async (token: string,event: Event): Promise<string> => {
 	const response = await fetch(`${API_BASE_URL}/event`, {
     	method: "POST",
     	headers: {
         	"Content-Type": "application/json",
+            "Authorization" : `Bearer ${token}`
     	},
     	body: JSON.stringify(event),
 	});
 	if (!response.ok) {
     	throw new Error("Failed to create event");
+	}
+    const event_id:string = await response.json();
+	return event_id;
+};
+
+export const updateEvent = async (token: string,event: Event): Promise<Event> => {
+	const response = await fetch(`${API_BASE_URL}/update/event`, {
+    	method: "PATCH",
+    	headers: {
+        	"Content-Type": "application/json",
+            "Authorization" : `Bearer ${token}`
+    	},
+    	body: JSON.stringify(event),
+	});
+	if (!response.ok) {
+    	throw new Error("Failed to update event");
 	}
 	return response.json();
 };

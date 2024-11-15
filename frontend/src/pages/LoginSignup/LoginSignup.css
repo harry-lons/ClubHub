@@ -15,7 +15,7 @@
 .loginsignup-input-wrap {
     display: flex;
     flex-direction: column;
-    margin-bottom: 35px;
+    margin-bottom: 20px;
 }
 
 .loginsignup-input-wrap p {
@@ -24,7 +24,7 @@
 }
 
 .loginsignup-input-wrap .MuiTextField-root {
-    margin-top: 10px; /* Decrease space between label and input */
+    margin-top: 5px; /* Decrease space between label and input */
 }
 
 .loginsignup-input-wrap .MuiOutlinedInput-root {

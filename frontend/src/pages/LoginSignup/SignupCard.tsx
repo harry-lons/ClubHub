@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, TextField, InputAdornment, IconButton, OutlinedInput, Button } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { AuthContext } from '../../context/AuthContext';
@@ -10,7 +10,7 @@ interface SignupCardProps {
 }
 const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
     const [showPassword, setShowPassword] = React.useState(false);
-    const [enteredUsername, setEnteredUsername] = React.useState("");
+    const [enteredEmail, setEnteredEmail] = React.useState("");
     const [enteredPassword, setEnteredPassword] = React.useState("");
     const { saveToken } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -21,8 +21,8 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
         event.preventDefault();
     };
 
-    const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setEnteredUsername(event.target.value);
+    const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setEnteredEmail(event.target.value);
     };
 
     const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,7 +37,7 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
         }
         // Create form-data from state
         const formData = new FormData();
-        formData.append('username', enteredUsername);
+        formData.append('username', enteredEmail);
         formData.append('password', enteredPassword);
 
         // TODO: Send backend request to sign up (add the user to the database)
@@ -50,10 +50,21 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
         <Card style={{ width: '100%' }}>
             <CardContent style={{ alignItems: 'left', textAlign: 'left', padding: 40 }}>
                 {/* roboto medium, override font size to 18 as per figma */}
-                <p className='roboto-medium' style={{ fontSize: 18, marginBottom: 40 }}>
+                <p className='roboto-medium' style={{ fontSize: 18, marginBottom: 20 }}>
                     SIGN UP {accountType === 'CLUB' ? '(club)' : null
                     }
                 </p>
+                {/* 
+                
+                COMMENTED OUT FOR NOW BECAUSE WE DON'T HAVE CLUB SIGNUP
+                
+                <div style={{ marginTop: 15, marginBottom:15 }}>
+                    <p className="roboto-regular">
+                        <Link to="/club/login" style={{ color: "#00cccccc" }}>
+                            Click here for club signup
+                        </Link> 
+                    </p>
+                </div> */}
                 <div className='loginsignup-input-wrap'>
                     <p className='roboto-regular'>
                         Email
@@ -62,7 +73,7 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
                         variant="outlined"
                         fullWidth
                         type="email"
-                        onChange={handleUsernameChange}
+                        onChange={handleEmailChange}
                     />
                 </div>
 
@@ -101,6 +112,13 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
                 >
                     SIGN UP
                 </Button>
+                <div style={{ marginTop: 15 }}>
+                    <p className="roboto-regular">
+                        Already have an account? <Link to="/login" style={{ color: "#00aaaa" }}>
+                            Log In
+                        </Link> instead.
+                    </p>
+                </div>
             </CardContent>
         </Card>
     )

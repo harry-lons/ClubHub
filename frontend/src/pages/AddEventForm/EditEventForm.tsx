@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom";
 import { Event, EventType } from "../../types/types";
 import { Club } from "../../types/types";
@@ -11,12 +11,13 @@ import dayjs, { Dayjs } from "dayjs";
 import { FormControl,Switch,FormGroup,FormControlLabel,InputLabel,OutlinedInput,ListItemText,Checkbox } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import "react-datepicker/dist/react-datepicker.css";
-import { createEvent } from "../../utils/event-utils";
+import { updateEvent, fetchEventById } from "../../utils/event-utils";
+import { exampleEvent } from "../../constants/constants";
 import {AuthContext} from "../../context/AuthContext"
 
 
-export const AddEventForm= ()=>{
-
+export const EditEventForm = ()=>{
+    const { id } = useParams<{ id: string }>();
     const {token} = useContext(AuthContext);
     const navigate = useNavigate();
     const BackButton: React.FC = () => {
@@ -25,16 +26,33 @@ export const AddEventForm= ()=>{
         return (<button onClick={handleBack} className="back-button">&lt;</button>);
     };
 
+    const [event, setEvent] = useState<Event> (exampleEvent);
+
+
+    useEffect(() => {
+        if (!id) return;
+        loadEvent();
+    }, [id]);
+    
+    const loadEvent = async () => {
+        try {
+            const event_ = await fetchEventById(Number(id)); // Convert id to a number
+            setEvent(event_);
+        } catch (err: any) {
+            console.error("Error loading event:", err.message);
+        }
+    };
+
     const [formData, setFormData] = useState({
-        title: "",
-        location: "",
-        begin_time: new Date(),
-        end_time: new Date(),
-        summary: "",
-        type: [] as EventType[],
-        recur: false,
-        frequency: -1,
-        stop_date: new Date(),
+        title: event.title,
+        location: event.location,
+        begin_time: event.begin_time,
+        end_time: event.end_time,
+        summary: event.summary,
+        type: event.type,
+        recur: event.recurrence[0],
+        frequency: event.recurrence[1],
+        stop_date: event.recurrence[2],
 	    // pictures: { [key: string]: string };
     });
 
@@ -64,7 +82,7 @@ export const AddEventForm= ()=>{
             // club id should be a context
             const newEvent: Event =
             {
-                id: `${formData.title}-${Date.now()}`,
+                id: `${id}`,
                 title: formData.title,
                 club_id : "CLUB ID PLACE HOLDER",
                 location: formData.location,
@@ -75,7 +93,7 @@ export const AddEventForm= ()=>{
                 pictures: { },
                 type: formData.type,
             };
-            const eventID = createEvent(token, newEvent);
+            const eventID = updateEvent(token, newEvent);
             navigate(`/club/events/${eventID}`);
         }
     

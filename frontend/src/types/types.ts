@@ -46,7 +46,7 @@ export type User =
 	username: string;
 	first_name: string;
 	last_name: string;
-	followed_clubs: string[];
+	followed_clubs: string[];//id of clubs
 };
 
 export type Club =

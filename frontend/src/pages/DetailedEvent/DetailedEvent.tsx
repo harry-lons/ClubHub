@@ -12,11 +12,14 @@ import exampleFlyer from "../../constants/flyer.jpg";
 import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
 
+interface DetailedEventProps {
+    which: string; 
+}
 
-const DetailedEvent: React.FC = () => {
+const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const authContext = useContext(AuthContext);
+    const {token} = useContext(AuthContext);
     // const { userId } = useContext(AuthContext);
     
     const [event, setEvent] = useState<Event> (exampleEvent);
@@ -52,7 +55,7 @@ const DetailedEvent: React.FC = () => {
     };
     const loadRSVP = async () => {
         try {
-            const RSVPList = await fetchRSVP(); // Convert id to a number
+            const RSVPList = await fetchRSVP(token); // Convert id to a number
             RSVPList.forEach((rl)=> {if(rl.event_id === event.id){setRsvp(true);}});
         } catch (err: any) {
             console.error("Error loading RSVP:", err.message);
@@ -108,7 +111,7 @@ const DetailedEvent: React.FC = () => {
 
     const BackButton: React.FC = () => {
         const handleBack = () => {
-        navigate(-1); // Navigates to the previous page
+            navigate(-1); // Navigates to the previous page
         };
 
         return (
@@ -127,7 +130,7 @@ const DetailedEvent: React.FC = () => {
                     user_id: userId,
                     event_id: event.id
                 };
-                const successful = await createRSVP(newRSVP);
+                const successful = await createRSVP(token,newRSVP);
                 if(successful){
                     <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
                         You have successfully RSVPed to this event! Looking forward to see you there!
@@ -136,7 +139,7 @@ const DetailedEvent: React.FC = () => {
                     <Alert severity="error">RSVP unsuccessful please contact webpage administrator</Alert>
                 }
             } else {
-                const successful = await deleteRSVP(event.id);
+                const successful = await deleteRSVP(token,event.id);
                 if(successful){
                     <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
                         You have successfully canceled RSVP to this event!
@@ -147,11 +150,23 @@ const DetailedEvent: React.FC = () => {
             }
         }
         return (
-            <Button className="rsvp-button" variant="contained" onClick={()=>toggleRSVP}>
+            <Button className="rsvp-button" variant="contained" onClick={toggleRSVP}>
                 {rsvp? 'Cancel RSVP' : 'RSVP' }
             </Button>
         );
     };
+
+    const EditButton : React.FC = () => {
+        const handleEdit = () => {
+            navigate(`/club/editEvent/${id}`);
+        }
+
+        return (
+            <Button className="edit-button" variant="contained" onClick={handleEdit}>
+                Edit
+            </Button>
+        );
+    }
     
     return (
         <div id="event-detail-container">
@@ -163,10 +178,17 @@ const DetailedEvent: React.FC = () => {
                         <div className="event-detail-title">
                             <h2>{event.title}</h2>
                         </div>
-                        <RSVPButton />
+                        {
+                            which == "CLUB" ?
+                            <EditButton /> :
+                            which == "USER" ?
+                            <RSVPButton /> :
+                            null
+                        }
                 </div>
-                <div className="event-detail-club">
-                    <p>From {club.name}</p>
+                <div className="event-detail-club" style={{ display: 'flex', alignItems: 'center' }}>
+                    <p style={{ display: 'inline-block',marginRight: '5px' }}>From  </p>
+                    <p className="event-detail-club-name-text">{club.name}</p>
                 </div>
                 
             </div>
