@@ -49,10 +49,21 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType }) => {
         <Card style={{ width: '100%' }}>
             <CardContent style={{ alignItems: 'left', textAlign: 'left', padding: 40 }}>
                 {/* roboto medium, override font size to 18 as per figma */}
-                <p className='roboto-medium' style={{ fontSize: 18, marginBottom: 40 }}>
+                <p className='roboto-medium' style={{ fontSize: 18, marginBottom: 20 }}>
                     SIGN UP {accountType === 'CLUB' ? '(club)' : null
                     }
                 </p>
+                {/* 
+                
+                COMMENTED OUT FOR NOW BECAUSE WE DON'T HAVE CLUB SIGNUP
+                
+                <div style={{ marginTop: 15, marginBottom:15 }}>
+                    <p className="roboto-regular">
+                        <Link to="/club/login" style={{ color: "#00cccccc" }}>
+                            Click here for club signup
+                        </Link> 
+                    </p>
+                </div> */}
                 <div className='loginsignup-input-wrap'>
                     <p className='roboto-regular'>
                         Email
@@ -101,7 +112,7 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType }) => {
                     SIGN UP
                 </Button>
                 <div style={{ marginTop: 15 }}>
-                    <p>
+                    <p className="roboto-regular">
                         Already have an account? <Link to="/login" style={{ color: "#00aaaa" }}>
                             Log In
                         </Link> instead.
