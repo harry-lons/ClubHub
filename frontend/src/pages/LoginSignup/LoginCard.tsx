@@ -11,6 +11,8 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
     const [showPassword, setShowPassword] = React.useState(false);
     const [enteredUsername, setEnteredUsername] = React.useState("");
     const [enteredPassword, setEnteredPassword] = React.useState("");
+    const [badEmailWarning, setBadEmailWarning] = React.useState(false);
+    const [badPasswordWarning, setBadPasswordWarning] = React.useState(false);
     const { saveToken } = useContext(AuthContext);
     const navigate = useNavigate();
 
@@ -28,7 +30,38 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
         setEnteredPassword(event.target.value);
     };
 
+    const inputIsValid = () => {
+        var returnValue = true;
+        setBadEmailWarning(false);
+        setBadPasswordWarning(false);
+
+        if (enteredUsername === "") {
+            // No email entered
+            setBadEmailWarning(true);
+            returnValue = false;
+        }
+
+        // Regular expression to validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(enteredUsername)) {
+            // Invalid email format
+            setBadEmailWarning(true);
+            returnValue = false;
+        }
+
+        if(enteredPassword === "") {
+            setBadPasswordWarning(true);
+            returnValue = false;
+        }
+
+        return returnValue;
+    }
+
     const handleSubmitForm = async (event: React.MouseEvent<HTMLButtonElement>) => {
+        if (!inputIsValid()) {
+            // Failed input check, do not submit
+            return;
+        }
         let baseURL = process.env.REACT_APP_BACKEND_URL;
         if (!baseURL) {
             console.error('Backend base URL is not defined. Check your .env file');
@@ -39,7 +72,7 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
         formData.append('username', enteredUsername);
         formData.append('password', enteredPassword);
 
-        if(!accountType || (accountType !== 'USER' && accountType !== 'CLUB')) {
+        if (!accountType || (accountType !== 'USER' && accountType !== 'CLUB')) {
             // Something went very wrong, just go back to / with error
             console.error("Lost state on whether this was club or user login!");
             window.location.href = '/';
@@ -53,7 +86,7 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
 
         // let tokenURL = `${baseURL}/${lcAccount}/login`;
         const tokenURL = `${baseURL}/token`;
-        
+
         try {
             const response = await fetch(tokenURL, {
                 method: 'POST',
@@ -94,7 +127,10 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
                     LOG IN {accountType === 'CLUB' ? 'AS CLUB' : null
                     }
                 </p>
-                <div className='loginsignup-input-wrap'>
+                <div className='loginsignup-input-wrap'
+                    // Override styles if there's an email warning above this
+                    style={badEmailWarning ? { marginBottom: 10 } : {}}
+                >
                     <p className='roboto-regular'>
                         Email
                     </p>
@@ -105,9 +141,18 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
                         type="email"
                         onChange={handleUsernameChange}
                     />
+                    {badEmailWarning ?
+                        <p
+                            style={{ color: "red", marginTop: 10 }}
+                        > Enter a valid email</p>
+                        :
+                        null
+                    }
                 </div>
 
-                <div className='loginsignup-input-wrap'>
+                <div className='loginsignup-input-wrap'
+                    style={badEmailWarning ? { marginBottom: 10 } : {}}
+                >
                     <p className='roboto-regular'>
                         Password
                     </p>
@@ -135,6 +180,13 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
                         }
                     />
                 </div>
+                {badPasswordWarning ?
+                        <p
+                            style={{ color: "red", marginTop: 10, marginBottom: 10 }}
+                        > Enter a password</p>
+                        :
+                        null
+                    }
                 <Button
                     variant="contained"
                     fullWidth
