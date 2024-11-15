@@ -108,18 +108,16 @@
  
  /* Club and location styling */
  .past-event-club-location {
- .past-event-club-location {
     color: #e1e1e1;
     font-size: 15px;
  }
 
 
- p.past-event-title{
+p.past-event-title{
     text-decoration: none;
     cursor: pointer;
     margin: 0;
-  }
-  
- p.past-event-title:hover{
-    text-decoration: underline;
- }
+}
+p.past-event-title:hover{
+   text-decoration: underline;
+}
