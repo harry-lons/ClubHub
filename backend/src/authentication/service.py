@@ -135,14 +135,20 @@ async def get_current_user(
     # TODO change this
     # ! Make sure not to allow user and club accounts with the same email to access eachother by
     # manipulating requests (use the "type" attribute of payload)
+    
+    '''
+    TODO Fix the token expiration issue (stringifying the datetime object)
+    process involves turning the the datetime object into a string and we 
+    turn it back to a datetime object and the issue lies in the latter..
+    '''
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
-        expiry_time_str: str = payload.get("expiry")
+        expiry_time_str: float = payload.get("expiry")
         acc_type: str = payload.get("type")
         if email is None or expiry_time_str is None or acc_type is None:
             raise BAD_CREDIENTIALS_EXCEPTION
-        expiry_time: datetime = datetime.fromtimestamp(float(expiry_time_str))
+        expiry_time: datetime = datetime.fromtimestamp(expiry_time_str)
         if acc_type is not "user" or expiry_time <= datetime.now():
             raise BAD_CREDIENTIALS_EXCEPTION
     except InvalidTokenError or ValueError:
