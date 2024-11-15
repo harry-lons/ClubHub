@@ -9,7 +9,7 @@ interface LoginCardProps {
 }
 const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
     const [showPassword, setShowPassword] = React.useState(false);
-    const [enteredUsername, setEnteredUsername] = React.useState("");
+    const [enteredEmail, setEnteredEmail] = React.useState("");
     const [enteredPassword, setEnteredPassword] = React.useState("");
     const [badEmailWarning, setBadEmailWarning] = React.useState(false);
     const [badPasswordWarning, setBadPasswordWarning] = React.useState(false);
@@ -22,8 +22,8 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
         event.preventDefault();
     };
 
-    const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setEnteredUsername(event.target.value);
+    const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setEnteredEmail(event.target.value);
     };
 
     const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,7 +35,7 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
         setBadEmailWarning(false);
         setBadPasswordWarning(false);
 
-        if (enteredUsername === "") {
+        if (enteredEmail === "") {
             // No email entered
             setBadEmailWarning(true);
             returnValue = false;
@@ -43,7 +43,7 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
 
         // Regular expression to validate email format
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(enteredUsername)) {
+        if (!emailRegex.test(enteredEmail)) {
             // Invalid email format
             setBadEmailWarning(true);
             returnValue = false;
@@ -69,7 +69,7 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
         }
         // Create form-data from state
         const formData = new FormData();
-        formData.append('username', enteredUsername);
+        formData.append('username', enteredEmail);
         formData.append('password', enteredPassword);
 
         if (!accountType || (accountType !== 'USER' && accountType !== 'CLUB')) {
@@ -146,7 +146,7 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
                         data-testid="emailInput"
                         fullWidth
                         type="email"
-                        onChange={handleUsernameChange}
+                        onChange={handleEmailChange}
                     />
                     {badEmailWarning ?
                         <p
