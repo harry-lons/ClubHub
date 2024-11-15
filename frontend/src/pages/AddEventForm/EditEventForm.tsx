@@ -26,35 +26,42 @@ export const EditEventForm = ()=>{
         return (<button onClick={handleBack} className="back-button">&lt;</button>);
     };
 
-    const [event, setEvent] = useState<Event> (exampleEvent);
-
-
-    useEffect(() => {
-        if (!id) return;
-        loadEvent();
-    }, [id]);
-    
+    const [formData, setFormData] = useState({
+        title: "",
+        location: "",
+        begin_time: new Date(),
+        end_time: new Date(),
+        summary: "",
+        type: [] as EventType[],
+        recur: false,
+        frequency: -1,
+        stop_date: new Date() as (Date | null),
+	    // pictures: { [key: string]: string };
+    });
     const loadEvent = async () => {
         try {
-            const event_ = await fetchEventById(Number(id)); // Convert id to a number
-            setEvent(event_);
+            const  event_ = await fetchEventById(Number(id)); // Convert id to a number
+            setFormData({
+                title: event_.title,
+                location: event_.location,
+                begin_time: event_.begin_time,
+                end_time: event_.end_time,
+                summary: event_.summary,
+                type: event_.type,
+                recur: event_.recurrence[0],
+                frequency: event_.recurrence[1],
+                stop_date: event_.recurrence[2],
+                // pictures: { [key: string]: string };
+            });
         } catch (err: any) {
             console.error("Error loading event:", err.message);
         }
     };
 
-    const [formData, setFormData] = useState({
-        title: event.title,
-        location: event.location,
-        begin_time: event.begin_time,
-        end_time: event.end_time,
-        summary: event.summary,
-        type: event.type,
-        recur: event.recurrence[0],
-        frequency: event.recurrence[1],
-        stop_date: event.recurrence[2],
-	    // pictures: { [key: string]: string };
-    });
+    useEffect(() => {
+        if (!id) return;
+        loadEvent();
+    }, [id]);
 
     const [errors, setErrors] = useState({
         title: false,
@@ -78,7 +85,6 @@ export const EditEventForm = ()=>{
 
         if (!Object.values(newErrors).includes(true)) {
             // TODO:
-            // navigate to club-side edit event page
             // club id should be a context
             const newEvent: Event =
             {
