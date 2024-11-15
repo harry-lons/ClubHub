@@ -7,7 +7,7 @@ on:
     branches: [main]  # Run the tests on pull requests targeting the 'main' branch
 
 jobs:
-  frontend-backend-integration-tests:
+  frontend-tests:
     runs-on: ubuntu-latest
 
     services:
@@ -34,11 +34,28 @@ jobs:
           node-version: 22
           cache: "npm"
           cache-dependency-path: frontend/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
 
       - name: Setup Environment
         run: |
           cd frontend
           touch .env
+
+          username="username"
+          password="examplepassword"
+          host="127.0.0.1"
+          port=5432
+          database="SoCalSocial"
+
+          echo "PG_USERNAME=$username" >> .env
+          echo "PG_PASSWORD=$password" >> .env
+          echo "PG_HOST=$host" >> .env
+          echo "PG_PORT=$port" >> .env
+          echo "PG_DATABASE=$database" >> .env
+
           echo "REACT_APP_BACKEND_URL=http://127.0.0.1:8000" >> .env
       - name: Install Backend dependencies
         run: |
@@ -106,6 +123,22 @@ jobs:
         with:
           python-version: "3.12"
           cache: "pip"
+
+      - name: Setup Environment
+        run: |
+          username="username"
+          password="examplepassword"
+          host="127.0.0.1"
+          port=5432
+          database="SoCalSocial"
+          cd backend
+          touch .env
+          echo "PG_USERNAME=$username" >> .env
+          echo "PG_PASSWORD=$password" >> .env
+          echo "PG_HOST=$host" >> .env
+          echo "PG_PORT=$port" >> .env
+          echo "PG_DATABASE=$database" >> .env
+
 
       - name: Install Dependencies
         run: |
