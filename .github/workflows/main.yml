@@ -125,12 +125,14 @@ jobs:
           cache: "pip"
 
       - name: Setup Environment
+      ## TODO: fix the problem related to .env
         run: |
           username="username"
           password="examplepassword"
           host="127.0.0.1"
           port=5432
           database="SoCalSocial"
+          
           cd backend
           touch .env
           echo "PG_USERNAME=$username" >> .env
