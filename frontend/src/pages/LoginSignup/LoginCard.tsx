@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, TextField, InputAdornment, IconButton, OutlinedInput, Button } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { AuthContext } from '../../context/AuthContext';
@@ -49,7 +49,7 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
             returnValue = false;
         }
 
-        if(enteredPassword === "") {
+        if (enteredPassword === "") {
             setBadPasswordWarning(true);
             returnValue = false;
         }
@@ -123,10 +123,17 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
         <Card style={{ width: '100%' }}>
             <CardContent style={{ alignItems: 'left', textAlign: 'left', padding: 40 }}>
                 {/* roboto medium, override font size to 18 as per figma */}
-                <p className='roboto-medium' style={{ fontSize: 18, marginBottom: 40 }}>
-                    LOG IN {accountType === 'CLUB' ? 'AS CLUB' : null
+                <p className='roboto-medium' style={{ fontSize: 18, marginBottom: 20 }}>
+                    LOG IN {accountType === 'CLUB' ? '(club)' : null
                     }
                 </p>
+                <div style={{ marginTop: 15, marginBottom:15 }}>
+                    <p className="roboto-regular">
+                        <Link to={ accountType === 'CLUB' ? '/login' : '/club/login' } style={{ color: "#00cccccc" }}>
+                            Click here for { accountType === 'CLUB' ? 'user' : 'club' } login
+                        </Link> 
+                    </p>
+                </div>
                 <div className='loginsignup-input-wrap'
                     // Override styles if there's an email warning above this
                     style={badEmailWarning ? { marginBottom: 10 } : {}}
@@ -181,12 +188,12 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
                     />
                 </div>
                 {badPasswordWarning ?
-                        <p
-                            style={{ color: "red", marginTop: 10, marginBottom: 10 }}
-                        > Enter a password</p>
-                        :
-                        null
-                    }
+                    <p
+                        style={{ color: "red", marginTop: 10, marginBottom: 10 }}
+                    > Enter a password</p>
+                    :
+                    null
+                }
                 <Button
                     variant="contained"
                     fullWidth
@@ -195,6 +202,13 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
                 >
                     LOG IN
                 </Button>
+                <div style={{ marginTop: 15 }}>
+                    <p className="roboto-regular">
+                        Don't have an account? <Link to="/signup" style={{ color: "#00aaaa" }}>
+                            Sign up
+                        </Link> instead.
+                    </p>
+                </div>
             </CardContent>
         </Card>
     )

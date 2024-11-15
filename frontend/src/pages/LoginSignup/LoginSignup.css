@@ -24,7 +24,7 @@
 }
 
 .loginsignup-input-wrap .MuiTextField-root {
-    margin-top: 10px; /* Decrease space between label and input */
+    margin-top: 5px; /* Decrease space between label and input */
 }
 
 .loginsignup-input-wrap .MuiOutlinedInput-root {
