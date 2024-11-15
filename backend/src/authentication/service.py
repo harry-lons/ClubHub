@@ -19,6 +19,13 @@ fake_users_db = {
         "first_name": "First",
         "last_name": "Last",
         "hashed_password": "$argon2id$v=19$m=65536,t=3,p=4$KYUwppQyxjgnBIBQyrkXAg$OmDVsUIY90aOTyvp0kbrtLuSKsSaewP64MfSDEwH7+w",
+    },
+    "email@gmail.com": {
+        "id": 6,
+        "username": "email@gmail.com",
+        "first_name": "First2",
+        "last_name": "Last2",
+        "hashed_password": "$argon2id$v=19$m=65536,t=3,p=4$KYUwppQyxjgnBIBQyrkXAg$OmDVsUIY90aOTyvp0kbrtLuSKsSaewP64MfSDEwH7+w",
     }
 }
 

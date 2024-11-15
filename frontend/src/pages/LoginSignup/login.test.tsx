@@ -32,7 +32,7 @@ describe('Login', () => {
 
         // Enter 'username1' as username
         fireEvent.change(screen.getByTestId('emailInput').querySelector('input')!, {
-            target: { value: 'username1' },
+            target: { value: 'email@gmail.com' },
         });
 
         // Enter 'password' as password
