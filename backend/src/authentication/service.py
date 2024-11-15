@@ -1,10 +1,10 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Annotated, Dict
 
 import jwt
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from jwt.exceptions import InvalidTokenError
+from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 from passlib.context import CryptContext
 
 from ..database import DB
@@ -119,9 +119,9 @@ def authenticate_signup(db, username: str, password: str) -> str:
 
 def create_access_token(data: Dict, expires_in: timedelta) -> str:
     """Creates a jwt token from data."""
-    now = datetime.now()
+    expires_at = datetime.now(timezone.utc) + expires_in
     to_encode = data.copy()
-    to_encode.update({"expiry": (now + expires_in).timestamp()})
+    to_encode.update({"exp": expires_at})
     token = jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
     return token
 
@@ -133,25 +133,21 @@ async def get_current_user(
     the user the token corresponds to."""
 
     # TODO change this
-    # ! Make sure not to allow user and club accounts with the same email to access eachother by
-    # manipulating requests (use the "type" attribute of payload)
-    
-    '''
+
+    """
     TODO Fix the token expiration issue (stringifying the datetime object)
-    process involves turning the the datetime object into a string and we 
+    process involves turning the the datetime object into a string and we
     turn it back to a datetime object and the issue lies in the latter..
-    '''
+    """
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
-        expiry_time_str: float = payload.get("expiry")
-        acc_type: str = payload.get("type")
-        if email is None or expiry_time_str is None or acc_type is None:
+        acc_type: str = payload.get("role")
+        if email is None or acc_type is None:
             raise BAD_CREDIENTIALS_EXCEPTION
-        expiry_time: datetime = datetime.fromtimestamp(expiry_time_str)
-        if acc_type is not "user" or expiry_time <= datetime.now():
+        if acc_type != "user":
             raise BAD_CREDIENTIALS_EXCEPTION
-    except InvalidTokenError or ValueError:
+    except (InvalidTokenError, ExpiredSignatureError, ValueError):
         raise BAD_CREDIENTIALS_EXCEPTION
 
     try:
@@ -166,18 +162,15 @@ async def get_current_logged_in_club(
     token: Annotated[str, Depends(oauth2_scheme_club_login)]
 ) -> str:
     """Returns the currently loged in user's id"""
-    # ! This is a development TEST function that should not make it to production
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
-        expiry_time_str: str = payload.get("expiry")
-        acc_type: str = payload.get("type")
-        if email is None or expiry_time_str is None or acc_type is None:
+        acc_type: str = payload.get("role")
+        if email is None or acc_type is None:
             raise BAD_CREDIENTIALS_EXCEPTION
-        expiry_time: datetime = datetime.fromtimestamp(float(expiry_time_str))
-        if acc_type is not "club" or expiry_time <= datetime.now():
+        if acc_type != "club":
             raise BAD_CREDIENTIALS_EXCEPTION
-    except InvalidTokenError:
+    except (InvalidTokenError, ExpiredSignatureError, ValueError):
         raise BAD_CREDIENTIALS_EXCEPTION
 
     try:
@@ -199,7 +192,7 @@ async def user_login(
     # create new session token and add to database
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user.username, "type": "user"}, expires_in=access_token_expires
+        data={"sub": user.username, "role": "user"}, expires_in=access_token_expires
     )
     return BearerToken(access_token=access_token, token_type="bearer")
 
@@ -232,7 +225,7 @@ async def club_login(
     # create new session token and add to database
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": club_email, "type": "club"}, expires_in=access_token_expires
+        data={"sub": club_email, "role": "club"}, expires_in=access_token_expires
     )
     return BearerToken(access_token=access_token, token_type="bearer")
 
