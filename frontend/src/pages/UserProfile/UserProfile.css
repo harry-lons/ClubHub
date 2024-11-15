@@ -82,7 +82,7 @@
  
  
  /* Date and time styling */
- .past-event-time {
+ .past-past-event-time {
     font-weight: bold;
     margin-right: 15px;
     color: #ffcb47; /* Optional: highlight time */
@@ -91,7 +91,7 @@
     text-align: right;
  }
 
- .past-event-details {
+ .past-past-event-details {
     text-align: center;
     width: 80%;
  }
@@ -107,6 +107,7 @@
  
  
  /* Club and location styling */
+ .past-event-club-location {
  .past-event-club-location {
     color: #e1e1e1;
     font-size: 15px;
