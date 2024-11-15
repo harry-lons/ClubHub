@@ -1,30 +1,30 @@
-import pytest
-from fastapi.testclient import TestClient
 from pathlib import Path
 
-from src.app import app
+import pytest
+from fastapi.testclient import TestClient
 
+from src.app import app
 
 TEST_DIR = Path(__file__).resolve().parent
 RESOURCES_DIR = TEST_DIR / "resources"
 
-client = TestClient(app)
+# from .utils import client
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture()
 def test_user():
     return {"username": "username1", "password": "password"}
 
 
-@pytest.fixture(scope="module")
-def auth_header():
+@pytest.fixture()
+def auth_header(client):
     """Authenticates a user, and returns the headers needed to authenticate."""
 
     # TODO function to reset user state (as state persists on server)
 
-    test_user = {"username": "username1", "password": "password"}
+    test_user = {"username": "username1@example.com", "password": "password"}
 
-    response = client.post("/token", data=test_user)
+    response = client.post("/user/login", data=test_user)
     assert response.status_code == 200
     token = response.json().get("access_token")
     assert token is not None
@@ -32,7 +32,7 @@ def auth_header():
     return {"Authorization": f"Bearer {token}"}
 
 
-def test_upload_profile_picture(auth_header):
+def test_upload_profile_picture(client, auth_header):
     """Upload a profile picture"""
 
     with open(RESOURCES_DIR / "pink.png", "rb") as pink_test_img:
@@ -44,7 +44,7 @@ def test_upload_profile_picture(auth_header):
         assert response.json()["key"]
 
 
-def test_download_profile_picture(auth_header):
+def test_download_profile_picture(client, auth_header):
     """Download the previously uploaded profile picture in `test_upload_image` and verify
     its contents"""
 

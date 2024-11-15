@@ -9,7 +9,7 @@ describe('Login', () => {
             <App />
         );
 
-        // Check that "LOG IN" is on the page twice 
+        // Check that "LOG IN" is on the page twice
         const loginTexts = screen.getAllByText(/LOG IN/i);
         expect(loginTexts).toHaveLength(2);
         loginTexts.forEach(text => expect(text).toBeInTheDocument());
@@ -32,7 +32,7 @@ describe('Login', () => {
 
         // Enter 'username1' as username
         fireEvent.change(screen.getByTestId('emailInput').querySelector('input')!, {
-            target: { value: 'email@gmail.com' },
+            target: { value: 'username1@example.com' },
         });
 
         // Enter 'password' as password

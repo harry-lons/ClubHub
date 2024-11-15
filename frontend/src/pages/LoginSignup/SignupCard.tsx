@@ -6,8 +6,9 @@ import { AuthContext } from '../../context/AuthContext';
 
 interface SignupCardProps {
     accountType?: string; // Define whether this is a user or club login
+    signupURL: string
 }
-const SignupCard: React.FC<SignupCardProps> = ({ accountType }) => {
+const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
     const [showPassword, setShowPassword] = React.useState(false);
     const [enteredEmail, setEnteredEmail] = React.useState("");
     const [enteredPassword, setEnteredPassword] = React.useState("");

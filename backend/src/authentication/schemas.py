@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+
 from ..identities.schemas import User
 
 
@@ -7,6 +8,7 @@ class BearerToken(BaseModel):
     token_type: str
 
 
+## TODO: merge the UserLogin and UserSignup to one class
 class UserLogin(User):
     # id: int
     # username: str
@@ -22,3 +24,26 @@ class UserLogin(User):
         else:
             raise ValueError("UserLogin object does not contain a password")
         return User(**user_dict)
+
+
+"""
+creating a class to handle user sign ins including the following
+member variables:
+- first_name: user's first name
+- last_name: user's last name
+- username: profile username
+- password: password
+"""
+
+
+class UserSignup(BaseModel):
+    first_name: str
+    last_name: str
+    username: str
+    password: str
+
+
+class ClubSignup(BaseModel):
+    email: str
+    password: str
+    name: str

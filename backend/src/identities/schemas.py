@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 
 class ClubID(BaseModel):
-    id: int
+    id: str
 
 
 class Club(ClubID):
@@ -14,7 +14,7 @@ class Club(ClubID):
 
 
 class UserID(BaseModel):
-    id: int
+    id: str
 
 
 class User(UserID):
