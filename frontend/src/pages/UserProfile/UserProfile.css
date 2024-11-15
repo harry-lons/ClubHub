@@ -119,6 +119,6 @@
     margin: 0;
   }
   
- p.past-event-title{
+ p.past-event-title:hover{
     text-decoration: underline;
  }
