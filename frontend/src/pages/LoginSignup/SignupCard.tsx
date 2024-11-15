@@ -9,7 +9,7 @@ interface SignupCardProps {
 }
 const SignupCard: React.FC<SignupCardProps> = ({ accountType }) => {
     const [showPassword, setShowPassword] = React.useState(false);
-    const [enteredUsername, setEnteredUsername] = React.useState("");
+    const [enteredEmail, setEnteredEmail] = React.useState("");
     const [enteredPassword, setEnteredPassword] = React.useState("");
     const { saveToken } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -20,8 +20,8 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType }) => {
         event.preventDefault();
     };
 
-    const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setEnteredUsername(event.target.value);
+    const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setEnteredEmail(event.target.value);
     };
 
     const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,7 +36,7 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType }) => {
         }
         // Create form-data from state
         const formData = new FormData();
-        formData.append('username', enteredUsername);
+        formData.append('username', enteredEmail);
         formData.append('password', enteredPassword);
 
         // TODO: Send backend request to sign up (add the user to the database)
@@ -61,7 +61,7 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType }) => {
                         variant="outlined"
                         fullWidth
                         type="email"
-                        onChange={handleUsernameChange}
+                        onChange={handleEmailChange}
                     />
                 </div>
 
