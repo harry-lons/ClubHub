@@ -65,14 +65,14 @@ class ClubAccounts(Base):
 class Events(Base):
     __tablename__ = "events"
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    title = Column(String, nullable=False)
-    club_id = Column(String, ForeignKey("club_accounts.id"), nullable=False)
-    location = Column(String, nullable=False)
-    begin_time = Column(DateTime, nullable=False)
-    end_time = Column(DateTime, nullable=False)
-    summary = Column(String, nullable=True)
-    recurrence = Column(String, nullable=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    title: Mapped[str] = mapped_column(String, nullable=False)
+    club_id: Mapped[str] = mapped_column(String, ForeignKey("club_accounts.id"), nullable=False)
+    location: Mapped[str] = mapped_column(String, nullable=False)
+    begin_time: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    end_time: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    summary: Mapped[str] = mapped_column(String, nullable=True)
+    recurrence: Mapped[str] = mapped_column(String, nullable=True)
 
     # Relationship back to ClubAccounts
     club = relationship("ClubAccounts", back_populates="events")
@@ -94,8 +94,8 @@ class Events(Base):
 class EventTags(Base):
     __tablename__ = "event_tags"
 
-    tag_id = Column(Integer, primary_key=True, autoincrement=True)
-    tag_name = Column(String, nullable=False)
+    tag_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    tag_name: Mapped[str] = mapped_column(String, nullable=False)
 
     # Many-to-many relationship with Events
     events = relationship(
@@ -110,31 +110,31 @@ class EventTags(Base):
 class UserRSVPs(Base):
     __tablename__ = "user_rsvps"
 
-    user_id = Column(String, ForeignKey("user_accounts.id"), primary_key=True)
-    event_id = Column(Integer, ForeignKey("events.id"), primary_key=True)
+    user_id: Mapped[str] = mapped_column(String, ForeignKey("user_accounts.id"), primary_key=True)
+    event_id: Mapped[int] = mapped_column(Integer, ForeignKey("events.id"), primary_key=True)
 
 
 # Association table for Board Members of ClubAccounts
 class ClubBoardMembers(Base):
     __tablename__ = "club_board_members"
 
-    user_id = Column(String, ForeignKey("user_accounts.id"), primary_key=True)
-    club_id = Column(String, ForeignKey("club_accounts.id"), primary_key=True)
+    user_id: Mapped[str] = mapped_column(String, ForeignKey("user_accounts.id"), primary_key=True)
+    club_id: Mapped[str] = mapped_column(String, ForeignKey("club_accounts.id"), primary_key=True)
 
 
 # Association table for Event-Tag associations
 class EventTagAssociations(Base):
     __tablename__ = "event_tag_associations"
 
-    event_id = Column(Integer, ForeignKey("events.id"), primary_key=True)
-    tag_id = Column(Integer, ForeignKey(EventTags.tag_id), primary_key=True)
+    event_id: Mapped[int] = mapped_column(Integer, ForeignKey("events.id"), primary_key=True)
+    tag_id: Mapped[int] = mapped_column(Integer, ForeignKey(EventTags.tag_id), primary_key=True)
 
 
 # Association table for Event-Image associations
 class EventImages(Base):
     __tablename__ = "event_images"
 
-    event_id = Column(Integer, ForeignKey("events.id"), primary_key=True)
-    object_id = Column(String)
+    event_id: Mapped[int] = mapped_column(Integer, ForeignKey("events.id"), primary_key=True)
+    object_id: Mapped[str] = mapped_column(String)
 
     event = relationship("Events", back_populates="images")

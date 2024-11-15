@@ -1,3 +1,5 @@
+import os
+
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import URL
 from sqlalchemy.orm import declarative_base
@@ -15,13 +17,14 @@ from .models import (
 )
 from .postgres import PostgresDatabase
 
+
 url = URL.create(
     drivername="postgresql+psycopg",
-    username="username",
-    password="examplepassword",
-    host="127.0.0.1",
-    port=5432,
-    database="SoCalSocial",
+    username=os.environ["PG_USERNAME"],
+    password=os.environ["PG_PASSWORD"],
+    host=os.environ["PG_HOST"],
+    port=int(os.environ["PG_PORT"]),
+    database=os.environ["PG_DATABSE"],
 )
 
 engine = create_engine(url)
