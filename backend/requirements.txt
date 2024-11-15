@@ -4,3 +4,4 @@ pyjwt
 pytest
 SQLAlchemy
 psycopg[binary,pool]
+python-dotenv

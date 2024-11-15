@@ -1,9 +1,8 @@
-import os
-
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import URL
 from sqlalchemy.orm import declarative_base
 
+from .. import ENV
 from .models import (
     Base,
     ClubAccounts,
@@ -17,14 +16,13 @@ from .models import (
 )
 from .postgres import PostgresDatabase
 
-
 url = URL.create(
     drivername="postgresql+psycopg",
-    username=os.environ["PG_USERNAME"],
-    password=os.environ["PG_PASSWORD"],
-    host=os.environ["PG_HOST"],
-    port=int(os.environ["PG_PORT"]),
-    database=os.environ["PG_DATABSE"],
+    username=ENV["PG_USERNAME"],
+    password=ENV["PG_PASSWORD"],
+    host=ENV["PG_HOST"],
+    port=int(ENV["PG_PORT"]),
+    database=ENV["PG_DATABASE"],
 )
 
 engine = create_engine(url)
@@ -52,7 +50,12 @@ except Exception as e:
 
 db = PostgresDatabase(session=session)
 
-db.add_user("username1@example.com", "$argon2id$v=19$m=65536,t=3,p=4$KYUwppQyxjgnBIBQyrkXAg$OmDVsUIY90aOTyvp0kbrtLuSKsSaewP64MfSDEwH7+w", first_name="f", last_name="l")
+db.add_user(
+    "username1@example.com",
+    "$argon2id$v=19$m=65536,t=3,p=4$KYUwppQyxjgnBIBQyrkXAg$OmDVsUIY90aOTyvp0kbrtLuSKsSaewP64MfSDEwH7+w",
+    first_name="f",
+    last_name="l",
+)
 
 # db._create(
 #     Accounts,
