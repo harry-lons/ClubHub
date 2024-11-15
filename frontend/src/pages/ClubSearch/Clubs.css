@@ -91,3 +91,12 @@
    flex: 1;
    text-align: left;
 }
+p.club-name{
+   text-decoration: none;
+   cursor: pointer;
+   margin: 0;
+ }
+ 
+p.club-name:hover{
+   text-decoration: underline;
+}

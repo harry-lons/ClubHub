@@ -81,6 +81,8 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
             // Handle other error codes (401 unauthorized, etc)
             console.error('There was a problem with the fetch operation:', error);
         }
+        //SW ADDED
+        navigate('/events');//Please only put this in the success path
     };
 
     const handleMouseUpPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
