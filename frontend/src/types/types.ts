@@ -54,6 +54,7 @@ export type Club =
 {
 	id : string;
 	name: string;
+	description: string;
 	board_members: string[];
 	contact_email: string | string[];
 };

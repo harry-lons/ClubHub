@@ -52,7 +52,7 @@ export const fetchRSVP = async (token:string): Promise<RSVP[]> => {
 	return rsvpList;
 };
 // fetch all attendees to a certain event
-export const fetchCurrentAttendees = async(event_id:string): Promise<User[]> =>{
+export const fetchCurrentAttendees = async(event_id:number): Promise<User[]> =>{
 	const response = await fetch(`${API_BASE_URL}/RSVP/Attendees/${event_id}`, { //NOTICE CHANGE
         method: "GET"
     })

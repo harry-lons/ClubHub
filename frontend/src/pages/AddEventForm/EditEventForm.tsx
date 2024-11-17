@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom";
-import { Event, EventType } from "../../types/types";
+import { Event, EventType, User } from "../../types/types";
 import { Club } from "../../types/types";
 import DatePicker from "react-datepicker";
 import { DateField, DateTimePicker} from "@mui/x-date-pickers";
@@ -12,14 +12,18 @@ import { FormControl,Switch,FormGroup,FormControlLabel,InputLabel,OutlinedInput,
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import "react-datepicker/dist/react-datepicker.css";
 import { updateEvent, fetchEventById } from "../../utils/event-utils";
-import { exampleEvent } from "../../constants/constants";
+import { fetchCurrentAttendees } from "../../utils/RSVP-utils";
+import { exampleEvent,exampleUsers } from "../../constants/constants";
 import {AuthContext} from "../../context/AuthContext"
-
+//NOTICE: NEED to ADD
+// When the changed capacity is smaller than the current attendees, error message: 
+//"capacity cannot be less than current attendees, please change the number to be greater than ${attendees....}"
 
 export const EditEventForm = ()=>{
     const { id } = useParams<{ id: string }>();
     const {token} = useContext(AuthContext);
     const navigate = useNavigate();
+    const [attendees,setAttendees] = useState<User[]>(exampleUsers);
     const BackButton: React.FC = () => {
         const handleBack = () => { navigate(-1); };
         // Navigates to the previous page
@@ -63,6 +67,7 @@ export const EditEventForm = ()=>{
     useEffect(() => {
         if (!id) return;
         loadEvent();
+        loadAttendees();
     }, [id]);
 
     const [errors, setErrors] = useState({
@@ -194,6 +199,16 @@ export const EditEventForm = ()=>{
         },
     },
     };
+        //load all the RSVP for the event
+    const loadAttendees = async ()=>{
+        try{
+            const AttendeeList = await fetchCurrentAttendees(Number(id));
+            setAttendees(AttendeeList);
+        }catch(err:any){
+            console.error("Error loading Attendee List:", err.message);
+        }
+    }
+    
     
     return(
         <div id="event-detail-container">
@@ -313,18 +328,19 @@ export const EditEventForm = ()=>{
                 </div>
                 <div className="add-event-capacity">
                     <h3>Capacity</h3>
+                    <p>Capacity cannot be set to a value less than the current number of attendees: {attendees.length}</p>
                     <TextField
                         type="text"
                         className="form-control"
                         name="capacity"
                         value={formData.capacity}
                         onChange={handleChange}
-                        sx={{ width: '24ch' }}
+                        sx={{ width: '24ch', marginTop: 2}}
                     ></TextField>
                 </div>
                 {/* Pictures */}
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", marginTop: "24px" }}>
-                    <Button variant="contained" style={{ backgroundColor: '#43BD28', color: '#FFFFFF' }} onClick={handleSubmit}>Submit Event</Button>
+                    <Button variant="contained" style={{ backgroundColor: '#43BD28', color: '#FFFFFF' }} onClick={handleSubmit}>Update Event</Button>
                 </div>
                 
                 <div></div>

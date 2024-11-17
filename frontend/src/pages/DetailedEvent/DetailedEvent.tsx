@@ -70,7 +70,8 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
     //load all the RSVP for the event
     const loadAttendees = async ()=>{
         try{
-            const AttendeeList = await fetchCurrentAttendees(event.id);
+            const AttendeeList = await fetchCurrentAttendees(Number(event.id));
+            setAttendees(AttendeeList);
         }catch(err:any){
             console.error("Error loading Attendee List:", err.message);
         }
