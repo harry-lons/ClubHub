@@ -10,7 +10,8 @@ export const exampleEvent = {
     recurrence: [false, 0, null] as [boolean, number, Date | null],
 	summary: "Join us for an engaging and inspiring Creative Writing Workshop hosted by The Literary Society! Whether you're a seasoned writer or just starting your journey, this workshop is designed to spark your creativity and help you develop your writing skills. Participants will explore various writing prompts, learn about character development, and receive constructive feedback on their work. This is a fantastic opportunity to meet fellow writers, share ideas, and enhance your craft in a supportive environment. Bring your favorite notebook and pen, and let your imagination run wild! Refreshments will be provided. Reserve your spot today!",
 	pictures: { image: "flyer.jpg" },
-	type: ["social", "workshop"] as EventType[]
+	type: ["social", "workshop"] as EventType[],
+    capacity: 50
 }
 
 export const exampleClub =
@@ -34,7 +35,8 @@ export const exampleEventList: Event[] = [
 		recurrence: [false, 0, null] as [boolean, number, Date | null],
 		summary: "Join us for an engaging and inspiring Creative Writing Workshop hosted by The Literary Society! Whether you're a seasoned writer or just starting your journey, this workshop is designed to spark your creativity and help you develop your writing skills. Participants will explore various writing prompts, learn about character development, and receive constructive feedback on their work. This is a fantastic opportunity to meet fellow writers, share ideas, and enhance your craft in a supportive environment. Bring your favorite notebook and pen, and let your imagination run wild! Refreshments will be provided. Reserve your spot today!",
 		pictures: { image: "flyer.jpg" },
-		type: ["social", "workshop"] as EventType[]
+		type: ["social", "workshop"] as EventType[],
+        capacity: null
 	},{
 		id: "002",
 		title: "Petting Car Club!",
@@ -45,7 +47,8 @@ export const exampleEventList: Event[] = [
 		recurrence: [false, 0, null] as [boolean, number, Date | null],
 		summary: "Cats are always so cute! Let's pet them!",
 		pictures: { image: "" },
-		type: ["social", "recreational"] as EventType[]
+		type: ["social", "recreational"] as EventType[],
+        capacity: 100
 	},
 	{
         id: "003",
@@ -57,7 +60,8 @@ export const exampleEventList: Event[] = [
         recurrence: [false, 0, null] as [boolean, number, Date | null],
         summary: "Take a break from your busy schedule and join us for a relaxing painting session! Supplies will be provided, and no experience is necessary. Meet new friends, unleash your creativity, and paint away your stress.",
         pictures: { image: "" },
-        type: ["recreational", "arts"] as EventType[]
+        type: ["recreational", "arts"] as EventType[],
+        capacity: 100
     },
     {
         id: "004",
@@ -69,7 +73,8 @@ export const exampleEventList: Event[] = [
         recurrence: [true, 1, null] as [boolean, number, Date | null], // Recurs weekly
         summary: "Start your morning with a rejuvenating yoga session led by experienced instructors. All skill levels are welcome! Bring your mat and experience the serenity of yoga in the great outdoors.",
         pictures: { image: "" },
-        type: ["sports"] as EventType[]
+        type: ["sports"] as EventType[],
+        capacity: 100
     },
     {
         id: "005",
@@ -81,7 +86,8 @@ export const exampleEventList: Event[] = [
         recurrence: [false, 0, null] as [boolean, number, Date | null],
         summary: "Join the Robotics Club for a hands-on workshop where you'll learn the basics of building and programming robots. No experience required. All materials will be provided. Come ready to create!",
         pictures: { image: "" },
-        type: ["workshop"] as EventType[]
+        type: ["workshop"] as EventType[],
+        capacity: 100
     },
     {
         id: "006",
@@ -93,7 +99,8 @@ export const exampleEventList: Event[] = [
         recurrence: [true, 2, null] as [boolean, number, Date | null],
         summary: "Explore the tastes of Italy with our Cooking Club! Learn how to make classic Italian dishes in a fun, hands-on cooking class. No cooking experience required. Spaces are limited, so sign up now!",
         pictures: { image: "" },
-        type: ["recreational", "cultural", "social"] as EventType[]
+        type: ["recreational", "cultural", "social"] as EventType[],
+        capacity: 100
     },
 
 

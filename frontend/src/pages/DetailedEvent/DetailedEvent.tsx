@@ -209,6 +209,11 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                     <h3>Date & Time</h3>
                     {handleTime(event.begin_time, event.end_time)}
                 </div>
+                
+                <div className="event-detail-capacity">
+                    <h3>Capacity</h3>
+                    <p>{event.capacity ? event.capacity.toString() : "No Capacity"}</p >
+                </div>
                 <div className="event-recurring">
                     <h3>Recurring</h3>
                     {handleRecur(event.recurrence)}
