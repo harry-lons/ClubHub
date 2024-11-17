@@ -10,6 +10,7 @@ export type Event =
 	summary: string;
 	pictures: { [key: string]: string };
 	type: EventType[];
+	capacity: Number | null;
 };
 
 export type EventType = 
@@ -53,6 +54,7 @@ export type Club =
 {
 	id : string;
 	name: string;
+	description: string;
 	board_members: string[];
 	contact_email: string | string[];
 };

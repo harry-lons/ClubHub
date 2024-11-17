@@ -22,6 +22,7 @@ export const fetchEventById = async (eventId: number): Promise<Event> => {
 
     return event;
 };
+// All events RSVPed by the user
 export const fetchRSVPEvents = async (token: string): Promise<Event[]> => {
 
     const response = await fetch(`${API_BASE_URL}/events`, {
@@ -44,6 +45,26 @@ export const fetchRSVPEvents = async (token: string): Promise<Event[]> => {
 
     return events;
 };
+//get all upcoming events of a club
+export const fetchClubEvents = async (club_id: Number): Promise<Event[]>=>{
+    const response = await fetch(`${API_BASE_URL}/events/club/${club_id}`, {
+        method: "GET"
+    })
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch club events")
+    }    
+
+    const events: Event[] = await response.json();
+    
+    events.forEach((event)=>{
+        if (event.begin_time) {event.begin_time = new Date(event.begin_time); }
+        if (event.end_time) {event.end_time = new Date(event.end_time);}
+    })
+    return events;
+
+};
+//Should implement backend to fit both user and club
 export const fetchPastEvents = async (token: string): Promise<Event[]> => {
 
     const response = await fetch(`${API_BASE_URL}/events/past`, { //NOTICE THIS CHANGE
@@ -54,7 +75,7 @@ export const fetchPastEvents = async (token: string): Promise<Event[]> => {
     })
 
     if (!response.ok) {
-        throw new Error("Failed to fetch events")
+        throw new Error("Failed to fetch upcoming events")
     }    
 
     const events: Event[] = await response.json();

@@ -12,6 +12,7 @@ import { NavBar } from './pages/NavBar/NavBar';
 import { UserProfile } from './pages/UserProfile/UserProfile';
 import Clubs from './pages/ClubSearch/Clubs';
 import { EditEventForm } from './pages/AddEventForm/EditEventForm';
+import ClubDetail from './pages/ClubDetail/ClubDetail';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
             <Route path="/navbar" element={<NavBar/>} />
             <Route path="/profile" element={<UserProfile/>} /> {/* Test Route */}
             <Route path="/clubs" element={<Clubs/>} />
+            <Route path = "/club/detail/:id" element = {<ClubDetail/>}/>
           </Routes>
         </div>
       </Router>

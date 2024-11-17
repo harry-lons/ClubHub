@@ -35,6 +35,7 @@ export const AddEventForm= ()=>{
         recur: false,
         frequency: -1,
         stop_date: new Date(),
+        capacity:null
 	    // pictures: { [key: string]: string };
     });
 
@@ -74,6 +75,7 @@ export const AddEventForm= ()=>{
                 summary: formData.summary,
                 pictures: { },
                 type: formData.type,
+                capacity:formData.capacity||null
             };
             const eventID = createEvent(token, newEvent);
             navigate(`/club/events/${eventID}`);
@@ -89,6 +91,7 @@ export const AddEventForm= ()=>{
             recur: false,
             frequency: -1,
             stop_date: new Date(),
+            capacity: null
         };
         setFormData(newFormData);
       };
@@ -277,6 +280,17 @@ export const AddEventForm= ()=>{
                             sx={{ width: '24ch' }}
                             minDateTime={dayjs(formData.begin_time)}/>
                     </div>}
+                </div>
+                <div className="add-event-capacity">
+                    <h3>Capacity</h3>
+                    <TextField
+                        type="text"
+                        className="form-control"
+                        name="capacity"
+                        value={formData.capacity}
+                        onChange={handleChange}
+                        sx={{ width: '24ch' }}
+                    ></TextField>
                 </div>
                 {/* Pictures */}
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", marginTop: "24px" }}>

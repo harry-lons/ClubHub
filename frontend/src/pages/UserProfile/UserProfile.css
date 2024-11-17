@@ -68,7 +68,7 @@
  
  
  /* Individual event card styling */
- .event-info {
+ .past-event-info {
     background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent white */
     border-radius: 10px;
     padding: 15px;
@@ -82,7 +82,7 @@
  
  
  /* Date and time styling */
- .event-time {
+ .past-event-time {
     font-weight: bold;
     margin-right: 15px;
     color: #ffcb47; /* Optional: highlight time */
@@ -91,14 +91,15 @@
     text-align: right;
  }
 
- .event-details {
+
+ .past-event-details {
     text-align: center;
     width: 80%;
  }
  
  
  /* Event title styling */
- .event-title {
+ .past-event-title {
     font-weight: bold;
     font-size: 20px;
     margin-bottom: 5px;
@@ -107,7 +108,18 @@
  
  
  /* Club and location styling */
- .event-club-location {
+ .past-event-club-location {
     color: #e1e1e1;
     font-size: 15px;
  }
+
+
+p.past-event-title{
+    text-decoration: none;
+    cursor: pointer;
+    margin: 0;
+}
+p.past-event-title:hover{
+   text-decoration: underline;
+}
+

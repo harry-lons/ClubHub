@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom";
-import { Event, EventType } from "../../types/types";
+import { Event, EventType, User } from "../../types/types";
 import { Club } from "../../types/types";
 import DatePicker from "react-datepicker";
 import { DateField, DateTimePicker} from "@mui/x-date-pickers";
@@ -12,49 +12,63 @@ import { FormControl,Switch,FormGroup,FormControlLabel,InputLabel,OutlinedInput,
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import "react-datepicker/dist/react-datepicker.css";
 import { updateEvent, fetchEventById } from "../../utils/event-utils";
-import { exampleEvent } from "../../constants/constants";
+import { fetchCurrentAttendees } from "../../utils/RSVP-utils";
+import { exampleEvent,exampleUsers } from "../../constants/constants";
 import {AuthContext} from "../../context/AuthContext"
-
+//NOTICE: NEED to ADD
+// When the changed capacity is smaller than the current attendees, error message: 
+//"capacity cannot be less than current attendees, please change the number to be greater than ${attendees....}"
 
 export const EditEventForm = ()=>{
     const { id } = useParams<{ id: string }>();
     const {token} = useContext(AuthContext);
     const navigate = useNavigate();
+    const [attendees,setAttendees] = useState<User[]>(exampleUsers);
     const BackButton: React.FC = () => {
         const handleBack = () => { navigate(-1); };
         // Navigates to the previous page
         return (<button onClick={handleBack} className="back-button">&lt;</button>);
     };
 
-    const [event, setEvent] = useState<Event> (exampleEvent);
-
-
-    useEffect(() => {
-        if (!id) return;
-        loadEvent();
-    }, [id]);
-    
+    const [formData, setFormData] = useState({
+        title: "",
+        location: "",
+        begin_time: new Date(),
+        end_time: new Date(),
+        summary: "",
+        type: [] as EventType[],
+        recur: false,
+        frequency: -1,
+        stop_date: new Date() as (Date | null),
+        capacity:null as Number | null
+	    // pictures: { [key: string]: string };
+    });
     const loadEvent = async () => {
         try {
-            const event_ = await fetchEventById(Number(id)); // Convert id to a number
-            setEvent(event_);
+            const  event_ = await fetchEventById(Number(id)); // Convert id to a number
+            setFormData({
+                title: event_.title,
+                location: event_.location,
+                begin_time: event_.begin_time,
+                end_time: event_.end_time,
+                summary: event_.summary,
+                type: event_.type,
+                recur: event_.recurrence[0],
+                frequency: event_.recurrence[1],
+                stop_date: event_.recurrence[2],
+                capacity:event_.capacity??null
+                // pictures: { [key: string]: string };
+            });
         } catch (err: any) {
             console.error("Error loading event:", err.message);
         }
     };
 
-    const [formData, setFormData] = useState({
-        title: event.title,
-        location: event.location,
-        begin_time: event.begin_time,
-        end_time: event.end_time,
-        summary: event.summary,
-        type: event.type,
-        recur: event.recurrence[0],
-        frequency: event.recurrence[1],
-        stop_date: event.recurrence[2],
-	    // pictures: { [key: string]: string };
-    });
+    useEffect(() => {
+        if (!id) return;
+        loadEvent();
+        loadAttendees();
+    }, [id]);
 
     const [errors, setErrors] = useState({
         title: false,
@@ -78,7 +92,6 @@ export const EditEventForm = ()=>{
 
         if (!Object.values(newErrors).includes(true)) {
             // TODO:
-            // navigate to club-side edit event page
             // club id should be a context
             const newEvent: Event =
             {
@@ -92,6 +105,7 @@ export const EditEventForm = ()=>{
                 summary: formData.summary,
                 pictures: { },
                 type: formData.type,
+                capacity: formData.capacity||null
             };
             const eventID = updateEvent(token, newEvent);
             navigate(`/club/events/${eventID}`);
@@ -107,6 +121,7 @@ export const EditEventForm = ()=>{
             recur: false,
             frequency: -1,
             stop_date: new Date(),
+            capacity: null
         };
         setFormData(newFormData);
       };
@@ -136,10 +151,15 @@ export const EditEventForm = ()=>{
     ];
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({
-            ...formData,
-            [event.target.name]: event.target.value,
-        });
+        const {name,value} = event.target;
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: name === "capacity" ? (value === "" ? null : Number(value)) : value,
+        }));
+        // setFormData({
+        //     ...formData,
+        //     [event.target.name]: event.target.value,
+        // });
     };
 
     const handleTypeChange = (event: SelectChangeEvent<string[]>) => {
@@ -179,6 +199,16 @@ export const EditEventForm = ()=>{
         },
     },
     };
+        //load all the RSVP for the event
+    const loadAttendees = async ()=>{
+        try{
+            const AttendeeList = await fetchCurrentAttendees(Number(id));
+            setAttendees(AttendeeList);
+        }catch(err:any){
+            console.error("Error loading Attendee List:", err.message);
+        }
+    }
+    
     
     return(
         <div id="event-detail-container">
@@ -296,9 +326,21 @@ export const EditEventForm = ()=>{
                             minDateTime={dayjs(formData.begin_time)}/>
                     </div>}
                 </div>
+                <div className="add-event-capacity">
+                    <h3>Capacity</h3>
+                    <p>Capacity cannot be set to a value less than the current number of attendees: {attendees.length}</p>
+                    <TextField
+                        type="text"
+                        className="form-control"
+                        name="capacity"
+                        value={formData.capacity}
+                        onChange={handleChange}
+                        sx={{ width: '24ch', marginTop: 2}}
+                    ></TextField>
+                </div>
                 {/* Pictures */}
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", marginTop: "24px" }}>
-                    <Button variant="contained" style={{ backgroundColor: '#43BD28', color: '#FFFFFF' }} onClick={handleSubmit}>Submit Event</Button>
+                    <Button variant="contained" style={{ backgroundColor: '#43BD28', color: '#FFFFFF' }} onClick={handleSubmit}>Update Event</Button>
                 </div>
                 
                 <div></div>

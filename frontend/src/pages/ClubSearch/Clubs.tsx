@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { NavBar } from "../NavBar/NavBar";
+import { useParams, useNavigate } from "react-router-dom";
 import './Clubs.css';
 
 const exampleClubList = [
@@ -20,11 +21,13 @@ const exampleClubList = [
 const Clubs: React.FC = () => {
     const [clubs, setClubs] = useState(exampleClubList);
     const [searchQuery, setSearchQuery] = useState('');
-
+    const navigate = useNavigate();
     const filteredClubs = clubs.filter(club => 
         club.clubName.toLowerCase().includes(searchQuery.toLowerCase())
     );
-
+    const goToClubProfile = (club_id : string) => {
+        navigate(`/club/${club_id}}`);
+    }
     return (
         <div className="clubs-list-container">
             <div className="sticky-header">
@@ -47,7 +50,8 @@ const Clubs: React.FC = () => {
                         <div key={index} className="club-card">
                             <div className="club-logo" style={{ backgroundColor: club.logoColor }}></div>
                             <div className="club-details">
-                                <p className="club-name">{club.clubName}</p>
+                                {/* After you change the club type to the real type, modify the content in goToClubProfile to be club.id */}
+                                <p className="club-name" onClick = {()=>goToClubProfile("1")}>{club.clubName}</p>
 
                             </div>
                             <p className="club-description">{club.description}</p>
