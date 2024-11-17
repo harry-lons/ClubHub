@@ -3,17 +3,17 @@ from enum import Enum
 
 from fastapi import HTTPException, status
 
-from .schemas import EventCalendarData, EventModel
+from .schemas import Event, EventCalendarData
 
-fake_event_1 = EventModel(
-    id=1,
+fake_event_1 = Event(
+    id="1",
     title="Lunch",
-    club_id=5,
+    club_id="5",
     location="Earth",
     begin_time=datetime(2024, 11, 3, 5),
     end_time=datetime(2024, 11, 3, 6),
-    recurrence=False,
-    type="other",
+    recurrence="",
+    type=["other"],
 )
 
 # fake_event_2 = EventModel(

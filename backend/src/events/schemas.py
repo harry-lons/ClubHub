@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Type
 
 from pydantic import BaseModel, Field
 
@@ -15,29 +15,30 @@ class EventID(BaseModel):
 class Event(EventID):
     # id: int
     title: str
-    club_id: int
+    club_id: str
     location: str = Field(default="")
     begin_time: datetime
     end_time: datetime
-    recurrence: bool
+    recurrence: str
     summary: str = Field(default="")
-    pictures: Dict = Field(default={})
-    type: str  # for now
+    pictures: List[str] = Field(default=[])
+    type: List[str]
 
 
-class EventModel(Event):
-    # TODO change edit this
-    """Event state to work with in the backend. We convert this to Event when sending
-    it to the frontend (converting the datetime to string)"""
-
-    # time: datetime
-
-    # def to_event(self) -> Event:
-    #     # Convert `time` to string representation in ISO format
-    #     event_dict = self.model_dump()
-    #     if isinstance(event_dict.get("time"), datetime):
-    #         event_dict["time"] = event_dict["time"].isoformat()
-    #     return Event(**event_dict)
+# Has all the attributes as Event, but without the `id` attribute. This data
+# is passed in when creating  an event - as when creating an event, the entity
+# creating does not know the id of the event (the id is created later by the backend)
+class EventWithoutID(BaseModel):
+    # id: int
+    title: str
+    # club_id: int
+    location: str = Field(default="")
+    begin_time: datetime
+    end_time: datetime
+    recurrence: str
+    summary: str = Field(default="")
+    pictures: List[str] = Field(default=[])
+    type: List[str]  # for now
 
 
 class EventCalendarData(BaseModel):

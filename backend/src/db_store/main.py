@@ -63,6 +63,13 @@ if __name__ == "__main__":
         "Last2",
     )
 
+    # password: clubpassword
+    db.add_organization(
+        "cats@example.com",
+        "$argon2id$v=19$m=65536,t=3,p=4$7b03BgAgZEwJwVhLCYHwPg$6rjLJCluu2ezwN7zqYRYZ4XG6BaLP38GNgIKXVZJgJM",
+        "Cat Club",
+    )
+
     print("Testing queries")
     print(db.get_user_from_email("username1@example.com"))
 
