@@ -132,12 +132,15 @@ class PostgresDatabase(IAuth, IEvents):
 
         # TODO How the heck do I type hint **filters? Dict, dict don't work
 
-        query = self.session.query(model)
-        for field, value in filters.items():
-            query = query.filter(getattr(model, field) == value)
-        res = query.one()
+        try:
+            query = self.session.query(model)
+            for field, value in filters.items():
+                query = query.filter(getattr(model, field) == value)
+            res = query.one()
+        except (NoResultFound, MultipleResultsFound):
+            raise ValueError("An incorrect amount of results were returned")
         if res is None:
-            raise ValueError()
+            raise ValueError("No result returned")
         return res
 
     def _create(self, model: Any, data: dict) -> Any:
