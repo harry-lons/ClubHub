@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Tuple
 
+from ..events.schemas import Event, EventWithoutID
 from .models import *
 
 
@@ -31,6 +32,33 @@ class IAuth(ABC):
 
     @abstractmethod
     def get_org_from_email(self, email: str) -> ClubAccounts:
+        pass
+
+
+class IEvents(ABC):
+    """Interface for Databaes queries related to events"""
+
+    @abstractmethod
+    def get_f_event(self, event_id: int) -> Event:
+        """Get the event with id `event_id`"""
+        pass
+
+    @abstractmethod
+    def create_event(self, event: Event, club_id: str) -> int:
+        """Club with `club_id` adds an event to the database. Returns the newly
+        created event's id."""
+        pass
+
+    @abstractmethod
+    def edit_event(self, event: Event):
+        """
+        The caller must check that the club has the permissions to be making this
+        edit. That is, the event's id is equal to the editing club's id."""
+        pass
+
+    @abstractmethod
+    def delete_event(self, event_id: int):
+        """A club can delete an event. Also remove all the RSVPs for said event."""
         pass
 
 

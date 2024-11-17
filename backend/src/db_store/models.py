@@ -1,22 +1,10 @@
+from datetime import datetime
+
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 Base = declarative_base()
-
-
-# class Accounts(Base):
-#     __tablename__ = "accounts"
-
-#     id = Column(String, primary_key=True)
-#     email = Column(String, nullable=False)
-#     hashed_password = Column(String, nullable=False)
-#     account_type = Column(String, nullable=False)
-#     profile_picture = Column(String, nullable=False)
-
-#     # One-to-one relationship with UserAccounts, ClubAccounts, and Objects
-#     user_account = relationship("UserAccounts", back_populates="account", uselist=False)
-#     club_account = relationship("ClubAccounts", back_populates="account", uselist=False)
 
 
 class UserAccounts(Base):
@@ -71,8 +59,8 @@ class Events(Base):
         String, ForeignKey("club_accounts.id"), nullable=False
     )
     location: Mapped[str] = mapped_column(String, nullable=False)
-    begin_time: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
-    end_time: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    begin_time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    end_time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     summary: Mapped[str] = mapped_column(String, nullable=True)
     recurrence: Mapped[str] = mapped_column(String, nullable=True)
 
