@@ -10,6 +10,7 @@ export type Event =
 	summary: string;
 	pictures: { [key: string]: string };
 	type: EventType[];
+	capacity: Number | null;
 };
 
 export type EventType = 

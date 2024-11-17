@@ -36,6 +36,7 @@ export const EditEventForm = ()=>{
         recur: false,
         frequency: -1,
         stop_date: new Date() as (Date | null),
+        capacity:null as Number | null
 	    // pictures: { [key: string]: string };
     });
     const loadEvent = async () => {
@@ -51,6 +52,7 @@ export const EditEventForm = ()=>{
                 recur: event_.recurrence[0],
                 frequency: event_.recurrence[1],
                 stop_date: event_.recurrence[2],
+                capacity:event_.capacity??null
                 // pictures: { [key: string]: string };
             });
         } catch (err: any) {
@@ -98,6 +100,7 @@ export const EditEventForm = ()=>{
                 summary: formData.summary,
                 pictures: { },
                 type: formData.type,
+                capacity: formData.capacity||null
             };
             const eventID = updateEvent(token, newEvent);
             navigate(`/club/events/${eventID}`);
@@ -113,6 +116,7 @@ export const EditEventForm = ()=>{
             recur: false,
             frequency: -1,
             stop_date: new Date(),
+            capacity: null
         };
         setFormData(newFormData);
       };
@@ -142,10 +146,15 @@ export const EditEventForm = ()=>{
     ];
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({
-            ...formData,
-            [event.target.name]: event.target.value,
-        });
+        const {name,value} = event.target;
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: name === "capacity" ? (value === "" ? null : Number(value)) : value,
+        }));
+        // setFormData({
+        //     ...formData,
+        //     [event.target.name]: event.target.value,
+        // });
     };
 
     const handleTypeChange = (event: SelectChangeEvent<string[]>) => {
@@ -301,6 +310,17 @@ export const EditEventForm = ()=>{
                             sx={{ width: '24ch' }}
                             minDateTime={dayjs(formData.begin_time)}/>
                     </div>}
+                </div>
+                <div className="add-event-capacity">
+                    <h3>Capacity</h3>
+                    <TextField
+                        type="text"
+                        className="form-control"
+                        name="capacity"
+                        value={formData.capacity}
+                        onChange={handleChange}
+                        sx={{ width: '24ch' }}
+                    ></TextField>
                 </div>
                 {/* Pictures */}
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", marginTop: "24px" }}>

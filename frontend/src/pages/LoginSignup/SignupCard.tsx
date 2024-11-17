@@ -40,8 +40,7 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType }) => {
         formData.append('password', enteredPassword);
 
         // TODO: Send backend request to sign up (add the user to the database)
-        // SW ADDED:
-        navigate('/login');//Please only put this in the successful path
+        
     };
 
     const handleMouseUpPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
