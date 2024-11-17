@@ -13,6 +13,105 @@ export const exampleEvent = {
 	type: ["social", "workshop"] as EventType[],
     capacity: 50
 }
+export const exampleUsers: User[] = [
+    {
+      id: "1",
+      username: "johndoe",
+      first_name: "John",
+      last_name: "Doe",
+      followed_clubs: ["001", "002", "003"],
+    },
+    {
+      id: "2",
+      username: "janesmith",
+      first_name: "Jane",
+      last_name: "Smith",
+      followed_clubs: ["001", "004"],
+    },
+    {
+      id: "3",
+      username: "alicebrown",
+      first_name: "Alice",
+      last_name: "Brown",
+      followed_clubs: ["002", "003"],
+    },
+    {
+      id: "4",
+      username: "bobjohnson",
+      first_name: "Bob",
+      last_name: "Johnson",
+      followed_clubs: ["003", "004"],
+    },
+    {
+      id: "5",
+      username: "emilywhite",
+      first_name: "Emily",
+      last_name: "White",
+      followed_clubs: ["001"],
+    },{
+        id: "6",
+        username: "michaelscott",
+        first_name: "Michael",
+        last_name: "Scott",
+        followed_clubs: ["105", "106"],
+      },
+      {
+        id: "7",
+        username: "angelamartin",
+        first_name: "Angela",
+        last_name: "Martin",
+        followed_clubs: ["101", "107"],
+      },
+      {
+        id: "8",
+        username: "dwightschrute",
+        first_name: "Dwight",
+        last_name: "Schrute",
+        followed_clubs: ["102", "103", "108"],
+      },
+      {
+        id: "9",
+        username: "stanleyhudson",
+        first_name: "Stanley",
+        last_name: "Hudson",
+        followed_clubs: ["103"],
+      },
+      {
+        id: "10",
+        username: "phyllisvance",
+        first_name: "Phyllis",
+        last_name: "Vance",
+        followed_clubs: ["104", "109"],
+      },
+      {
+        id: "11",
+        username: "jimhalpert",
+        first_name: "Jim",
+        last_name: "Halpert",
+        followed_clubs: ["101", "110"],
+      },
+      {
+        id: "12",
+        username: "pambeesly",
+        first_name: "Pam",
+        last_name: "Beesly",
+        followed_clubs: ["105", "102"],
+      },
+      {
+        id: "13",
+        username: "ryanhoward",
+        first_name: "Ryan",
+        last_name: "Howard",
+        followed_clubs: ["106", "107"],
+      },
+      {
+        id: "14",
+        username: "kellykapoor",
+        first_name: "Kelly",
+        last_name: "Kapoor",
+        followed_clubs: ["108", "109"],
+      }
+  ];
 
 export const exampleClub =
 {

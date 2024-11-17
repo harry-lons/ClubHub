@@ -1,16 +1,19 @@
 import React, { useContext, useState,useEffect } from "react"
+import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import { useParams, useNavigate } from "react-router-dom";
-import { Event, Club, RSVP} from "../../types/types";
-import { exampleEvent, exampleClub } from "../../constants/constants";
+import { Event, Club, RSVP, User} from "../../types/types";
+import { exampleEvent, exampleClub, exampleUsers } from "../../constants/constants";
 import { TextField, Button, MenuItem } from '@mui/material';
 import "./DetailedEvent.css"
 import {AuthContext} from "../../context/AuthContext"
 import { fetchEventById } from "../../utils/event-utils";
 import { fetchClubById } from "../../utils/club-utils";
-import { fetchRSVP, createRSVP, deleteRSVP } from "../../utils/RSVP-utils";
+import { fetchRSVP, createRSVP, deleteRSVP, fetchCurrentAttendees } from "../../utils/RSVP-utils";
 import exampleFlyer from "../../constants/flyer.jpg";
-import Alert from '@mui/material/Alert';
+import {Alert, Box,ListItem,ListItemButton,ListItemText,AccordionDetails,Accordion,AccordionSummary} from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
 
 interface DetailedEventProps {
     which: string; 
@@ -26,6 +29,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
     const [club, setClub] = useState<Club> (exampleClub);
     const [rsvp, setRsvp] = useState(false);
     const userId = "001";
+    const [attendees, setAttendees] = useState<User[]>(exampleUsers);
 
 
     useEffect(() => {
@@ -33,6 +37,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
         loadEvent();
         loadClub();
         loadRSVP();
+        loadAttendees();
     }, [id]);
 
     const loadEvent = async () => {
@@ -53,6 +58,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
             console.error("Error loading club:", err.message);
         }
     };
+    //load all the RSVP of the user 
     const loadRSVP = async () => {
         try {
             const RSVPList = await fetchRSVP(token); // Convert id to a number
@@ -61,6 +67,14 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
             console.error("Error loading RSVP:", err.message);
         }
     };
+    //load all the RSVP for the event
+    const loadAttendees = async ()=>{
+        try{
+            const AttendeeList = await fetchCurrentAttendees(event.id);
+        }catch(err:any){
+            console.error("Error loading Attendee List:", err.message);
+        }
+    }
 
     const handleTime = (begin_time: Date, end_time: Date) => {
 
@@ -101,11 +115,47 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
             return(<p>Yes. Recur {recurrenceDescription(recurrence[1])}. End Date {recurrence[2]?.getFullYear()}-{recurrence[2]?.getMonth()}-{recurrence[2]?.getDate()}</p >);
         }
     }
-    // const handleAttendees = (event_id: string) =>{
-    // implement after database is set
-    // //search through the same event_id
-    // //try to represent the list in a nice way
-    // }
+    function renderRow(props: ListChildComponentProps) {
+        const { index, style } = props;
+      
+        // Ensure we don't go out of bounds
+        const user = attendees[index] || { first_name: 'Unknown', last_name: 'User' };
+      
+        return (
+          <ListItem style={style} key={index} component="div" disablePadding>
+            <ListItemButton>
+              <ListItemText primary={`${user.first_name} ${user.last_name}`} />
+            </ListItemButton>
+          </ListItem>
+        );
+      }
+      
+      const VirtualizedAccordion=()=> {
+        return (
+          <Accordion sx={{width: 600,marginTop:3}}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel2-content"
+              id="panel2-header"
+            >
+              <ListItemText primary="Attendee List" />
+            </AccordionSummary>
+            <AccordionDetails>
+              <Box sx={{ width: 600, height: 400, maxWidth: 360, bgcolor: 'background.paper' }}>
+                <FixedSizeList
+                  height={400}
+                  width={570}
+                  itemSize={46}
+                  itemCount={attendees.length}
+                  overscanCount={5}
+                >
+                  {renderRow}
+                </FixedSizeList>
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+        );
+      }
 
 
 
@@ -218,6 +268,12 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                     <h3>Recurring</h3>
                     {handleRecur(event.recurrence)}
                 </div>
+                {(which === "CLUB") && 
+                <div className = "event-num-attendees">
+                    <h3>Attendees</h3>
+                    <p>Number of Current Attendees: {attendees.length}</p>
+                    <VirtualizedAccordion />
+                </div>}
                 <div className="event-detail-pictures">
                     <h3>Pictures</h3>
                     <img src={exampleFlyer} className="event-picture"/>
