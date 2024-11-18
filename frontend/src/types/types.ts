@@ -1,3 +1,5 @@
+import { StringLiteral } from "typescript";
+
 export type Event =
 {
 	id: string;
@@ -40,6 +42,10 @@ export type RSVP =
 	user_id: string;
 	event_id: string;
 };
+export type Follow = {
+	user_id: string;
+	club_id: string;
+}
 
 export type User = 
 {
