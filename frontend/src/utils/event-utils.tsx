@@ -85,7 +85,7 @@ export const fetchPastEvents = async (token: string): Promise<Event[]> => {
         if (event.end_time) {event.end_time = new Date(event.end_time);}
     })
 
-    return eventlist;
+    return events;
 };
 // Function to create an event in the backend. Method: POST
 export const createEvent = async (token: string,event: Event): Promise<string> => {
