@@ -8,7 +8,7 @@ Base = declarative_base()
 
 
 class UserAccounts(Base):
-    __tablename__ = "user_accounts"
+    __tablename__ = "users"
 
     id: Mapped[str] = mapped_column(String, primary_key=True)
     email: Mapped[str] = mapped_column(String, nullable=False)
@@ -101,7 +101,7 @@ class UserRSVPs(Base):
     __tablename__ = "user_rsvps"
 
     user_id: Mapped[str] = mapped_column(
-        String, ForeignKey("user_accounts.id"), primary_key=True
+        String, ForeignKey("users.id"), primary_key=True
     )
     event_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("events.id"), primary_key=True
@@ -113,7 +113,7 @@ class ClubBoardMembers(Base):
     __tablename__ = "club_board_members"
 
     user_id: Mapped[str] = mapped_column(
-        String, ForeignKey("user_accounts.id"), primary_key=True
+        String, ForeignKey("users.id"), primary_key=True
     )
     club_id: Mapped[str] = mapped_column(
         String, ForeignKey("club_accounts.id"), primary_key=True
