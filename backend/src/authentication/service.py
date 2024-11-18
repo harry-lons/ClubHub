@@ -104,8 +104,6 @@ def authenticate_user2(email: str, entered_passwd: str) -> UserLogin:
         last_name=user_acc.last_name,
         hashed_password=user_acc.hashed_password,
     )
-    print(pwd_context.hash(entered_passwd))
-    print(user.hashed_password)
     if not verify_password(entered_passwd, user.hashed_password):
         raise LOGIN_BAD_PASSWORD
     return user
