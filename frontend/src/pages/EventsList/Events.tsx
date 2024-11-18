@@ -5,7 +5,7 @@ import { useState, useEffect, useContext } from "react";
 import "./Events.css";
 import { Grid, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
 import { NavBar } from "../NavBar/NavBar";
-import { fetchEvents } from "../../utils/event-utils";
+import { fetchRSVPEvents } from "../../utils/event-utils";
 import { fetchClubById } from "../../utils/club-utils";
 import { AuthContext } from "../../context/AuthContext";
 
@@ -21,7 +21,7 @@ const Events: React.FC = () => {
     
     const loadEvents = async () => {
         try {
-            const eList = await fetchEvents(context.token);
+            const eList = await fetchRSVPEvents(context.token);
             const result = await processEvents(eList);
             setEventList(result);
         } catch (err: any) {
@@ -48,6 +48,10 @@ const Events: React.FC = () => {
         }, Promise.resolve({} as Record<string, [string, Event][]>));
         
         return result;
+    }
+
+    const goToDetailPage = (event_id: string) => {
+        navigate(`/events/${event_id}`);
     }
 
     //Old method to process event list, keeping for placeholder
@@ -92,12 +96,12 @@ const Events: React.FC = () => {
                                     </div >
                                     <div className="event-details-column">
                                         {events.map((event) => (
-                                            <div className="event-info" key={event[1].id} onClick={() => {console.log(event[1].club_id)}}>
+                                            <div className="event-info" key={event[1].id}>
                                                 <div className="event-time">
                                                     {event[1].begin_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                 </div>
                                                 <div className="event-details">
-                                                    <p className="event-title">{event[1].title}</p>
+                                                    <p className="event-title" onClick={()=>goToDetailPage(event[1].id)}>{event[1].title}</p>
                                                     <p className="event-club-location">{event[0]}, {event[1].location}</p>
                                                 </div>
                                             </div>
@@ -140,12 +144,12 @@ const Events: React.FC = () => {
                                     </div >
                                     <div className="event-details-column">
                                         {events.map((event) => (
-                                            <div className="event-info" key={event[1].id} onClick={() => {console.log(event[1].club_id)}}>
+                                            <div className="event-info" key={event[1].id}>
                                                 <div className="event-time">
                                                     {event[1].begin_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                 </div>
                                                 <div className="event-details">
-                                                    <p className="event-title">{event[1].title}</p>
+                                                    <p className="event-title" onClick={()=>goToDetailPage(event[1].id)}>{event[1].title}</p>
                                                     <p className="event-club-location">{event[0]}, {event[1].location}</p>
                                                 </div>
                                             </div>

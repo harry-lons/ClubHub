@@ -16,26 +16,26 @@ fake_event_1 = Event(
     type=["other"],
 )
 
-fake_event_2 = EventModel(
+fake_event_2 = Event(
     id=2,
     title="Cat Party",
-    club_id=2,
+    club_id="2",
     location="Felis",
     begin_time=datetime(2024, 11, 4, 20),
     end_time=datetime(2024, 11, 4, 21),
-    recurrence=False,
-    type="party",
+    recurrence="",
+    type=["party"],
 )
 
-fake_event_3 = EventModel(
+fake_event_3 = Event(
     id=3,
     title="Big Speech",
-    club_id=3,
+    club_id="3",
     location="Price Center Ballroom",
     begin_time=datetime(2024, 11, 3, 2),
     end_time=datetime(2024, 11, 3, 3),
-    recurrence=False,
-    type="food",
+    recurrence="",
+    type=["food"],
 )
 
 mock_events = EventCalendarData(
