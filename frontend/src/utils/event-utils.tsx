@@ -19,7 +19,8 @@ export const fetchEventById = async (eventId: number): Promise<Event> => {
     if (event.end_time) {
         event.end_time = new Date(event.end_time);  // Convert to Date object
     }
-
+    
+    console.log("Event fetched successfully:", event);
     return event;
 };
 // All events RSVPed by the user
