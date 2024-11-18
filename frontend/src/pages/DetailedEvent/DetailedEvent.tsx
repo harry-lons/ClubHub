@@ -110,10 +110,10 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
         }
     }
     const handleRecur = (recurrence: [ boolean, number, Date|null])=>{
-        if(!recurrence[0]){
-            return (<p>Not a recurring event.</p >);
-        }else{
+        if(recurrence[0]){
             return(<p>Yes. Recur {recurrenceDescription(recurrence[1])}. End Date {recurrence[2]?.getFullYear()}-{recurrence[2]?.getMonth()}-{recurrence[2]?.getDate()}</p >);
+        }else{
+            return (<p>Not a recurring event.</p >);
         }
     }
     function renderRow(props: ListChildComponentProps) {

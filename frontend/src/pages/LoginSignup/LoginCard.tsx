@@ -6,9 +6,8 @@ import { AuthContext } from '../../context/AuthContext';
 
 interface LoginCardProps {
     accountType?: string; // Define whether this is a user or club login
-    loginURL: string;
 }
-const LoginCard: React.FC<LoginCardProps> = ({ accountType, loginURL }) => {
+const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
     const [showPassword, setShowPassword] = React.useState(false);
     const [enteredEmail, setEnteredEmail] = React.useState("");
     const [enteredPassword, setEnteredPassword] = React.useState("");
@@ -82,11 +81,8 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType, loginURL }) => {
         let lcAccount = accountType?.toLowerCase();
 
         // Determine the specific backend endpoint based on what type of account this is
-
-        // TODO: Switch to the commented version once backend club login is implemented
-
-        // let tokenURL = `${baseURL}/${lcAccount}/login`;
-        const tokenURL = `${baseURL}${loginURL}`;
+        const tokenURL = `${baseURL}/${lcAccount}/login`;
+        console.log(tokenURL);
 
         try {
             const response = await fetch(tokenURL, {
