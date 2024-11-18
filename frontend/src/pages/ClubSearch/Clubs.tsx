@@ -26,7 +26,7 @@ const Clubs: React.FC = () => {
         club.clubName.toLowerCase().includes(searchQuery.toLowerCase())
     );
     const goToClubProfile = (club_id : string) => {
-        navigate(`/club/${club_id}}`);
+        navigate(`/club/detail/${club_id}}`);
     }
     return (
         <div className="clubs-list-container">

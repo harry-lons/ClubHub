@@ -10,7 +10,21 @@
    width: 100%;
    padding-bottom: 30px;
 }
+.club-detail-container{
+   display:flex;
+}
+.club-contact {
+   text-align: left; /* Ensures text is aligned to the left */
+   margin: 15px 0; /* Adds some spacing around the section */
+   padding: 10px; /* Adds padding inside the container */
+   width: 100%; /* Ensures it takes the full width of its container */
+   box-sizing: border-box; /* Ensures padding doesn't affect width */
+   margin-left: 8px;
+}
 
+.club-contact h3 {
+   margin: 0 0 10px 0; /* Adds space below the heading */
+}
 .sticky-header{
    position: sticky;
    width: 100%;
@@ -92,12 +106,12 @@
    text-align: left;
 }
 
-p.club-event-clickable-title {
+p.club-name{
    text-decoration: none;
    cursor: pointer;
    margin: 0;
  }
  
- p.club-event-clickable-title:hover {
+ p.club-name:hover {
    text-decoration: underline;
  }
