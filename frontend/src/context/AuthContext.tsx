@@ -36,7 +36,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const removeToken = () => {
-
+    setToken(""); // Reset the token state
   };
 
   return (<AuthContext.Provider value={{token, saveToken, removeToken}}>{children}</AuthContext.Provider>);

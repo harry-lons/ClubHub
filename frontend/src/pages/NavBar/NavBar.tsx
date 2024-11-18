@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -11,11 +12,13 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import Diversity2Icon from '@mui/icons-material/Diversity2';
+import { AuthContext } from '../../context/AuthContext';
 
-const pages = ['Events', 'Clubs', 'Profile'];
+const pages = ['Events', 'Clubs', 'Profile', 'Log Out'];
 
 export const NavBar = () => {
   const navigate = useNavigate();
+  const { removeToken } = useContext(AuthContext);
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -25,9 +28,24 @@ export const NavBar = () => {
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
+
+  const handleLogOut = () => {
+    // Clear the token
+    removeToken();
+    localStorage.removeItem('token'); 
+  
+    // Navigate to the root 
+    navigate('/');
+  };
+
   const handleNavigation = (page: string) => { // Add this function
     handleCloseNavMenu();
-    navigate(`/${page}`);
+    if(page === 'Log Out') { 
+      handleLogOut(); 
+    }
+    else{
+      navigate(`/${page}`);
+    }
   };
 
   return (
