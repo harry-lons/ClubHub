@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-
+import uuid
 from ..identities.schemas import User
 
 
@@ -10,10 +10,10 @@ class BearerToken(BaseModel):
 
 ## TODO: merge the UserLogin and UserSignup to one class
 class UserLogin(User):
-    # id: int
-    # username: str
-    # first_name: str
-    # last_name: str
+    id: uuid.UUID
+    username: str
+    first_name: str
+    last_name: str
     hashed_password: str
 
     def to_user(self) -> User:

@@ -26,9 +26,9 @@ const LoginSignup: React.FC<LoginSignupProps> = ({ which }) => {
                     {
                         // Determine which card/props to put up based on the prop
                         which === 'LOG IN' ?
-                            <LoginCard accountType={'USER'} loginURL={'/user/login'} /> :
+                            <LoginCard accountType={'USER'}/> :
                             which === 'CLUB LOG IN' ?
-                                <LoginCard accountType={'CLUB'} loginURL={'/club/login'} /> :
+                                <LoginCard accountType={'CLUB'}/> :
                                 which === 'SIGN UP' ?
                                     <SignupCard accountType={'USER'} signupURL={'user/signup'} /> :
                                     null
