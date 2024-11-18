@@ -1,6 +1,10 @@
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import URL
 from sqlalchemy.orm import declarative_base, sessionmaker
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from .db_store.postgres import PostgresDatabase
 
@@ -62,11 +66,11 @@ class DatabaseContainer:
 
 url = URL.create(
     drivername="postgresql+psycopg",
-    username="username",
-    password="examplepassword",
-    host="127.0.0.1",
-    port=5432,
-    database="SoCalSocial",
+    username=os.getenv('PG_USERNAME'),
+    password=os.getenv('PG_PASSWORD'),
+    host=os.getenv('PG_HOST'),
+    port=os.getenv('PG_PORT'),
+    database=os.getenv('PG_DATABASE'),
 )
 
 DB = DatabaseContainer()
