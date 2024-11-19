@@ -13,6 +13,7 @@ fake_event_1 = Event(
     begin_time=datetime(2024, 11, 3, 5),
     end_time=datetime(2024, 11, 3, 6),
     recurrence=(False, None, None),
+    capacity=101,
     type=["other"],
 )
 
