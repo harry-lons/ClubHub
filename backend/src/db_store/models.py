@@ -64,7 +64,6 @@ class Events(Base):
     end_time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     summary: Mapped[str] = mapped_column(String, nullable=True)
 
-    # ! TODO currently broken (see ./db_store/converesion.py)
     recurrence: Mapped[bool] = mapped_column(nullable=False)
     recurrence_type: Mapped[int] = mapped_column(nullable=True)
     recurrence_stop_date: Mapped[datetime] = mapped_column(DateTime, nullable=True)

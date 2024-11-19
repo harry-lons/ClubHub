@@ -25,6 +25,7 @@ def f_event_to_b_event(
         recurrence=event.recurrence[0],
         recurrence_type=event.recurrence[1],
         recurrence_stop_date=event.recurrence[2],
+        capacity=event.capacity,
         summary=event.summary,
         tags=[],
     )
@@ -64,6 +65,7 @@ def b_event_to_f_event(db_event: DBEventObject) -> FrontendEventObject:
             db_event.recurrence_type,
             db_event.recurrence_stop_date,
         ),
+        capacity=db_event.capacity,
         summary=db_event.summary,
         pictures=[image.object_id for image in db_event.images],
         type=[tag.name for tag in db_event.tags],
