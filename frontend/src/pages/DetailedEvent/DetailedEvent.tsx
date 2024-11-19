@@ -42,8 +42,13 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
 
     const loadEvent = async () => {
         try {
-            const event_ = await fetchEventById(Number(id)); // Convert id to a number
-            setEvent(event_);
+            if (id) {
+                const event_ = await fetchEventById(id); // `id` is already a string, so no conversion is needed
+                console.log("Fetched event:", event_);
+                setEvent(event_);
+            } else {
+                console.error("ID is undefined. Cannot fetch event.");
+            }
         } catch (err: any) {
             console.error("Error loading event:", err.message);
         }

@@ -1,7 +1,7 @@
 import { API_BASE_URL } from "../constants/constants"
 import { Event } from "../types/types"
 
-export const fetchEventById = async (eventId: number): Promise<Event> => {
+export const fetchEventById = async (eventId: string): Promise<Event> => {
 
     const response = await fetch(`${API_BASE_URL}/event/${eventId}`)
     
