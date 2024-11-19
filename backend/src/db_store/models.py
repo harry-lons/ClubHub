@@ -67,7 +67,7 @@ class Events(Base):
     # ! TODO currently broken (see ./db_store/converesion.py)
     recurrence: Mapped[bool] = mapped_column(nullable=False)
     recurrence_type: Mapped[int] = mapped_column(nullable=True)
-    stop_date: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    recurrence_stop_date: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     capacity: Mapped[int] = mapped_column(Integer, nullable=True)
 
     # Relationship back to ClubAccounts

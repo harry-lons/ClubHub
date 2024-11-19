@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, List, Optional, Type
+from typing import Dict, List, Optional, Tuple, Type
 
 from pydantic import BaseModel, Field
 
@@ -19,7 +19,7 @@ class Event(EventID):
     location: str = Field(default="")
     begin_time: datetime
     end_time: datetime
-    recurrence: str
+    recurrence: Tuple[bool, Optional[int], Optional[datetime]]
     summary: str = Field(default="")
     pictures: List[str] = Field(default=[])
     type: List[str]
