@@ -12,7 +12,7 @@ fake_event_1 = Event(
     location="Earth",
     begin_time=datetime(2024, 11, 3, 5),
     end_time=datetime(2024, 11, 3, 6),
-    recurrence="",
+    recurrence=(False, None, None),
     type=["other"],
 )
 

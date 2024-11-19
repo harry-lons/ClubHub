@@ -1,16 +1,17 @@
 from datetime import datetime
 
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.dialects.postgresql import UUID
+
 Base = declarative_base()
 
 
 class UserAccounts(Base):
     __tablename__ = "users"
 
-    id = mapped_column(UUID(as_uuid=True), primary_key=True)
+    id: Mapped[str] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(String, nullable=False)
     hashed_password: Mapped[str] = mapped_column(String, nullable=False)
     first_name: Mapped[str] = mapped_column(String, nullable=False)
@@ -62,7 +63,12 @@ class Events(Base):
     begin_time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     end_time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     summary: Mapped[str] = mapped_column(String, nullable=True)
-    recurrence: Mapped[str] = mapped_column(String, nullable=True)
+
+    # ! TODO currently broken (see ./db_store/converesion.py)
+    recurrence: Mapped[bool] = mapped_column(nullable=False)
+    recurrence_type: Mapped[int] = mapped_column(nullable=True)
+    recurrence_stop_date: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    capacity: Mapped[int] = mapped_column(Integer, nullable=True)
 
     # Relationship back to ClubAccounts
     club = relationship("ClubAccounts", back_populates="events")
@@ -100,9 +106,7 @@ class EventTags(Base):
 class UserRSVPs(Base):
     __tablename__ = "user_rsvps"
 
-    user_id: Mapped[str] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.id"), primary_key=True
-    )
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), primary_key=True)
     event_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("events.id"), primary_key=True
     )
@@ -112,9 +116,7 @@ class UserRSVPs(Base):
 class ClubBoardMembers(Base):
     __tablename__ = "club_board_members"
 
-    user_id: Mapped[str] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.id"), primary_key=True
-    )
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), primary_key=True)
     club_id: Mapped[str] = mapped_column(
         String, ForeignKey("club_accounts.id"), primary_key=True
     )
