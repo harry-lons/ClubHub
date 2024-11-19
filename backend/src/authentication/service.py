@@ -213,6 +213,7 @@ async def user_login(
 async def user_signup(info: UserSignup) -> str:
     try:
         DB.db.get_user_from_email(info.username)
+        # DB.connection.execute (example in main.py)
         raise SIGNUP_EMAIL_EXISTS
     except ValueError:
         # This email isn't in the database. Continue

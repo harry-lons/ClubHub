@@ -22,9 +22,10 @@ async def get_events(
 
 
 @app.get("/event/{id}", response_model=Event)
-async def event(id: int) -> Event:
-    # temp code
-    return fake_event_1
+async def event(id: str) -> Event:
+    # Vivian Modified
+    event = DB.db.get_f_event(id)
+    return event
 
 
 @app.post("/rsvp/{event_id}")
