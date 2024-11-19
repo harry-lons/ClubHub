@@ -37,7 +37,7 @@ fake_users_db = {
         "first_name": "First2",
         "last_name": "Last2",
         "hashed_password": "$argon2id$v=19$m=65536,t=3,p=4$KYUwppQyxjgnBIBQyrkXAg$OmDVsUIY90aOTyvp0kbrtLuSKsSaewP64MfSDEwH7+w",
-    }
+    },
 }
 
 
@@ -131,7 +131,7 @@ def create_access_token(data: Dict, expires_in: timedelta) -> str:
     expires_at = datetime.now(timezone.utc) + expires_in
     to_encode = data.copy()
     to_encode.update({"exp": expires_at})
-    token = jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
+    token = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return token
 
 
@@ -156,6 +156,7 @@ async def get_current_user(
             raise BAD_CREDIENTIALS_EXCEPTION
         if acc_type != "user":
             raise BAD_CREDIENTIALS_EXCEPTION
+        print(payload)
     except (InvalidTokenError, ExpiredSignatureError, ValueError):
         raise BAD_CREDIENTIALS_EXCEPTION
 
