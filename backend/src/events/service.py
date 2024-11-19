@@ -22,7 +22,7 @@ async def get_events(
 
 
 @app.get("/event/{id}", response_model=Event)
-async def event(id: str) -> Event:
+async def event(id: int) -> Event:
     # Vivian Modified
     event = DB.db.get_f_event(id)
     return event
