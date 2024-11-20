@@ -38,12 +38,7 @@ fake_event_2 = Event(
 # )
 
 
-mock_events = EventCalendarData(
-    events=[
-        fake_event_1,
-        fake_event_2, fake_event_3
-    ]
-)
+mock_events = EventCalendarData(events=[fake_event_1, fake_event_2])
 
 ## RSVPs
 
