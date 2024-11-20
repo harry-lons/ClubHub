@@ -8,7 +8,8 @@ from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 from passlib.context import CryptContext
 
 from ..database import DB
-from ..identities.schemas import User
+from ..db_store.conversion import b_club_to_f_club
+from ..identities.schemas import Club, User
 from .constants import (
     BAD_CREDIENTIALS_EXCEPTION,
     LOGIN_BAD_EMAIL,
@@ -109,15 +110,16 @@ def authenticate_user2(email: str, entered_passwd: str) -> UserLogin:
     return user
 
 
-def authenticate_club(email: str, entered_pw: str) -> str:
+def authenticate_club(email: str, entered_pw: str) -> Club:
     try:
         club_acc = DB.db.get_org_from_email(email)
+        club = b_club_to_f_club(club_acc)
     except ValueError as e:
         raise LOGIN_BAD_EMAIL
 
     if not verify_password(entered_pw, club_acc.hashed_password):
         raise LOGIN_BAD_PASSWORD
-    return club_acc.email
+    return club
 
 
 def authenticate_signup(db, username: str, password: str) -> str:
@@ -156,7 +158,6 @@ async def get_current_user(
             raise BAD_CREDIENTIALS_EXCEPTION
         if acc_type != "user":
             raise BAD_CREDIENTIALS_EXCEPTION
-        print(payload)
     except (InvalidTokenError, ExpiredSignatureError, ValueError):
         raise BAD_CREDIENTIALS_EXCEPTION
 
@@ -170,8 +171,8 @@ async def get_current_user(
 
 async def get_current_logged_in_club(
     token: Annotated[str, Depends(oauth2_scheme_club_login)]
-) -> str:
-    """Returns the currently loged in user's id"""
+) -> Club:
+    """Returns the currently loged in club's data"""
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
@@ -184,8 +185,9 @@ async def get_current_logged_in_club(
         raise BAD_CREDIENTIALS_EXCEPTION
 
     try:
-        org = DB.db.get_org_from_email(email)
-        return org.id
+        club_from_db = DB.db.get_org_from_email(email)
+        club = b_club_to_f_club(club_from_db)
+        return club
     except ValueError:
         raise BAD_CREDIENTIALS_EXCEPTION
 
@@ -229,14 +231,15 @@ async def club_login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ) -> BearerToken:
     try:
-        club_email = authenticate_club(form_data.username, form_data.password)
+        club = authenticate_club(form_data.username, form_data.password)
     except ValueError:
         raise LOGIN_SIGNUP_OTHER_ERROR
 
     # create new session token and add to database
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": club_email, "role": "club"}, expires_in=access_token_expires
+        data={"sub": club.contact_email, "role": "club"},
+        expires_in=access_token_expires,
     )
     return BearerToken(access_token=access_token, token_type="bearer")
 
@@ -257,7 +260,7 @@ async def club_signup(info: ClubSignup):
 
 
 @app.get("/user/whoami/", response_model=User, tags=["user"])
-async def read_users_me(
+async def user_whoami(
     current_user: Annotated[User, Depends(get_current_user)],
 ) -> User:
     # TODO Change this
@@ -265,9 +268,10 @@ async def read_users_me(
     return current_user
 
 
-@app.get("/club/whoami", response_model=str, tags=["club"])
-async def user_whoami(
-    current_club_id: Annotated[str, Depends(get_current_logged_in_club)]
-) -> str:
+@app.get("/club/whoami", response_model=Club, tags=["club"])
+async def club_whoami(
+    current_club: Annotated[Club, Depends(get_current_logged_in_club)]
+) -> Club:
+    # TODO: Change this to return a club object
     """Returns the id of the club that is logged in"""
-    return current_club_id
+    return current_club
