@@ -42,8 +42,13 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
 
     const loadEvent = async () => {
         try {
-            const event_ = await fetchEventById(Number(id)); // Convert id to a number
-            setEvent(event_);
+            if (id) {
+                const event_ = await fetchEventById(id); // `id` is already a string, so no conversion is needed
+                console.log("Fetched event:", event_);
+                setEvent(event_);
+            } else {
+                console.error("ID is undefined. Cannot fetch event.");
+            }
         } catch (err: any) {
             console.error("Error loading event:", err.message);
         }
@@ -110,10 +115,10 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
         }
     }
     const handleRecur = (recurrence: [ boolean, number, Date|null])=>{
-        if(!recurrence[0]){
-            return (<p>Not a recurring event.</p >);
-        }else{
+        if(recurrence[0]){
             return(<p>Yes. Recur {recurrenceDescription(recurrence[1])}. End Date {recurrence[2]?.getFullYear()}-{recurrence[2]?.getMonth()}-{recurrence[2]?.getDate()}</p >);
+        }else{
+            return (<p>Not a recurring event.</p >);
         }
     }
     function renderRow(props: ListChildComponentProps) {

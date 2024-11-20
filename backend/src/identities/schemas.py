@@ -10,7 +10,7 @@ class ClubID(BaseModel):
 class Club(ClubID):
     # id: int
     name: str
-    contact_email: List[str]
+    contact_email: str
 
 
 class UserID(BaseModel):

@@ -120,7 +120,7 @@ export const exampleClub =
 {
 	id : "001",
 	name: "The Literary Society",
-	board_members: ["Member 1"],
+	board_members: ["Vivian Wang", "Shengqi Wu", "Harry", "Allen", "Peter", "George", "Ali", "Allison"],
 	contact_email: ["contact@example.com"],
   description: "The Literary Society is a vibrant community dedicated to the love of literature, fostering an environment where members can explore, discuss, and celebrate the written word. Led by a passionate team, including the dedicated board member Member 1, the club serves as a hub for book enthusiasts, writers, and creatives alike.For inquiries or more information, feel free to reach out to us at contact@example.com. Join us to connect with like-minded individuals, participate in engaging events, and deepen your appreciation for the world of literature!"
 };

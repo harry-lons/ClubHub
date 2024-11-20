@@ -1,18 +1,22 @@
 import React, { useContext, useState,useEffect } from "react"
-import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import { useParams, useNavigate } from "react-router-dom";
 import { Event, Club, RSVP, User} from "../../types/types";
-import { exampleEvent, exampleClub, exampleUsers, exampleEventList } from "../../constants/constants";
+import {exampleClub, exampleUsers, exampleEventList } from "../../constants/constants";
 import { TextField, Button, MenuItem, Typography } from '@mui/material';
 import {AuthContext} from "../../context/AuthContext"
-import { fetchClubEvents, fetchEventById, fetchPastEvents } from "../../utils/event-utils";
+import { fetchClubEvents} from "../../utils/event-utils";
+import { createFollow, deleteFollow } from "../../utils/follow-utils";
 import { fetchClubById } from "../../utils/club-utils";
-import exampleFlyer from "../../constants/flyer.jpg";
-import {Alert, Box,List,ListItem,ListItemButton,ListItemText,AccordionDetails,Accordion,AccordionSummary} from '@mui/material';
+import { Follow } from "../../types/types";
+import {Alert, Box,List,ListItem,ListItemText,AccordionDetails,Accordion,AccordionSummary} from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import "./ClubDetail.css";
-const ClubDetail: React.FC = () => {
+
+interface ClubDetailProps {
+    which: string; 
+}
+const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
     const { id } = useParams<{ id: string }>(); //should be club id
     const navigate = useNavigate();
     const {token} = useContext(AuthContext);
@@ -23,7 +27,7 @@ const ClubDetail: React.FC = () => {
     const [attendees, setAttendees] = useState<User[]>(exampleUsers);
     const [pastEvents,setPastEvents] = useState<Event[]>(exampleEventList);
     const [nextEvents,setNextEvents] = useState<Event[]>(exampleEventList);
-
+    const [follow, setFollow] = useState(false);
     useEffect(() => {
         if (!id) return;
         loadEvent();
@@ -73,6 +77,39 @@ const ClubDetail: React.FC = () => {
         </button>
         );
     };
+    const FollowButton : React.FC = () => {
+        const toggleFollow = async () => {
+            setFollow(!rsvp);
+            if (!follow) {
+                const newFollow: Follow = {
+                    user_id: userId,
+                    club_id: id as string
+                };
+                const successful = await createFollow(token,newFollow);
+                if(successful){
+                    <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
+                        You have successfully Followed this club! We're very happy to have you here!
+                    </Alert>
+                }else{
+                    <Alert severity="error">Follow Action unsuccessful please contact webpage administrator</Alert>
+                }
+            } else {
+                const successful = await deleteFollow(token,id as string);
+                if(successful){
+                    <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
+                        You have successfully canceled RSVP to this event!
+                    </Alert>
+                }else{
+                    <Alert severity="error">Cancel RSVP unsuccessful please contact webpage administrator</Alert>
+                }
+            }
+        }
+        return (
+            <Button className="follow-button" variant="contained" onClick={toggleFollow}>
+                {rsvp? 'unFOLLOW' : 'FOLLOW' }
+            </Button>
+        );
+    };
     const goToDetailPage = (event_id: string) =>{
         navigate(`/events/${event_id}`);
     }
@@ -85,24 +122,41 @@ const ClubDetail: React.FC = () => {
             <div className="club-identity-container">
                 <div className="club-name-container">
                     <h2>{club.name}</h2>
+                    {which == "USER" && <FollowButton/>}
+                    
+                </div>
+                <div className = "club-description-container">
                     <p className="club-description">{club.description}</p>
-                </div>
-
-                <div className="club-board">
-                    <h3>Board Members</h3>
-                    {/* Waiting to be Implemented, related to privacy */}
-                </div>
-
-                <div className="club-contact">
-                    <h3>Contact Information</h3>
-                    {Array.isArray(club.contact_email) ? (
-                        club.contact_email.map((email, index) => <p key={index}>{email}</p>)
-                    ) : (
-                        <p>{club.contact_email}</p>
-                    )}
                 </div>
             </div>
 
+            <div className="club-board">
+                <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <h3>Board Members</h3>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <List style={{ height: '300px', overflowY: 'auto' }}>
+                        {club.board_members.map((member) => (
+                            <ListItem key={member}>
+                            <ListItemText primary={<Typography>{member}</Typography>} />
+                            </ListItem>
+                    ))}
+                    </List>
+                </AccordionDetails>
+                </Accordion>
+            </div>
+
+            <div className="club-contact">
+                <h3>Contact Information</h3>
+                {Array.isArray(club.contact_email) ? (
+                    club.contact_email.map((email, index) => <p key={index}>{email}</p>)
+                    ) : (
+                        <p>{club.contact_email}</p>
+                    )}
+            </div>
+
+            
             <div className="club-events-container">
                 <Accordion defaultExpanded>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -111,15 +165,7 @@ const ClubDetail: React.FC = () => {
                     <AccordionDetails>
                         <List style={{ height: '400px', overflowY: 'auto' }}>
                             {nextEvents.map(event => (
-                                <ListItem
-                                    key={event.id}
-                                    style={{
-                                        backgroundColor: '#f3e5f5',
-                                        margin: '8px 0',
-                                        borderRadius: '8px',
-                                        padding: '16px',
-                                    }}
-                                >
+                                <ListItem key={event.id} style={{backgroundColor: '#f3e5f5', margin: '8px 0', borderRadius: '8px', padding: '16px',}}>
                                     <ListItemText primary={
                                         <Typography onClick={() => goToDetailPage(event.id)} className="club-event-clickable-title">
                                                 {event.title}
@@ -162,7 +208,7 @@ const ClubDetail: React.FC = () => {
                     </AccordionDetails>
                 </Accordion>
             </div>
-        </div>
+            </div>
     );
 };
 

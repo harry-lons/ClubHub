@@ -6,44 +6,39 @@ from fastapi import HTTPException, status
 from .schemas import Event, EventCalendarData
 
 fake_event_1 = Event(
-    id="1",
+    id=1,  # will autoincrement
     title="Lunch",
     club_id="5",
     location="Earth",
     begin_time=datetime(2024, 11, 3, 5),
     end_time=datetime(2024, 11, 3, 6),
-    recurrence="",
-    type=["other"],
+    recurrence=(False, None, None),
+    capacity=101,
+    type=["social"],
 )
 
 fake_event_2 = Event(
-    id=2,
+    id=999999999999,
     title="Cat Party",
-    club_id="2",
-    location="Felis",
-    begin_time=datetime(2024, 11, 4, 20),
-    end_time=datetime(2024, 11, 4, 21),
-    recurrence="",
-    type=["party"],
-)
-
-fake_event_3 = Event(
-    id=3,
-    title="Big Speech",
-    club_id="3",
-    location="Price Center Ballroom",
-    begin_time=datetime(2024, 11, 3, 2),
-    end_time=datetime(2024, 11, 3, 3),
-    recurrence="",
+    club_id="x",
+    location="Cat Cafe",
+    begin_time=datetime(2024, 11, 3, 20),
+    end_time=datetime(2024, 11, 3, 22),
+    recurrence=(False, None, None),
+    capacity=None,
     type=["food"],
 )
 
-mock_events = EventCalendarData(
-    events=[
-        fake_event_1,
-        fake_event_2, fake_event_3
-    ]
-)
+# fake_event_3 = EventModel(
+#     name="Big Speech",
+#     event_id=3,
+#     location="Price Center Ballroom",
+#     time=datetime(2024, 11, 3, 2),
+#     type="food",
+# )
+
+
+mock_events = EventCalendarData(events=[fake_event_1, fake_event_2])
 
 ## RSVPs
 

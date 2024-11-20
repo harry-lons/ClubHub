@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from ..authentication import service as auth_service
 from ..authentication.schemas import User
 from ..database import DB
+from ..identities.schemas import Club
 from .constants import fake_event_1, mock_events
 from .rsvp import rsvp_user_create, rsvp_user_delete, rsvp_user_get
 
@@ -23,8 +24,8 @@ async def get_events(
 
 @app.get("/event/{id}", response_model=Event)
 async def event(id: int) -> Event:
-    # temp code
-    return fake_event_1
+    event = DB.db.get_f_event(id)
+    return event
 
 
 @app.post("/rsvp/{event_id}")
@@ -57,7 +58,7 @@ async def rsvp(
 
 @app.post("/club/event")
 async def add_event(
-    current_club_id: Annotated[str, Depends(auth_service.get_current_logged_in_club)],
+    current_club: Annotated[Club, Depends(auth_service.get_current_logged_in_club)],
     new_event: Event,
 ) -> int:
     """A logged-in club can create an event. Returns the newly created event's id.
@@ -66,7 +67,7 @@ async def add_event(
     ignored."""
     print(new_event)
     # try:
-    event_id = DB.db.create_event(new_event, current_club_id)
+    event_id = DB.db.create_event(new_event, current_club.id)
     return event_id
     # except ValueError:
     #     raise HTTPException(
@@ -77,11 +78,11 @@ async def add_event(
 
 @app.patch("/club/event")
 async def update_event(
-    current_club_id: Annotated[str, Depends(auth_service.get_current_logged_in_club)],
+    current_club: Annotated[Club, Depends(auth_service.get_current_logged_in_club)],
     event: Event,
 ) -> bool:
     """Updates an event. Takes an Event object, which has updated fields."""
-    if event.club_id != current_club_id:
+    if event.club_id != current_club.id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Updated event's club id does not match yours.",
@@ -95,7 +96,7 @@ async def update_event(
 
 @app.delete("/club/event/{event_id}")
 async def delete_event(
-    current_club_id: Annotated[str, Depends(auth_service.get_current_logged_in_club)],
+    current_club: Annotated[Club, Depends(auth_service.get_current_logged_in_club)],
     event_id: int,
 ) -> bool:
     """
@@ -103,7 +104,7 @@ async def delete_event(
     """
     event = DB.db.get_f_event(event_id)
 
-    if event.club_id != current_club_id:
+    if event.club_id != current_club.id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Updated event's club id does not match yours.",

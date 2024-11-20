@@ -5,7 +5,10 @@ database objects (in db_store/models.py)
 
 from ..events.schemas import Event as FrontendEventObject
 from ..events.schemas import EventWithoutID as FrontendNewEventObject
-from .models import ClubAccounts, EventImages
+from ..identities.schemas import Club as FrontendClubObject
+from .models import ClubAccounts
+from .models import ClubAccounts as DBClubObject
+from .models import EventImages
 from .models import Events as DBEventObject
 from .models import EventTags
 
@@ -22,7 +25,10 @@ def f_event_to_b_event(
         location=event.location,
         begin_time=event.begin_time,
         end_time=event.end_time,
-        recurrence=event.recurrence,
+        recurrence=event.recurrence[0],
+        recurrence_type=event.recurrence[1],
+        recurrence_stop_date=event.recurrence[2],
+        capacity=event.capacity,
         summary=event.summary,
         tags=[],
     )
@@ -32,7 +38,7 @@ def f_event_to_b_event(
     # Add or fetch related tags from the Event model
     tags = []
     for tag_name in event.type:
-        tag = session.query(EventTags).filter(EventTags.name == tag_name).first()
+        tag = session.query(EventTags).filter(EventTags.tag_name == tag_name).first()
         if not tag:
             raise ValueError("Specified tags do not exist in database")
         tags.append(tag)
@@ -57,8 +63,18 @@ def b_event_to_f_event(db_event: DBEventObject) -> FrontendEventObject:
         location=db_event.location,
         begin_time=db_event.begin_time,
         end_time=db_event.end_time,
-        recurrence=db_event.recurrence,
+        recurrence=(
+            db_event.recurrence,
+            db_event.recurrence_type,
+            db_event.recurrence_stop_date,
+        ),
+        capacity=db_event.capacity,
         summary=db_event.summary,
         pictures=[image.object_id for image in db_event.images],
-        type=[tag.name for tag in db_event.tags],
+        type=[tag.tag_name for tag in db_event.tags],
     )
+
+
+def b_club_to_f_club(club: DBClubObject) -> FrontendClubObject:
+    """Convert SQLAlchemy Club object to API's Pydantic Club Object"""
+    return FrontendClubObject(id=club.id, name=club.name, contact_email=club.email)

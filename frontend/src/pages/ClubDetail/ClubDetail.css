@@ -43,3 +43,30 @@
     margin-left: 20px;
     margin-right: 20px;
 }
+.club-name-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.follow-button {
+    font-size: 16px !important;
+    color: white !important;
+    background-color: #43BD28 !important;
+    border: none !important;
+    border-radius: 8px !important;
+    width: 150px !important;
+    height: 40px !important;
+    margin: 0 !important;
+    margin-right: 5px;
+    align-self: flex-start;
+}
+p.club-event-clickable-title {
+    text-decoration: none;
+    cursor: pointer;
+    margin: 0;
+  }
+  
+p.club-event-clickable-title:hover {
+    text-decoration: underline;
+}

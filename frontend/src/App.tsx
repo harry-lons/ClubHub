@@ -33,7 +33,8 @@ function App() {
             <Route path="/navbar" element={<NavBar/>} />
             <Route path="/profile" element={<UserProfile/>} /> {/* Test Route */}
             <Route path="/clubs" element={<Clubs/>} />
-            <Route path = "/club/detail/:id" element = {<ClubDetail/>}/>
+            <Route path = "/clubDetail/:id" element = {<ClubDetail which="USER"/>}/>
+            <Route path = "/club/clubDetail/:id" element = {<ClubDetail which="CLUB"/>}/>
           </Routes>
         </div>
       </Router>

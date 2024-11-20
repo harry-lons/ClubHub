@@ -1,28 +1,36 @@
-# import pytest
-# from fastapi.testclient import TestClient
-# from sqlalchemy import MetaData
-# from sqlalchemy.orm import Session
+from pathlib import Path
 
-# from src.app import app
-# from src.db_store.postgres import PostgresDatabase
+import pytest
 
-
-# @pytest.fixture(scope="session")
-# def client():
-#     # TODO setup and delete tables and data to allow tests to be independent
-#     print("Setting up Database for tests...")
-#     with TestClient(app) as client:
-#         yield client
+TEST_DIR = Path(__file__).resolve().parent
+RESOURCES_DIR = TEST_DIR / "resources"
 
 
-# def reset_database(session: Session):
-#     """Deletes all tables in the database"""
+@pytest.fixture()
+def user_auth_header(client):
+    """Authenticates a user, and returns the headers needed to authenticate."""
 
-#     # https://stackoverflow.com/questions/74755722/confused-between-engine-metadata-base-and-sessions-sqlalchemy-exc-unboundexecu
+    # TODO function to reset user state (as state persists on server)
 
-#     engine = session.get_bind()
+    test_user = {"username": "username1@example.com", "password": "password"}
 
-#     metadata = MetaData()
+    response = client.post("/user/login", data=test_user)
+    assert response.status_code == 200
+    token = response.json().get("access_token")
+    assert token is not None
 
-#     for table in metadata.sorted_tables:
-#         session
+    return {"Authorization": f"Bearer {token}"}
+
+
+@pytest.fixture()
+def club_auth_header(client):
+    """Logs in a club, and returns headers needed to authenticate"""
+
+    valid_club = {"username": "cats@example.com", "password": "clubpassword"}
+
+    response = client.post("/club/login", data=valid_club)
+    assert response.status_code == 200
+    token = response.json().get("access_token")
+    assert token is not None
+
+    return {"Authorization": f"Bearer {token}"}

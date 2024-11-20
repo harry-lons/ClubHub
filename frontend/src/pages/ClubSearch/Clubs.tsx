@@ -6,7 +6,7 @@ import './Clubs.css';
 const exampleClubList = [
     { clubName: 'Future Innovators Society', description: 'Future Innovators Society Description...', logoColor: '#a850ba' },
     { clubName: 'Urban Gardeners Network', description: 'Urban Gardeners Network Description...', logoColor: '#15e688' },
-    { clubName: 'Club 3', description: 'All about Club 3 ...', logoColor: 'blue' },
+    { clubName: 'The Literary Society', description: 'The Literary Society is a vibrant community dedi...', logoColor: 'blue' },
     { clubName: 'Club 4', description: 'All about Club 4 ...', logoColor: 'yellow' },
     { clubName: 'Clubert 4', description: 'All about Clubert 4 ...', logoColor: 'magenta' },
     { clubName: 'Clubert 4.5', description: 'All about Clubert 4.5 ...', logoColor: '#faae66' },
@@ -26,7 +26,7 @@ const Clubs: React.FC = () => {
         club.clubName.toLowerCase().includes(searchQuery.toLowerCase())
     );
     const goToClubProfile = (club_id : string) => {
-        navigate(`/club/${club_id}}`);
+        navigate(`/clubDetail/${club_id}}`);
     }
     return (
         <div className="clubs-list-container">
