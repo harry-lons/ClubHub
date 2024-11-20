@@ -32,7 +32,7 @@ export const deleteRSVP = async (token:string,event_id: string): Promise<boolean
 // fetch all RSVP by a certain user
 // Function to get all expenses from the backend. Method: GET
 export const fetchRSVP = async (token:string): Promise<RSVP[]> => { 
-	const response = await fetch(`${API_BASE_URL}/RSVP`, { //NOTICE CHANGE
+	const response = await fetch(`${API_BASE_URL}/rsvp/`, { //NOTICE CHANGE
         method: "GET",
         headers: {
             "Authorization" : `Bearer ${token}`

@@ -1,7 +1,30 @@
 import { API_BASE_URL } from "../constants/constants"
-import { Event } from "../types/types"
+import { Event, EventType } from "../types/types"
 
-export const fetchEventById = async (eventId: string): Promise<Event> => {
+const validEventTypes: Set<EventType> = new Set<EventType>([
+    "social",
+    "workshop",
+    "networking",
+    "fundraiser",
+    "competition",
+    "seminar",
+    "communityService",
+    "cultural",
+    "recreational",
+    "generalMeeting",
+    "academic",
+    "orientation",
+    "careerDevelopment",
+    "volunteering",
+    "panel",
+    "celebration",
+    "sports",
+    "arts",
+    "training",
+    "research",
+  ]);
+
+export const fetchEventById = async (eventId: number): Promise<Event> => {
 
     const response = await fetch(`${API_BASE_URL}/event/${eventId}`)
     
@@ -19,10 +42,17 @@ export const fetchEventById = async (eventId: string): Promise<Event> => {
     if (event.end_time) {
         event.end_time = new Date(event.end_time);  // Convert to Date object
     }
+
+    if (Array.isArray(event.type)) {
+        event.type = event.type.filter((type): type is EventType =>
+          validEventTypes.has(type as EventType)
+        );
+      }
     
     console.log("Event fetched successfully:", event);
     return event;
 };
+
 // All events RSVPed by the user
 export const fetchRSVPEvents = async (token: string): Promise<Event[]> => {
 

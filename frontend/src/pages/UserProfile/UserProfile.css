@@ -1,10 +1,18 @@
 .userProfilePageContainer {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
+    background: url('../../../public/gradientBackground.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: repeat-y;
     display: flex;
-    overflow: hidden;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+    padding-bottom: 30px;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    overflow: auto;
 }
 
 .navbarContainer {
