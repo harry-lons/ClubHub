@@ -26,20 +26,25 @@ export const HomePage = () =>{
         <div className = "web-instruction-container">
             <div className = "web-clubs-container">
                 <h3>Let's Start by Exploring Clubs That Match Your Interests 😻</h3>
-                <p></p>
+                <p>Tutorials waiting to be written at the end of Sprint 5</p>
             </div>
             <div className = "web-events-container">
                 <h3>Next Step: RSVP to Events from Your Favorite Clubs!</h3>
+                <p>Tutorials waiting to be written at the end of Sprint 5</p>
             </div>
                 
             <div className = "web-profile-container">
                 <h3>Update Your Profile to Stay Connected with Friends!</h3>
+                <p>Tutorials waiting to be written at the end of Sprint 5</p>
             </div>
             <p>You are ready ✌️</p>
         </div>
-        <h2></h2>
+        <h2>Latest Updates on Our Progress</h2>
         <div className = "web-updates-container">
-            <h2>Latest Updates on Our Progress</h2>
+           <div className = "web-update-4">
+            <h3>Sprint 4</h3>
+            <p>Things waiting to be filled</p>
+           </div>
         </div>
         
     </div>);

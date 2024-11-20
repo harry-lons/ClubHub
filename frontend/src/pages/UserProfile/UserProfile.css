@@ -9,7 +9,7 @@
 
 .navbarContainer {
     width: 100%;
-    position: fixed;
+    position: sticky;
     top: 0;
     z-index: 1000;
     background-color: #4A3F8C; /* Matches NavBar color */

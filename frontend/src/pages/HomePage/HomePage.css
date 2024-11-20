@@ -13,6 +13,8 @@
     padding-bottom: 30px;
     color: #fff;
     font-family: Arial, sans-serif;
+    overflow: auto;
+    
 }
 
 .navbarContainer {
@@ -20,6 +22,8 @@
     position: sticky;
     top: 0;
     z-index: 1000;
+    background-color: #4A3F8C; /* Matches NavBar color */
+    height: 4rem;
 }
 
 .web-identity-container {
@@ -52,10 +56,11 @@
 }
 
 .web-instruction-container p {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: bold;
     color: #ffffff;
 }
+.web-updates-container,
 .web-instruction-container {
     display: flex;
     flex-direction: column;
@@ -67,7 +72,7 @@
     border-radius: 10px; /* Smooth rounded corners */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
 }
-
+.web-update-4,
 .web-clubs-container,
 .web-events-container,
 .web-profile-container {
