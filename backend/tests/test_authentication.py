@@ -1,8 +1,6 @@
 from datetime import timedelta
 
 import pytest
-from fastapi import HTTPException
-from fastapi.testclient import TestClient
 
 from src.app import app, start_db
 from src.authentication.service import (
@@ -11,8 +9,6 @@ from src.authentication.service import (
     authenticate_user2,
     create_access_token,
 )
-
-# from .utils import client
 
 
 def test_login_user(client):
