@@ -6,7 +6,7 @@ from fastapi import HTTPException, status
 from .schemas import Event, EventCalendarData
 
 fake_event_1 = Event(
-    id="1",
+    id=1,  # will autoincrement
     title="Lunch",
     club_id="5",
     location="Earth",
@@ -14,16 +14,20 @@ fake_event_1 = Event(
     end_time=datetime(2024, 11, 3, 6),
     recurrence=(False, None, None),
     capacity=101,
-    type=["other"],
+    type=["social"],
 )
 
-# fake_event_2 = EventModel(
-#     name="Cat Party",
-#     event_id=2,
-#     location="Felis",
-#     time=datetime(2024, 11, 3, 20),
-#     type="party",
-# )
+fake_event_2 = Event(
+    id=999999999999,
+    title="Cat Party",
+    club_id="x",
+    location="Cat Cafe",
+    begin_time=datetime(2024, 11, 3, 20),
+    end_time=datetime(2024, 11, 3, 22),
+    recurrence=(False, None, None),
+    capacity=None,
+    type=["food"],
+)
 
 # fake_event_3 = EventModel(
 #     name="Big Speech",

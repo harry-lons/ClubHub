@@ -20,7 +20,7 @@ class Event(EventID):
     begin_time: datetime
     end_time: datetime
     recurrence: Tuple[bool, Optional[int], Optional[datetime]]
-    capacity: int
+    capacity: Optional[int]
     summary: str = Field(default="")
     pictures: List[str] = Field(default=[])
     type: List[str]
