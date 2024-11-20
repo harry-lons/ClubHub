@@ -89,10 +89,6 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
                 body: formData
             });
 
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
             const data = await response.json();
             console.log('Response:', data);
 
