@@ -1,0 +1,96 @@
+
+.HomePageContainer {
+    background: url('../../../public/gradientBackground.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: repeat-y;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+    padding-bottom: 30px;
+    color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+.navbarContainer {
+    width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.web-identity-container {
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 30px;
+    padding: 20px;
+}
+
+.web-identity-container h1 {
+    font-size: 36px;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.web-identity-container p {
+    font-size: 18px;
+    color: #e1e1e1;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.web-instruction-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.web-instruction-container p {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffffff;
+}
+.web-instruction-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+    margin-top: 20px;
+    background-color: rgba(255, 255, 255, 0.1); /* White transparent background */
+    padding: 18px;
+    border-radius: 10px; /* Smooth rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+}
+
+.web-clubs-container,
+.web-events-container,
+.web-profile-container {
+    display: block; /* Switch to block layout */
+    text-align: left; 
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    width: 90%;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.web-clubs-container {
+    flex-direction: column;
+}
+
+.web-events-container {
+    flex-direction: column;
+}
+
+.web-profile-container {
+    flex-direction: column;
+}

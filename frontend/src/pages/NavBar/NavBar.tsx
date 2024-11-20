@@ -66,6 +66,7 @@ export const NavBar = () => {
               color: 'inherit',
               textDecoration: 'none',
             }}
+            onClick={()=>navigate('/homepage')}
           >
             SoCalSocial
           </Typography>
