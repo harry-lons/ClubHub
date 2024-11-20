@@ -37,10 +37,11 @@ fake_event_2 = Event(
 #     type="food",
 # )
 
+
 mock_events = EventCalendarData(
     events=[
         fake_event_1,
-        # fake_event_2, fake_event_3
+        fake_event_2, fake_event_3
     ]
 )
 

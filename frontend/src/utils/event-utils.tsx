@@ -34,10 +34,10 @@ export const fetchRSVPEvents = async (token: string): Promise<Event[]> => {
     })
 
     if (!response.ok) {
-        throw new Error("Failed to fetch events")
+        throw new Error("Failed to fetch event list")
     }    
 
-    const events: Event[] = await response.json();
+    const events: Event[] = (await response.json()).events;
     
     events.forEach((event)=>{
         if (event.begin_time) {event.begin_time = new Date(event.begin_time); }
@@ -56,7 +56,7 @@ export const fetchClubEvents = async (club_id: Number): Promise<Event[]>=>{
         throw new Error("Failed to fetch club events")
     }    
 
-    const events: Event[] = await response.json();
+    const events: Event[] = (await response.json()).events;
     
     events.forEach((event)=>{
         if (event.begin_time) {event.begin_time = new Date(event.begin_time); }
@@ -79,7 +79,7 @@ export const fetchPastEvents = async (token: string): Promise<Event[]> => {
         throw new Error("Failed to fetch upcoming events")
     }    
 
-    const events: Event[] = await response.json();
+    const events: Event[] = (await response.json()).events;
     
     events.forEach((event)=>{
         if (event.begin_time) {event.begin_time = new Date(event.begin_time); }

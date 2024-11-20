@@ -1,11 +1,17 @@
 /* Container for the entire events list */
-.events-list-container {
-    background: url('../../../public/gradientBackground.png'); /* Gradient background */
+.background {
+    background: url('../../../public/gradientBackground.png');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    background-repeat: repeat-y; /*infinite scroll*/
+    background-repeat: repeat-y;
     width: 100%;
+    height: 100vh;
+    position: fixed;
+    z-index: -1;
+}
+
+.events-list-container {
     display: flex;
     justify-content: center;
     align-items: flex-start; /* Aligns to the top */
