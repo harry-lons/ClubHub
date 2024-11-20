@@ -4,12 +4,11 @@ from typing import Annotated, Dict
 import jwt
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from fastapi.responses import JSONResponse
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 from passlib.context import CryptContext
 
 from ..database import DB
-from ..identities.schemas import User
+from ..identities.schemas import User, UserID
 from .constants import (
     BAD_CREDIENTIALS_EXCEPTION,
     LOGIN_BAD_EMAIL,
@@ -211,16 +210,16 @@ async def user_login(
     "/user/signup",
     tags=["user"],
 )
-async def user_signup(info: UserSignup) -> JSONResponse:
+async def user_signup(info: UserSignup) -> UserID:
     try:
         DB.db.get_user_from_email(info.email)
         raise SIGNUP_EMAIL_EXISTS
     except ValueError:
         # This email isn't in the database. Continue
         pass
-    hashed_pw = pwd_context.hash(info.password)
+    hashed_pw = get_password_hash(info.password)
     uuid = DB.db.add_user(info.email, hashed_pw, info.first_name, info.last_name)
-    return {"id": uuid}
+    return UserID(id=uuid)
 
 
 @app.post("/club/login", tags=["club"])
