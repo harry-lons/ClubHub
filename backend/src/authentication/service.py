@@ -9,8 +9,7 @@ from passlib.context import CryptContext
 
 from ..database import DB
 from ..db_store.conversion import b_club_to_f_club
-from ..identities.schemas import Club, User
-from ..identities.schemas import User, UserID
+from ..identities.schemas import Club, User, UserID
 from .constants import (
     BAD_CREDIENTIALS_EXCEPTION,
     LOGIN_BAD_EMAIL,
