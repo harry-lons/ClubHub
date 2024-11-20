@@ -12,6 +12,8 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
     const [showPassword, setShowPassword] = React.useState(false);
     const [enteredEmail, setEnteredEmail] = React.useState("");
     const [enteredPassword, setEnteredPassword] = React.useState("");
+    const [badEmailWarning, setBadEmailWarning] = React.useState(false);
+    const [badPasswordWarning, setBadPasswordWarning] = React.useState(false);
     const { saveToken } = useContext(AuthContext);
     const navigate = useNavigate();
 
@@ -29,9 +31,41 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
         setEnteredPassword(event.target.value);
     };
 
+    const inputIsValid = () => {
+        var returnValue = true;
+        setBadEmailWarning(false);
+        setBadPasswordWarning(false);
+
+        if (enteredEmail === "") {
+            // No email entered
+            setBadEmailWarning(true);
+            returnValue = false;
+        }
+
+        // Regular expression to validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(enteredEmail)) {
+            // Invalid email format
+            setBadEmailWarning(true);
+            returnValue = false;
+        }
+
+        if (enteredPassword === "") {
+            setBadPasswordWarning(true);
+            returnValue = false;
+        }
+
+        return returnValue;
+    }
+
     const handleSubmitForm = async (event: React.MouseEvent<HTMLButtonElement>) => {
-        let endpointURL = process.env.REACT_APP_BACKEND_URL;
-        if (!endpointURL) {
+        if (!inputIsValid()) {
+            // Failed input check, do not submit
+            return;
+        }
+
+        let baseURL = process.env.REACT_APP_BACKEND_URL;
+        if (!baseURL) {
             console.error('Backend base URL is not defined. Check your .env file');
             return;
         }
@@ -39,8 +73,40 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
         const formData = new FormData();
         formData.append('username', enteredEmail);
         formData.append('password', enteredPassword);
+        // Convert to lowercase for consistency
+        let lcAccount = accountType?.toLowerCase();
 
-        // TODO: Send backend request to sign up (add the user to the database)
+        // Determine the specific backend endpoint based on what type of account this is
+        const tokenURL = `${baseURL}/${lcAccount}/signup`;
+        console.log(tokenURL);
+
+        try {
+            const response = await fetch(tokenURL, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            console.log('Response:', data);
+
+            // Check if the response contains a token
+            if (data.access_token) {
+                console.log('Token received:', data.access_token);
+                saveToken(data.access_token);  // Store the token in context
+                navigate('/events');     // Redirect to /events page
+            } else {
+                // Handle (unexpected) incorrect response from backend
+                console.error('No token found in the response');
+            }
+
+        } catch (error) {
+            // Handle other error codes (401 unauthorized, etc)
+            console.error('There was a problem with the fetch operation:', error);
+        }
         
     };
 
