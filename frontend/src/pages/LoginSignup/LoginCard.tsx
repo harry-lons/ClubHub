@@ -82,17 +82,12 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
 
         // Determine the specific backend endpoint based on what type of account this is
         const tokenURL = `${baseURL}/${lcAccount}/login`;
-        console.log(tokenURL);
 
         try {
             const response = await fetch(tokenURL, {
                 method: 'POST',
                 body: formData
             });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
 
             const data = await response.json();
             console.log('Response:', data);

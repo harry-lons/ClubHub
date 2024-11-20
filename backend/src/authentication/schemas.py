@@ -39,7 +39,7 @@ member variables:
 class UserSignup(BaseModel):
     first_name: str
     last_name: str
-    username: str
+    email: str
     password: str
 
 

@@ -19,10 +19,10 @@ const LoginSignup: React.FC<LoginSignupProps> = ({ which }) => {
         <div id='login-signup-container' >
             <Grid container id='login-signup-grid'>
                 {/* Left Side - empty space */}
-                <Grid item xs={7.5} />
+                <Grid item xs={ which === 'LOG IN' ? 7.5 : 5} />
 
                 {/* Right Side - Card */}
-                <Grid item xs={3.5} style={{ display: 'flex', justifyContent: 'center', fontFamily: 'Roboto' }}>
+                <Grid item xs={which === 'LOG IN' ? 3.5 : 6} style={{ display: 'flex', justifyContent: 'center', fontFamily: 'Roboto' }}>
                     {
                         // Determine which card/props to put up based on the prop
                         which === 'LOG IN' ?
