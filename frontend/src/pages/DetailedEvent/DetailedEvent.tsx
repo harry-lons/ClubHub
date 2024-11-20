@@ -42,8 +42,13 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
 
     const loadEvent = async () => {
         try {
-            const event_ = await fetchEventById(Number(id)); // Convert id to a number
-            setEvent(event_);
+            if (id) {
+                const event_ = await fetchEventById(Number(id)); // `id` is already a string, so no conversion is needed
+                console.log("Fetched event:", event_);
+                setEvent(event_);
+            } else {
+                console.error("ID is undefined. Cannot fetch event.");
+            }
         } catch (err: any) {
             console.error("Error loading event:", err.message);
         }
@@ -62,6 +67,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
     const loadRSVP = async () => {
         try {
             const RSVPList = await fetchRSVP(token); // Convert id to a number
+            
             RSVPList.forEach((rl)=> {if(rl.event_id === event.id){setRsvp(true);}});
         } catch (err: any) {
             console.error("Error loading RSVP:", err.message);
@@ -109,9 +115,9 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                 return "custom interval";
         }
     }
-    const handleRecur = (recurrence: [ boolean, number, Date|null])=>{
-        if(recurrence[0]){
-            return(<p>Yes. Recur {recurrenceDescription(recurrence[1])}. End Date {recurrence[2]?.getFullYear()}-{recurrence[2]?.getMonth()}-{recurrence[2]?.getDate()}</p >);
+    const handleRecur = (event: Event)=>{
+        if(event.recurrence){
+            return(<p>Yes. Recur {recurrenceDescription(event.recurrence_type as number)}. End Date {event.stop_date?.getFullYear()}-{event.stop_date?.getMonth()}-{event.stop_date?.getDate()}</p >);
         }else{
             return (<p>Not a recurring event.</p >);
         }
@@ -267,7 +273,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                 </div>
                 <div className="event-recurring">
                     <h3>Recurring</h3>
-                    {handleRecur(event.recurrence)}
+                    {handleRecur(event)}
                 </div>
                 {(which === "CLUB") && 
                 <div className = "event-num-attendees">

@@ -8,7 +8,9 @@ export type Event =
 	location: string;
 	begin_time: Date;
 	end_time: Date;
-	recurrence: [ boolean, number, Date|null ];
+	recurrence: boolean;
+	recurrence_type: Number | null;
+	stop_date: Date|null;
 	summary: string;
 	pictures: { [key: string]: string };
 	type: EventType[];
