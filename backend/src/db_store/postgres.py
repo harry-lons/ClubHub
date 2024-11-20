@@ -1,7 +1,12 @@
 import uuid
 from typing import Any, Dict, Optional, Tuple, Type, TypeVar
 
-from sqlalchemy.exc import IntegrityError, MultipleResultsFound, NoResultFound
+from sqlalchemy.exc import (
+    IntegrityError,
+    MultipleResultsFound,
+    NoResultFound,
+    SQLAlchemyError,
+)
 from sqlalchemy.orm import Session
 
 from ..events.schemas import Event as FrontendEvent
@@ -30,7 +35,7 @@ class PostgresDatabase(IAuth, IEvents):
             )
 
             self.session.add(account)
-            self.session.commit()
+            # self.session.commit()
 
             return account_id
 
@@ -111,18 +116,41 @@ class PostgresDatabase(IAuth, IEvents):
             raise ValueError(f"Server error")
 
     def edit_event(self, event: FrontendEvent):
+        # ! TODO do not allow a club to edit the ID of an event
         parent_club = self.get_org_from_id(event.club_id)
         new_event = f_event_to_b_event(self.session, parent_club, event)
         self._update(Events, new_event, id=new_event.id)
+        self.session.commit()
 
     def delete_event(self, event_id: int):
-        event = self._get_by(Events, id=event_id)
+        event = self._get_by(Events, id=event_id)  # Fetch the event
+        try:
 
-        # TODO we may want to make this a single transaction to allow rollbacks
-        self.session.query(UserRSVPs).filter_by(event_id=event.id).delete(
-            synchronize_session=False
+            with self.session.begin_nested():  # Create a savepoint
+                # Delete related UserRSVPs and EventTagAssociations
+                self.session.query(UserRSVPs).filter_by(event_id=event.id).delete()
+                self.session.query(EventTagAssociations).filter_by(
+                    event_id=event.id
+                ).delete()
+                self._delete(Events, id=event_id)
+            self.session.commit()
+
+        except SQLAlchemyError as e:
+            # If anything goes wrong, rollback the transaction
+            self.session.rollback()
+            raise ValueError(f"Error deleting event {event_id}: {e}")
+
+    def add_tag(self, tag: str):
+        existing_tag = (
+            self.session.query(EventTags).filter(EventTags.tag_name == tag).first()
         )
-        self._delete(Events, id=event_id)
+
+        if existing_tag is not None:
+            raise Exception(f"Tag {tag} already exist in database.")
+
+        new_tag = EventTags(tag_name=tag)
+
+        self.session.add(new_tag)
 
     def _get_by(self, model: Type[M], **filters) -> M:
         """Fetch an object by arbitrary filters. Returns an object of type `model`.
@@ -192,4 +220,3 @@ class PostgresDatabase(IAuth, IEvents):
                 )
             else:
                 query.delete(synchronize_session=False)
-        self.session.commit()

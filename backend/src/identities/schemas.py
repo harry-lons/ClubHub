@@ -1,5 +1,5 @@
 from typing import List
-
+import uuid
 from pydantic import BaseModel
 
 
@@ -10,11 +10,11 @@ class ClubID(BaseModel):
 class Club(ClubID):
     # id: int
     name: str
-    contact_email: List[str]
+    contact_email: str
 
 
 class UserID(BaseModel):
-    id: str
+    id: uuid.UUID
 
 
 class User(UserID):

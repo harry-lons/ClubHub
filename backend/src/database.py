@@ -1,11 +1,10 @@
-from sqlalchemy import create_engine, text
-from sqlalchemy.engine import URL
-from sqlalchemy.orm import declarative_base, sessionmaker
-import os
 from dotenv import load_dotenv
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import sessionmaker
 
 load_dotenv()
 
+from .db_store.main import url
 from .db_store.postgres import PostgresDatabase
 
 # TODO we need to move away from concrete PostgresDatabase and replace
@@ -63,14 +62,5 @@ class DatabaseContainer:
 
         self.db = PostgresDatabase(session=session)
 
-
-url = URL.create(
-    drivername="postgresql+psycopg",
-    username=os.getenv('PG_USERNAME'),
-    password=os.getenv('PG_PASSWORD'),
-    host=os.getenv('PG_HOST'),
-    port=os.getenv('PG_PORT'),
-    database=os.getenv('PG_DATABASE'),
-)
 
 DB = DatabaseContainer()

@@ -37,7 +37,8 @@ export type EventType =
     | "sports"
     | "arts"
     | "training"
-    | "research";
+    | "research"
+    | "food";
 
 export type RSVP = 
 {
