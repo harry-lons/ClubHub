@@ -5,13 +5,17 @@ import {Event,Club,User,RSVP} from "../types/types";
 
 interface AuthContextType {
   token: string;
+  accountType: string;
   saveToken: (jwt: string) => void;
+  setAccountType: (type: string) => void;
   removeToken: () => void;
 }
 
 const defaultContextValue: AuthContextType = {
   token: "",
+  accountType: "",
   saveToken: () => {},
+  setAccountType: () => {},
   removeToken: () => {}
 };
 
@@ -23,6 +27,7 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [token,setToken] = useState("");
+  const [accountType, setAccountType] = useState("");
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -39,6 +44,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setToken(""); // Reset the token state
   };
 
-  return (<AuthContext.Provider value={{token, saveToken, removeToken}}>{children}</AuthContext.Provider>);
+  return (<AuthContext.Provider value={{token, accountType, setAccountType, saveToken, removeToken}}>{children}</AuthContext.Provider>);
 
 }

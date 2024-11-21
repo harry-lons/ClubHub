@@ -13,7 +13,7 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
     const [enteredPassword, setEnteredPassword] = React.useState("");
     const [badEmailWarning, setBadEmailWarning] = React.useState(false);
     const [badPasswordWarning, setBadPasswordWarning] = React.useState(false);
-    const { saveToken } = useContext(AuthContext);
+    const { saveToken, setAccountType } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -96,6 +96,7 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
             if (data.access_token) {
                 console.log('Token received:', data.access_token);
                 saveToken(data.access_token);  // Store the token in context
+                setAccountType(accountType === 'CLUB' ? 'club' : 'user');
                 navigate('/events');     // Redirect to /events page
             } else {
                 // Handle (unexpected) incorrect response from backend
