@@ -30,14 +30,14 @@ describe('Login', () => {
             <App />
         );
 
-        // Enter 'harry@admin.com' as email
+        // Enter 'username1@example.com' as email
         fireEvent.change(screen.getByTestId('emailInput').querySelector('input')!, {
-            target: { value: 'harry@admin.com' },
+            target: { value: 'username1@example.com' },
         });
 
-        // Enter 'harrys' as password
+        // Enter 'password' as password
         fireEvent.change(screen.getByTestId('passwordInput').querySelector('input')!, {
-            target: { value: 'harrys' },
+            target: { value: 'password' },
         });
 
         // Click the login button
