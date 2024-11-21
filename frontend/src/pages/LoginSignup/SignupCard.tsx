@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, InputAdornment, IconButton, OutlinedInput, Button, Grid } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { signup } from '../../utils/auth-utils';
 import { AuthContext } from '../../context/AuthContext';
 
 interface SignupCardProps {
@@ -95,41 +96,9 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
         const tokenURL = `${baseURL}/${lcAccount}/signup`;
         console.log(tokenURL);
 
-        try {
-            const response = await fetch(tokenURL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(info)
-            });
-
-            if (!response.ok) {
-                // Check if it was existing email error
-                const message = await response.json();
-                if (message.detail === "An account with this email already exists") {
-                    console.log(message.detail);
-                    // Handle this somehow on screen
-                }
-            }
-
-            const data = await response.json();
-
-            // Check if the response contains a token
-            if (data.id) {
-                console.log('ID received:', data.id);
-                saveToken(data.id);  // Store the token in context
-                setSignupSuccess(true);
-            } else {
-                // Handle (unexpected) incorrect response from backend
-                console.error('No ID found in the response');
-            }
-
-        } catch (error) {
-            // Handle other error codes (401 unauthorized, etc)
-            console.error('There was a problem with the fetch operation:', error);
-        }
-
+        const success = await signup(info, tokenURL);
+        if(success){ setSignupSuccess(true); }
+        else{ console.error("something went wrong on backend"); }
     };
 
     const handleMouseUpPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
