@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Card, CardContent, TextField, InputAdornment, IconButton, OutlinedInput, Button } from '@mui/material';
+import { Card, CardContent, TextField, InputAdornment, IconButton, OutlinedInput, Button, Snackbar } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { AuthContext } from '../../context/AuthContext';
 
@@ -8,12 +8,13 @@ interface LoginCardProps {
     accountType?: string; // Define whether this is a user or club login
 }
 const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
-    const [showPassword, setShowPassword] = React.useState(false);
-    const [enteredEmail, setEnteredEmail] = React.useState("");
-    const [enteredPassword, setEnteredPassword] = React.useState("");
-    const [badEmailWarning, setBadEmailWarning] = React.useState(false);
-    const [badPasswordWarning, setBadPasswordWarning] = React.useState(false);
-    const { saveToken, setAccountType } = useContext(AuthContext);
+    const [showPassword, setShowPassword] = useState(false);
+    const [enteredEmail, setEnteredEmail] = useState("");
+    const [enteredPassword, setEnteredPassword] = useState("");
+    const [badEmailWarning, setBadEmailWarning] = useState(false);
+    const [badPasswordWarning, setBadPasswordWarning] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const { saveToken, setAccountType, setId } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -57,6 +58,55 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
         return returnValue;
     }
 
+    const authenticate = async (endpoint: string, formData: FormData) => {
+        try {
+            const response = await fetch(`${endpoint}/login/`, {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            // Check if the response contains a token
+            if (data.access_token) {
+                // console.log('Token received:', data.access_token);
+                return data.access_token;
+            } else {
+                // Handle (unexpected) incorrect response from backend
+                console.error('No token found in the response');
+
+                return null;
+            }
+
+        } catch (error) {
+            // Handle other error codes (401 unauthorized, etc)
+            console.error('There was a problem with the fetch operation:', error);
+        }
+    }
+
+    const whoami = async (endpoint: string, token: string): Promise<string> => {
+        try {
+            const response = await fetch(`${endpoint}/whoami/`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error fetching user info: ${response.statusText}`);
+            }
+
+            const user = await response.json(); // Assuming the response is the `User` model
+            return user.id;
+        } catch (error) {
+            console.error("Failed to fetch user info:", error);
+            throw error;
+        }
+    };
+
+
     const handleSubmitForm = async (event: React.MouseEvent<HTMLButtonElement>) => {
         if (!inputIsValid()) {
             // Failed input check, do not submit
@@ -74,39 +124,30 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
 
         if (!accountType || (accountType !== 'USER' && accountType !== 'CLUB')) {
             // Something went very wrong, just go back to / with error
-            console.error("Lost state on whether this was club or user login!");
+            console.error("Somehow lost state on whether this was club or user login!");
             window.location.href = '/';
         }
+
         // Convert to lowercase for consistency
         let lcAccount = accountType?.toLowerCase();
 
         // Determine the specific backend endpoint based on what type of account this is
-        const tokenURL = `${baseURL}/${lcAccount}/login`;
-
-        try {
-            const response = await fetch(tokenURL, {
-                method: 'POST',
-                body: formData
-            });
-
-            const data = await response.json();
-            console.log('Response:', data);
-
-            // Check if the response contains a token
-            if (data.access_token) {
-                console.log('Token received:', data.access_token);
-                saveToken(data.access_token);  // Store the token in context
-                setAccountType(accountType === 'CLUB' ? 'club' : 'user');
-                navigate('/events');     // Redirect to /events page
-            } else {
-                // Handle (unexpected) incorrect response from backend
-                console.error('No token found in the response');
-            }
-
-        } catch (error) {
-            // Handle other error codes (401 unauthorized, etc)
-            console.error('There was a problem with the fetch operation:', error);
+        const endpoint = `${baseURL}/${lcAccount}`;
+        const token = await authenticate(endpoint, formData);
+        if (!token) {
+            // error in fetch was already printed to console in authenticate, just show user an error
+            setError("Error logging in")
+            return;
         }
+        saveToken(token);  // Store the token in context
+        setAccountType(accountType === 'CLUB' ? 'club' : 'user');
+        const id = await whoami(endpoint, token);
+
+        // Put the id in context
+        setId(id);
+
+        navigate('/events');     // Redirect to /events page
+
     };
 
     const handleMouseUpPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -114,17 +155,24 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
     };
     return (
         <Card style={{ width: '100%' }}>
+            {error &&
+                <Snackbar
+                    open={true}
+                    autoHideDuration={6000}
+                    message={error}
+                    onClose={() => setError(null)}
+                />}
             <CardContent style={{ alignItems: 'left', textAlign: 'left', padding: 40 }}>
                 {/* roboto medium, override font size to 18 as per figma */}
                 <p className='roboto-medium' style={{ fontSize: 18, marginBottom: 20 }}>
                     LOG IN {accountType === 'CLUB' ? '(club)' : null
                     }
                 </p>
-                <div style={{ marginTop: 15, marginBottom:15 }}>
+                <div style={{ marginTop: 15, marginBottom: 15 }}>
                     <p className="roboto-regular">
-                        <Link to={ accountType === 'CLUB' ? '/login' : '/club/login' } style={{ color: "#00cccccc" }}>
-                            Click here for { accountType === 'CLUB' ? 'user' : 'club' } login
-                        </Link> 
+                        <Link to={accountType === 'CLUB' ? '/login' : '/club/login'} style={{ color: "#00cccccc" }}>
+                            Click here for {accountType === 'CLUB' ? 'user' : 'club'} login
+                        </Link>
                     </p>
                 </div>
                 <div className='loginsignup-input-wrap'
