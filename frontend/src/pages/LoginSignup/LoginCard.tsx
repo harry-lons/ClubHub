@@ -60,7 +60,7 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
 
     const authenticate = async (endpoint: string, formData: FormData) => {
         try {
-            const response = await fetch(`${endpoint}/login/`, {
+            const response = await fetch(`${endpoint}/login`, {
                 method: 'POST',
                 body: formData
             });

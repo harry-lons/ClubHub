@@ -30,14 +30,14 @@ describe('Login', () => {
             <App />
         );
 
-        // Enter 'username1' as username
+        // Enter 'harry@admin.com' as email
         fireEvent.change(screen.getByTestId('emailInput').querySelector('input')!, {
-            target: { value: 'username1@example.com' },
+            target: { value: 'harry@admin.com' },
         });
 
-        // Enter 'password' as password
+        // Enter 'harrys' as password
         fireEvent.change(screen.getByTestId('passwordInput').querySelector('input')!, {
-            target: { value: 'password' },
+            target: { value: 'harrys' },
         });
 
         // Click the login button
@@ -45,7 +45,7 @@ describe('Login', () => {
 
         // Assert that navigation to the /events page happens upon successful login
         await waitFor(() => {
-
+            
             // Check for the existence of navbar
             const NavbarTexts = screen.getAllByText('SoCalSocial');
             expect(NavbarTexts).toHaveLength(2);
