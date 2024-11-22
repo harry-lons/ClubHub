@@ -1,3 +1,5 @@
+import {userSignup} from '../types/types'
+
 export const authenticate = async (endpoint: string, formData: FormData) => {
     // object to return
     let ret = {
@@ -78,7 +80,62 @@ export const validateLoginInput = (enteredEmail: string, enteredPassword: string
     return ret;
 };
 
-export const signup = async (info: object, tokenURL: string) => {
+const validateWithin40chars = (element: string) => {
+    if (element === "") {
+        // No string entered
+        return "This field is required";
+    }
+    else if (element.length > 40){
+        // string too long
+        return "Must be less than 40 characters";
+    }
+    else {
+        // 
+        return null;
+    }
+}
+
+const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        // Invalid email format
+        return "Invalid email format";
+    }
+    else return null;
+}
+
+export const validateSignupInput = (info: userSignup) => {
+    const { email, password, first_name, last_name } = info;
+    
+    let ret = {
+        success: true,
+        // Reuse the function to apply DRY (don't repeat yourself) for each field
+        emailMessage: validateWithin40chars(email),
+        passwordMessage: validateWithin40chars(password),
+        firstNameMessage: validateWithin40chars(first_name),
+        lastNameMessage: validateWithin40chars(last_name)
+    }
+    if (!ret.emailMessage) {
+        // Check email format
+        ret.emailMessage = validateEmail(email);
+    }
+    if(!ret.passwordMessage) {
+        if(password.length < 6) {
+            ret.passwordMessage = "Must be at least 6 characters";
+        }
+    }
+
+    if(ret.emailMessage || ret.passwordMessage || ret.firstNameMessage || ret.lastNameMessage){
+        // If we have an error message, set success to false
+        ret.success = false;
+    }
+    console.log(ret);
+
+    return ret;
+};
+
+export const signup = async (info: userSignup, tokenURL: string) => {
+    validateSignupInput(info);
 
     try {
         const response = await fetch(tokenURL, {

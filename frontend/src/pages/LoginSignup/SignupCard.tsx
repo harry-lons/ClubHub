@@ -1,8 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, InputAdornment, IconButton, OutlinedInput, Button, Grid } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { signup } from '../../utils/auth-utils';
+import { userSignup } from '../../types/types'
+import { signup, validateSignupInput } from '../../utils/auth-utils';
 import { AuthContext } from '../../context/AuthContext';
 
 interface SignupCardProps {
@@ -10,14 +11,16 @@ interface SignupCardProps {
     signupURL: string
 }
 const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
-    const [showPassword, setShowPassword] = React.useState(false);
-    const [enteredEmail, setEnteredEmail] = React.useState("");
-    const [enteredPassword, setEnteredPassword] = React.useState("");
-    const [firstName, setFirstName] = React.useState("");
-    const [lastName, setLastName] = React.useState("");
-    const [signupSuccess, setSignupSuccess] = React.useState(false);
-    const [badEmailWarning, setBadEmailWarning] = React.useState(false);
-    const [badPasswordWarning, setBadPasswordWarning] = React.useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [enteredEmail, setEnteredEmail] = useState("");
+    const [enteredPassword, setEnteredPassword] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [signupSuccess, setSignupSuccess] = useState(false);
+    const [badEmailWarning, setBadEmailWarning] = useState<string | null>(null);
+    const [badPasswordWarning, setBadPasswordWarning] = useState<string | null>(null);
+    const [firstNameWarning, setFirstNameWarning] = useState<string | null>(null);
+    const [lastNameWarning, setLastNameWarning] = useState<string | null>(null);
 
     const { saveToken } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -43,36 +46,23 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
         setLastName(event.target.value);
     }
 
-    const inputIsValid = () => {
-        var returnValue = true;
-        setBadEmailWarning(false);
-        setBadPasswordWarning(false);
-
-        if (enteredEmail === "") {
-            // No email entered
-            setBadEmailWarning(true);
-            returnValue = false;
-        }
-
-        // Regular expression to validate email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(enteredEmail)) {
-            // Invalid email format
-            setBadEmailWarning(true);
-            returnValue = false;
-        }
-
-        if (enteredPassword === "") {
-            setBadPasswordWarning(true);
-            returnValue = false;
-        }
-
-        return returnValue;
-    }
-
     const handleSubmitForm = async (event: React.MouseEvent<HTMLButtonElement>) => {
-        if (!inputIsValid()) {
-            // Failed input check, do not submit
+        // initialize signup info based on entered data
+        const info: userSignup = {
+            email: enteredEmail,
+            password: enteredPassword,
+            first_name: firstName,
+            last_name: lastName,
+        }
+        const validation = validateSignupInput(info);
+
+        if (!validation.success) {
+            console.log("failed input validation");
+            setBadEmailWarning(validation.emailMessage);
+            setBadPasswordWarning(validation.passwordMessage);
+            setFirstNameWarning(validation.firstNameMessage);
+            setLastNameWarning(validation.lastNameMessage);
+            // do not send request
             return;
         }
 
@@ -82,13 +72,6 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
             return;
         }
 
-        // initialize signup info based on entered data
-        const info = {
-            email: enteredEmail,
-            password: enteredPassword,
-            first_name: firstName,
-            last_name: lastName,
-        }
         // Convert to lowercase for consistency
         let lcAccount = accountType?.toLowerCase();
 
@@ -97,8 +80,8 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
         console.log(tokenURL);
 
         const success = await signup(info, tokenURL);
-        if(success){ setSignupSuccess(true); }
-        else{ console.error("something went wrong on backend"); }
+        if (success) { setSignupSuccess(true); }
+        else { console.error("something went wrong on backend"); }
     };
 
     const handleMouseUpPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -109,7 +92,7 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
             <CardContent style={{ alignItems: 'left', textAlign: 'left', padding: 40 }}>
                 {signupSuccess ? (
                     <>
-                        <div className='roboto-medium' style={{marginBottom:20}}>Signup successful!</div>
+                        <div className='roboto-medium' style={{ marginBottom: 20 }}>Signup successful!</div>
                         Your account has been registered. Head over to the {' '}
                         <Link to="/login" style={{ color: "#00aaaa" }}>
                             login page
@@ -132,6 +115,11 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
                                         value={enteredEmail}
                                         onChange={handleEmailChange}
                                     />
+                                    {badEmailWarning &&
+                                        <p
+                                            style={{ color: "red", marginTop: 10 }}
+                                        > {badEmailWarning}</p>
+                                    }
                                 </div>
                             </Grid>
                             <Grid item xs={1} />
@@ -162,6 +150,11 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
                                             </InputAdornment>
                                         }
                                     />
+                                    {badPasswordWarning &&
+                                        <p
+                                            style={{ color: "red", marginTop: 10 }}
+                                        > {badPasswordWarning}</p>
+                                    }
                                 </div>
                             </Grid>
                             {/* First Name Input */}
@@ -173,6 +166,11 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
                                         value={firstName}
                                         onChange={handleFirstNameChange}
                                     />
+                                    {firstNameWarning &&
+                                        <p
+                                            style={{ color: "red", marginTop: 10 }}
+                                        > {firstNameWarning}</p>
+                                    }
                                 </div>
                             </Grid>
                             <Grid item xs={1} />
@@ -185,6 +183,11 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
                                         value={lastName}
                                         onChange={handleLastNameChange}
                                     />
+                                    {lastNameWarning &&
+                                        <p
+                                            style={{ color: "red", marginTop: 10 }}
+                                        > {lastNameWarning}</p>
+                                    }
                                 </div>
                             </Grid>
                         </Grid>
