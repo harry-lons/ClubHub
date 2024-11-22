@@ -67,3 +67,11 @@ export type Club =
 	board_members: string[];
 	contact_email: string | string[];
 };
+
+export type userSignup = 
+{
+	email: string;
+	password: string;
+	first_name: string; 
+	last_name: string;
+};
