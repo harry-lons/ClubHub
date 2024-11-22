@@ -117,6 +117,11 @@
    text-decoration: underline;
  }
  
- 
+ #logsign-submit-button {
+   background-color: #A556EE;
+   color: white;
+   padding-top: 10px;
+   padding-bottom: 10px;
+}
  
  
