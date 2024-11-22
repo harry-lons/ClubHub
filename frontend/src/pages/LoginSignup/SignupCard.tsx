@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Card, CardContent, InputAdornment, IconButton, OutlinedInput, Button, Grid } from '@mui/material';
+import { Card, CardContent, InputAdornment, IconButton, OutlinedInput, Button, Grid, Snackbar } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { userSignup } from '../../types/types'
 import { signup, validateSignupInput } from '../../utils/auth-utils';
@@ -21,6 +21,7 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
     const [badPasswordWarning, setBadPasswordWarning] = useState<string | null>(null);
     const [firstNameWarning, setFirstNameWarning] = useState<string | null>(null);
     const [lastNameWarning, setLastNameWarning] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const { saveToken } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -79,9 +80,9 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
         const tokenURL = `${baseURL}/${lcAccount}/signup`;
         console.log(tokenURL);
 
-        const success = await signup(info, tokenURL);
-        if (success) { setSignupSuccess(true); }
-        else { console.error("something went wrong on backend"); }
+        const result = await signup(info, tokenURL);
+        if (result.success) { setSignupSuccess(true); }
+        else { setError(result.detail); }
     };
 
     const handleMouseUpPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -89,6 +90,13 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
     };
     return (
         <Card style={{ width: '100%' }}>
+            {error &&
+                <Snackbar
+                    open={true}
+                    autoHideDuration={6000}
+                    message={error}
+                    onClose={() => setError(null)}
+                />}
             <CardContent style={{ alignItems: 'left', textAlign: 'left', padding: 40 }}>
                 {signupSuccess ? (
                     <>
