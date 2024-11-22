@@ -1,8 +1,8 @@
-import {userSignup} from '../types/types'
+import { userSignup, signupResponse, loginResponse } from '../types/types'
 
 export const authenticate = async (endpoint: string, formData: FormData) => {
     // object to return
-    let ret = {
+    let ret:loginResponse = {
         success: false,
         token: "",
         detail: "",
@@ -85,7 +85,7 @@ const validateWithin40chars = (element: string) => {
         // No string entered
         return "This field is required";
     }
-    else if (element.length > 40){
+    else if (element.length > 40) {
         // string too long
         return "Must be less than 40 characters";
     }
@@ -106,7 +106,7 @@ const validateEmail = (email: string) => {
 
 export const validateSignupInput = (info: userSignup) => {
     const { email, password, first_name, last_name } = info;
-    
+
     let ret = {
         success: true,
         // Reuse the function to apply DRY (don't repeat yourself) for each field
@@ -119,24 +119,26 @@ export const validateSignupInput = (info: userSignup) => {
         // Check email format
         ret.emailMessage = validateEmail(email);
     }
-    if(!ret.passwordMessage) {
-        if(password.length < 6) {
+    if (!ret.passwordMessage) {
+        if (password.length < 6) {
             ret.passwordMessage = "Must be at least 6 characters";
         }
     }
 
-    if(ret.emailMessage || ret.passwordMessage || ret.firstNameMessage || ret.lastNameMessage){
+    if (ret.emailMessage || ret.passwordMessage || ret.firstNameMessage || ret.lastNameMessage) {
         // If we have an error message, set success to false
         ret.success = false;
     }
-    console.log(ret);
 
     return ret;
 };
 
 export const signup = async (info: userSignup, tokenURL: string) => {
     validateSignupInput(info);
-
+    let ret: signupResponse = {
+        success: false,
+        detail: "",
+    }
     try {
         const response = await fetch(tokenURL, {
             method: 'POST',
@@ -147,29 +149,30 @@ export const signup = async (info: userSignup, tokenURL: string) => {
         });
 
         if (!response.ok) {
-            // Check if it was existing email error
+            // send failure message back to signup card
             const message = await response.json();
-            if (message.detail === "An account with this email already exists") {
-                console.log(message.detail);
-                // Handle this somehow on screen
-            }
+            ret.detail = message.detail;
+            return ret;
         }
 
         const data = await response.json();
 
-        // Check if the response contains a token
+        // Check if the response contains an id
         if (data.id) {
             console.log('ID received:', data.id);
-            return true;
+            ret.success = true;
+            return ret;
         } else {
             // Handle (unexpected) incorrect response from backend
             console.error('No ID found in the response');
-            return false;
+            ret.detail = "Unexpected response from server";
+            return ret;
         }
 
     } catch (error) {
-        // Handle other error codes (401 unauthorized, etc)
+        // Catch any other weird errors
         console.error('There was a problem with the fetch operation:', error);
-        return false;
+        ret.detail = "An unknown error occured";
+        return ret;
     }
 }

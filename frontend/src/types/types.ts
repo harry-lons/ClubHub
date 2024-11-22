@@ -75,3 +75,16 @@ export type userSignup =
 	first_name: string; 
 	last_name: string;
 };
+
+export type signupResponse =
+{
+	success: boolean;
+	detail: string;
+}
+
+export type loginResponse = 
+{
+	success: boolean,
+    token: string,
+    detail: string,
+}
