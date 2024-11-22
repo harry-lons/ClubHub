@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { exampleEventList } from "../../constants/constants";
 import { useState, useEffect, useContext } from "react";
 import "./Events.css";
-import { Grid, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
+import { Grid, FormGroup, FormControlLabel, Checkbox, Button } from '@mui/material';
 import { NavBar } from "../NavBar/NavBar";
 import { fetchRSVPEvents } from "../../utils/event-utils";
 import { fetchClubById } from "../../utils/club-utils";
@@ -14,6 +14,11 @@ const Events: React.FC = () => {
     const [events, setEvents] = useState(exampleEventList);
     const [eventList, setEventList] = useState<Record<string, [string, Event][]>> ();
     const context = useContext(AuthContext);
+    const [checked, setChecked] = useState({
+        RSVP: false,
+        Followed: true,
+      });
+    const {RSVP, Followed} = checked;
 
     useEffect(() => {
         loadEvents();
@@ -54,6 +59,44 @@ const Events: React.FC = () => {
         navigate(`/events/${event_id}`);
     }
 
+    const handleLogIn = () => {
+        navigate('/');
+    };
+
+    const handleCheck = (check: any) => {
+        setChecked({...checked, [check.target.name]: check.target.checked,});
+    };
+
+    const getEvents = () => {
+        console.log("A");
+    }
+
+    const getRSVP = () => {
+        console.log("B");
+    }
+
+    const getFollowed = () => {
+        console.log("C");
+    }
+
+    const getRSVPFollowed = () => {
+        console.log("D");
+    }
+
+    //Check the filter to load the correct list
+    if (!RSVP && !Followed) {
+        getEvents();
+    }
+    if (RSVP && !Followed) {
+        getRSVP();
+    }
+    if (!RSVP && Followed) {
+        getFollowed();
+    }
+    if (RSVP && Followed) {
+        getRSVPFollowed();
+    }
+
     //Old method to process event list, keeping for placeholder
     const groupedEvents = events.reduce((acc: Record<string, [string, Event][]>, event: any) => {
         const dateKey = event.begin_time.toDateString();
@@ -70,6 +113,17 @@ const Events: React.FC = () => {
     //Placeholder screen for when no access to backend
     if (eventList === undefined) {
         return (
+            // Log in Button for when there is no token
+            // 
+            // <div style={{width: "100%"}}>
+            //     <div className="background"/>
+            //     <div className="navbar-container">
+            //         <NavBar />
+            //     </div>
+            //     <h1 style={{color: "white"}}>Please Log In to See All Events</h1>
+            //     <Button variant="contained" onClick={(handleLogIn)} id='logsign-submit-button'>LOG IN</Button>
+            // </div>
+
             <div style={{width: "100%"}}>
                 <div className="background"/>
                 <Grid container rowSpacing={4} className="events-list-container">
@@ -78,13 +132,25 @@ const Events: React.FC = () => {
                     </div>
                     <Grid item xs={9.5} sx={{display: 'flex', justifyContent: 'flex-end'}}>
                         <FormGroup>
-                            <FormControlLabel control={<Checkbox sx={{color: 'white', '&.Mui-checked': {color: 'white',},}}/>} label="RSVP Events" sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}} />
+                            <FormControlLabel 
+                                control={
+                                    <Checkbox checked={RSVP} onChange={handleCheck} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="RSVP"/>
+                                } 
+                                label="RSVP Events" 
+                                sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
+                            } />
                         </FormGroup>
                     </Grid>
                     <Grid item xs={.2}/>
                     <Grid item xs={2.3}>
                         <FormGroup>
-                            <FormControlLabel control={<Checkbox sx={{color: 'white', '&.Mui-checked': {color: 'white',},}}/>} label="Followed Events" sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}} />
+                            <FormControlLabel 
+                                control={
+                                    <Checkbox checked={Followed} onChange={handleCheck} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="Followed"/>
+                                } 
+                                label="Followed Events" 
+                                sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
+                            } />
                         </FormGroup>
                     </Grid>
                     <Grid item xs={12}>
@@ -126,13 +192,25 @@ const Events: React.FC = () => {
                     </div>
                     <Grid item xs={9.5} sx={{display: 'flex', justifyContent: 'flex-end'}}>
                         <FormGroup>
-                            <FormControlLabel control={<Checkbox sx={{color: 'white', '&.Mui-checked': {color: 'white',},}}/>} label="RSVP Events" sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}} />
+                            <FormControlLabel 
+                                control={
+                                    <Checkbox checked={RSVP} onChange={handleCheck} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="RSVP"/>
+                                } 
+                                label="RSVP Events" 
+                                sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
+                            } />
                         </FormGroup>
                     </Grid>
                     <Grid item xs={.2}/>
                     <Grid item xs={2.3}>
                         <FormGroup>
-                            <FormControlLabel control={<Checkbox sx={{color: 'white', '&.Mui-checked': {color: 'white',},}}/>} label="Followed Events" sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}} />
+                            <FormControlLabel 
+                                control={
+                                    <Checkbox checked={Followed} onChange={handleCheck} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="Followed"/>
+                                } 
+                                label="Followed Events" 
+                                sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
+                            } />
                         </FormGroup>
                     </Grid>
                     <Grid item xs={12}>
