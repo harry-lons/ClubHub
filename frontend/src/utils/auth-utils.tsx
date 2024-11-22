@@ -1,4 +1,4 @@
-import { userSignup, signupResponse, loginResponse } from '../types/types'
+import { userSignup, signupResponse, loginResponse, signupInfo, clubSignup } from '../types/types'
 
 export const authenticate = async (endpoint: string, formData: FormData) => {
     // object to return
@@ -104,7 +104,7 @@ const validateEmail = (email: string) => {
     else return null;
 }
 
-export const validateSignupInput = (info: userSignup) => {
+export const validateUserSignupInput = (info: userSignup) => {
     const { email, password, first_name, last_name } = info;
 
     let ret = {
@@ -133,8 +133,36 @@ export const validateSignupInput = (info: userSignup) => {
     return ret;
 };
 
-export const signup = async (info: userSignup, tokenURL: string) => {
-    validateSignupInput(info);
+export const validateClubSignupInput = (info: clubSignup) => {
+    const { email, password, name } = info;
+
+    let ret = {
+        success: true,
+        // Reuse the function to apply DRY (don't repeat yourself) for each field
+        emailMessage: validateWithin40chars(email),
+        passwordMessage: validateWithin40chars(password),
+        nameMessage: validateWithin40chars(name)
+    }
+    if (!ret.emailMessage) {
+        // Check email format
+        ret.emailMessage = validateEmail(email);
+    }
+    if (!ret.passwordMessage) {
+        if (password.length < 6) {
+            ret.passwordMessage = "Must be at least 6 characters";
+        }
+    }
+
+    if (ret.emailMessage || ret.passwordMessage || ret.nameMessage) {
+        // If we have an error message, set success to false
+        ret.success = false;
+    }
+
+    return ret;
+};
+
+export const signupCall = async (info: signupInfo, tokenURL: string) => {
+    
     let ret: signupResponse = {
         success: false,
         detail: "",

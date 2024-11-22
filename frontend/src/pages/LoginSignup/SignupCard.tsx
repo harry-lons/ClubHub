@@ -2,8 +2,8 @@ import React, { useContext, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, InputAdornment, IconButton, OutlinedInput, Button, Grid, Snackbar } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { userSignup } from '../../types/types'
-import { signup, validateSignupInput } from '../../utils/auth-utils';
+import { userSignup, clubSignup, signupInfo } from '../../types/types'
+import { signupCall, validateClubSignupInput, validateUserSignupInput } from '../../utils/auth-utils';
 import { AuthContext } from '../../context/AuthContext';
 
 interface SignupCardProps {
@@ -16,11 +16,13 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
     const [enteredPassword, setEnteredPassword] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
+    const [clubName, setClubName] = useState("");
     const [signupSuccess, setSignupSuccess] = useState(false);
     const [badEmailWarning, setBadEmailWarning] = useState<string | null>(null);
     const [badPasswordWarning, setBadPasswordWarning] = useState<string | null>(null);
     const [firstNameWarning, setFirstNameWarning] = useState<string | null>(null);
     const [lastNameWarning, setLastNameWarning] = useState<string | null>(null);
+    const [clubNameWarning, setClubNameWarning] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
     const { saveToken } = useContext(AuthContext);
@@ -46,8 +48,26 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
     const handleLastNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setLastName(event.target.value);
     }
+    const handleClubNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setClubName(event.target.value);
+    }
 
-    const handleSubmitForm = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    const makeCall = async (info: signupInfo) => {
+        let baseURL = process.env.REACT_APP_BACKEND_URL;
+        if (!baseURL) {
+            console.error('Backend base URL is not defined. Check your .env file');
+            return;
+        }
+
+        // Determine the specific backend endpoint based on what type of account this is
+        const tokenURL = `${baseURL}/${signupURL}`;
+
+        const result = await signupCall(info, tokenURL);
+        if (result.success) { setSignupSuccess(true); }
+        else { setError(result.detail); }
+    }
+
+    const handleUserSubmit = async () => {
         // initialize signup info based on entered data
         const info: userSignup = {
             email: enteredEmail,
@@ -55,7 +75,7 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
             first_name: firstName,
             last_name: lastName,
         }
-        const validation = validateSignupInput(info);
+        const validation = validateUserSignupInput(info);
 
         if (!validation.success) {
             console.log("failed input validation");
@@ -67,22 +87,36 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
             return;
         }
 
-        let baseURL = process.env.REACT_APP_BACKEND_URL;
-        if (!baseURL) {
-            console.error('Backend base URL is not defined. Check your .env file');
+        makeCall(info);
+    }
+
+    const handleClubSubmit = async () => {
+        console.log("club submit");
+        const info: clubSignup = {
+            email: enteredEmail,
+            password: enteredPassword,
+            name: clubName
+        }
+        const validation = validateClubSignupInput(info);
+        if (!validation.success) {
+            console.log("failed input validation");
+            setBadEmailWarning(validation.emailMessage);
+            setBadPasswordWarning(validation.passwordMessage);
+            setClubNameWarning(validation.nameMessage);
+            // do not send request
             return;
         }
 
-        // Convert to lowercase for consistency
-        let lcAccount = accountType?.toLowerCase();
+        makeCall(info);
+    }
 
-        // Determine the specific backend endpoint based on what type of account this is
-        const tokenURL = `${baseURL}/${lcAccount}/signup`;
-        console.log(tokenURL);
-
-        const result = await signup(info, tokenURL);
-        if (result.success) { setSignupSuccess(true); }
-        else { setError(result.detail); }
+    const handleSubmitForm = async (event: React.MouseEvent<HTMLButtonElement>) => {
+        if(accountType === 'USER'){
+            await handleUserSubmit();
+        }
+        else if (accountType === 'CLUB'){
+            await handleClubSubmit();
+        }
     };
 
     const handleMouseUpPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -102,7 +136,7 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
                     <>
                         <div className='roboto-medium' style={{ marginBottom: 20 }}>Signup successful!</div>
                         Your account has been registered. Head over to the {' '}
-                        <Link to="/login" style={{ color: "#00aaaa" }}>
+                        <Link to={`/${accountType}/login`} style={{ color: "#00aaaa" }}>
                             login page
                         </Link>
                     </>
@@ -166,38 +200,60 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
                                 </div>
                             </Grid>
                             {/* First Name Input */}
-                            <Grid item xs={5.5}>
-                                <div className='loginsignup-input-wrap'>
-                                    <p className='roboto-regular'>First Name</p>
-                                    <OutlinedInput
-                                        fullWidth
-                                        value={firstName}
-                                        onChange={handleFirstNameChange}
-                                    />
-                                    {firstNameWarning &&
-                                        <p
-                                            style={{ color: "red", marginTop: 10 }}
-                                        > {firstNameWarning}</p>
-                                    }
-                                </div>
-                            </Grid>
-                            <Grid item xs={1} />
-                            {/* Last Name Input */}
-                            <Grid item xs={5.5}>
-                                <div className='loginsignup-input-wrap'>
-                                    <p className='roboto-regular'>Last Name</p>
-                                    <OutlinedInput
-                                        fullWidth
-                                        value={lastName}
-                                        onChange={handleLastNameChange}
-                                    />
-                                    {lastNameWarning &&
-                                        <p
-                                            style={{ color: "red", marginTop: 10 }}
-                                        > {lastNameWarning}</p>
-                                    }
-                                </div>
-                            </Grid>
+                            {
+                                accountType === 'USER' ?
+                                    <>
+                                        <Grid item xs={5.5}>
+                                            <div className='loginsignup-input-wrap'>
+                                                <p className='roboto-regular'>First Name</p>
+                                                <OutlinedInput
+                                                    fullWidth
+                                                    value={firstName}
+                                                    onChange={handleFirstNameChange}
+                                                />
+                                                {firstNameWarning &&
+                                                    <p
+                                                        style={{ color: "red", marginTop: 10 }}
+                                                    > {firstNameWarning}</p>
+                                                }
+                                            </div>
+                                        </Grid>
+                                        <Grid item xs={1} />
+                                        {/* Last Name Input */}
+                                        <Grid item xs={5.5}>
+                                            <div className='loginsignup-input-wrap'>
+                                                <p className='roboto-regular'>Last Name</p>
+                                                <OutlinedInput
+                                                    fullWidth
+                                                    value={lastName}
+                                                    onChange={handleLastNameChange}
+                                                />
+                                                {lastNameWarning &&
+                                                    <p
+                                                        style={{ color: "red", marginTop: 10 }}
+                                                    > {lastNameWarning}</p>
+                                                }
+                                            </div>
+                                        </Grid>
+                                    </>
+                                    :
+
+                                    <Grid item xs={12}>
+                                        <div className='loginsignup-input-wrap'>
+                                            <p className='roboto-regular'>Club Name</p>
+                                            <OutlinedInput
+                                                fullWidth
+                                                value={clubName}
+                                                onChange={handleClubNameChange}
+                                            />
+                                            {clubNameWarning &&
+                                                <p
+                                                    style={{ color: "red", marginTop: 10 }}
+                                                > {clubNameWarning}</p>
+                                            }
+                                        </div>
+                                    </Grid>
+                            }
                         </Grid>
                         {/* Submit Button */}
                         <Button
@@ -211,7 +267,7 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
                         <div style={{ marginTop: 15 }}>
                             <p className="roboto-regular">
                                 Already have an account?{' '}
-                                <Link to="/login" style={{ color: "#00aaaa" }}>
+                                <Link to={accountType === "USER" ? "/login" : "/club/login"} style={{ color: "#00aaaa" }}>
                                     Log In
                                 </Link>{' '}
                                 instead.
@@ -221,8 +277,6 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
                 )}
             </CardContent>
         </Card>
-
-
     )
 }
 export default SignupCard;
