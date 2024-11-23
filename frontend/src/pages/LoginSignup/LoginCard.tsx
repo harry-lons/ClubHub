@@ -2,8 +2,9 @@ import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, TextField, InputAdornment, IconButton, OutlinedInput, Button, Snackbar, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { authenticate, whoami, validateLoginInput } from '../../utils/auth-utils';
+import { authenticate, whoami, validateLoginInput, clubAuthenticate } from '../../utils/auth-utils';
 import { AuthContext } from '../../context/AuthContext';
+import { login } from '../../types/types';
 
 interface LoginCardProps {
     typeAccount?: string; // Define whether this is a user or club login
@@ -55,6 +56,10 @@ const LoginCard: React.FC<LoginCardProps> = ({ typeAccount }) => {
         const formData = new FormData();
         formData.append('username', enteredEmail);
         formData.append('password', enteredPassword);
+        const info: login = {
+            email: enteredEmail,
+            password: enteredPassword
+        }
 
         if (!accountType || (accountType !== 'USER' && accountType !== 'CLUB')) {
             // Something went very wrong, just go back to / with error
@@ -67,6 +72,10 @@ const LoginCard: React.FC<LoginCardProps> = ({ typeAccount }) => {
 
         // Determine the specific backend endpoint based on what type of account this is
         const endpoint = `${baseURL}/${lcAccount}`;
+        var authresponse;
+        if(accountType === "CLUB"){
+            authresponse = await clubAuthenticate(endpoint, info);
+        }
         const authResponse = await authenticate(endpoint, formData);
         if (!authResponse.success) {
             console.log("unsuccessful")
@@ -78,7 +87,7 @@ const LoginCard: React.FC<LoginCardProps> = ({ typeAccount }) => {
         else if (authResponse.token !== "") {
             const token = authResponse.token;
             saveToken(token);  // Store the token in context
-            setAccountType(accountType === 'CLUB' ? 'club' : 'user');
+            setAccountType(accountType === 'CLUB' ? 'club' : 'user'); // set the account type in context
             const id = await whoami(endpoint, token);
             // Put the id in context
             setId(id);

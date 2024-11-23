@@ -96,4 +96,10 @@ export type loginResponse =
 	success: boolean,
     token: string,
     detail: string,
+};
+
+export type login =
+{
+	email: string,
+	password: string,
 }
