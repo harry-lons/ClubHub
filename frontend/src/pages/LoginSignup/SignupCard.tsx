@@ -1,16 +1,16 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Card, CardContent, InputAdornment, IconButton, OutlinedInput, Button, Grid, Snackbar } from '@mui/material';
+import { Card, CardContent, InputAdornment, IconButton, OutlinedInput, Button, Grid, Snackbar, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { userSignup, clubSignup, signupInfo } from '../../types/types'
 import { signupCall, validateClubSignupInput, validateUserSignupInput } from '../../utils/auth-utils';
 import { AuthContext } from '../../context/AuthContext';
 
 interface SignupCardProps {
-    accountType?: string; // Define whether this is a user or club login
+    typeAccount?: string; // Define whether this is a user or club login
     signupURL: string
 }
-const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
+const SignupCard: React.FC<SignupCardProps> = ({ typeAccount, signupURL }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [enteredEmail, setEnteredEmail] = useState("");
     const [enteredPassword, setEnteredPassword] = useState("");
@@ -23,6 +23,7 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
     const [firstNameWarning, setFirstNameWarning] = useState<string | null>(null);
     const [lastNameWarning, setLastNameWarning] = useState<string | null>(null);
     const [clubNameWarning, setClubNameWarning] = useState<string | null>(null);
+    const [accountType, setTypeAccount] = useState<string | null>(typeAccount ?? null);
     const [error, setError] = useState<string | null>(null);
 
     const { saveToken } = useContext(AuthContext);
@@ -111,10 +112,10 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
     }
 
     const handleSubmitForm = async (event: React.MouseEvent<HTMLButtonElement>) => {
-        if(accountType === 'USER'){
+        if (accountType === 'USER') {
             await handleUserSubmit();
         }
-        else if (accountType === 'CLUB'){
+        else if (accountType === 'CLUB') {
             await handleClubSubmit();
         }
     };
@@ -143,9 +144,22 @@ const SignupCard: React.FC<SignupCardProps> = ({ accountType, signupURL }) => {
                 ) : (
                     <>
                         {/* roboto medium, override font size to 18 as per figma */}
-                        <p className='roboto-medium' style={{ fontSize: 18, marginBottom: 20 }}>
-                            SIGN UP {accountType === 'CLUB' ? '(club)' : null}
-                        </p>
+                        <div className="flex-row-between">
+                            <p className="roboto-medium" style={{ fontSize: 18 }}>
+                                SIGN UP {accountType === 'CLUB' ? '(club)' : null}
+                            </p>
+                            <ToggleButtonGroup
+                                color="primary"
+                                value={accountType}
+                                exclusive
+                                onChange={(event, value) => setTypeAccount(value)}
+                                aria-label="Platform"
+                            >
+                                <ToggleButton value="USER">User</ToggleButton>
+                                <ToggleButton value="CLUB">Club</ToggleButton>
+                            </ToggleButtonGroup>
+                        </div>
+
                         <Grid container>
                             {/* Email Input */}
                             <Grid item xs={5.5}>
