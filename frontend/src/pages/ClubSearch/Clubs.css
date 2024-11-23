@@ -100,7 +100,7 @@
 .club-description {
    margin-left: 5%;
    font-size: 16px;
-   color: #e1e1e1;
+   color: white !important;
    word-wrap: break-word;
    flex: 1;
    text-align: left;
