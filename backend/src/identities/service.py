@@ -1,15 +1,17 @@
-from typing import Annotated
-from io import BytesIO
 import tempfile
+from io import BytesIO
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, FastAPI, File, HTTPException, UploadFile, status
+from fastapi.responses import FileResponse, Response
 
 from ..authentication import service as auth_service
 from ..authentication.schemas import User
-from fastapi import APIRouter, Depends, FastAPI, UploadFile, File, HTTPException, status
-from fastapi.responses import FileResponse, Response
-
-from .schemas import Club, ClubWithBoardMembers, UserProfilePictureImgKey
-from .constants import cat_club, cat_club_board_members
+from ..database import DB
+from ..db_store.conversion import b_club_to_f_club, b_club_to_f_club_full
 from ..object_store import InMemoryFileStorage, IStorage
+from .constants import cat_club, cat_club_board_members
+from .schemas import AllClubs, Club, ClubWithBoardMembers, UserProfilePictureImgKey
 
 app = APIRouter()
 
@@ -18,8 +20,10 @@ definitely_a_database = dict()  # TODO
 
 
 @app.get("/club", response_model=ClubWithBoardMembers)
-def club(club_id: int) -> ClubWithBoardMembers:
-    return cat_club_board_members
+def club(club_id: str) -> ClubWithBoardMembers:
+    club_obj = DB.db.get_org_from_id(club_id)
+    club = b_club_to_f_club_full(club_obj)
+    return club
 
 
 async def validate_file(file: BytesIO):
@@ -57,3 +61,11 @@ async def get_profile_picture(
     return Response(file.read(), media_type="image/png")
 
     # returns file (it is BinaryIO)
+
+
+@app.get("/clubs", response_model=AllClubs)
+async def get_all_clubs() -> AllClubs:
+    """Get a list of all clubs"""
+    all_clubs = DB.db.get_all_clubs()
+    all_clubs_api = [b_club_to_f_club_full(e) for e in all_clubs]
+    return AllClubs(clubs=all_clubs_api)

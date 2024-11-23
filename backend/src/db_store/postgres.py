@@ -1,5 +1,5 @@
 import uuid
-from typing import Any, Dict, Optional, Tuple, Type, TypeVar
+from typing import Any, Dict, List, Optional, Tuple, Type, TypeVar
 
 from sqlalchemy.exc import (
     IntegrityError,
@@ -89,6 +89,10 @@ class PostgresDatabase(IAuth, IEvents):
         if not acc:
             raise ValueError(f"Organization with email {email} not found.")
         return acc
+
+    def get_all_clubs(self) -> List[ClubAccounts]:
+        entries = self.session.query(ClubAccounts).all()
+        return entries
 
     def get_f_event(self, event_id: int) -> FrontendEvent:
         event = self._get_by(Events, id=event_id)

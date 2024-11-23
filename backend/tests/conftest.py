@@ -22,7 +22,6 @@ def client(base_client):
     to reset the database before each test.
     We DO NOT initalize the database with test data in this function. We should have
     ran the script in db_store/main.py to do that before running tests
-    DO NOT call session.commit() in functions, or else this will not work.
     """
     old_session = DB.db.session
     old_session.close()

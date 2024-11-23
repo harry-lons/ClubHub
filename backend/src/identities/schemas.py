@@ -1,5 +1,6 @@
-from typing import List
 import uuid
+from typing import List
+
 from pydantic import BaseModel
 
 
@@ -14,7 +15,7 @@ class Club(ClubID):
 
 
 class UserID(BaseModel):
-    id: uuid.UUID
+    id: str
 
 
 class User(UserID):
@@ -30,8 +31,12 @@ class UserAndClubs(User):
 
 
 class ClubWithBoardMembers(Club):
-    board_members: List[UserID]
+    board_members: List[str]  # List of UserIDs
 
 
 class UserProfilePictureImgKey(BaseModel):
     key: str
+
+
+class AllClubs(BaseModel):
+    clubs: List[ClubWithBoardMembers]

@@ -4,8 +4,8 @@ database objects (in db_store/models.py)
 """
 
 from ..events.schemas import Event as FrontendEventObject
-from ..events.schemas import EventWithoutID as FrontendNewEventObject
 from ..identities.schemas import Club as FrontendClubObject
+from ..identities.schemas import ClubWithBoardMembers as FrontendClubBoardMembers
 from .models import ClubAccounts
 from .models import ClubAccounts as DBClubObject
 from .models import EventImages
@@ -78,3 +78,10 @@ def b_event_to_f_event(db_event: DBEventObject) -> FrontendEventObject:
 def b_club_to_f_club(club: DBClubObject) -> FrontendClubObject:
     """Convert SQLAlchemy Club object to API's Pydantic Club Object"""
     return FrontendClubObject(id=club.id, name=club.name, contact_email=club.email)
+
+
+def b_club_to_f_club_full(club: DBClubObject) -> FrontendClubBoardMembers:
+    board_members = [user.id for user in club.members]
+    return FrontendClubBoardMembers(
+        id=club.id, name=club.name, contact_email=club.email, board_members=board_members
+    )
