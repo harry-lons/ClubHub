@@ -40,7 +40,7 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
             setBadPasswordWarning(validation.passwordMessage);
             return;
         }
-        else{
+        else {
             // disable input warnings
             setBadEmailWarning(null);
             setBadPasswordWarning(null);
@@ -74,7 +74,7 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
             setError(authResponse.detail)
             return;
         }
-        else if(authResponse.token !== ""){
+        else if (authResponse.token !== "") {
             const token = authResponse.token;
             saveToken(token);  // Store the token in context
             setAccountType(accountType === 'CLUB' ? 'club' : 'user');
@@ -176,11 +176,21 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
                     LOG IN
                 </Button>
                 <div style={{ marginTop: 15 }}>
-                    <p className="roboto-regular">
-                        Don't have an account? <Link to="/signup" style={{ color: "#00aaaa" }}>
-                            Sign up
-                        </Link> instead.
-                    </p>
+                    {
+                        accountType === "USER" ?
+                            <p className="roboto-regular">
+                                Don't have an account? <Link to="/signup" style={{ color: "#00aaaa" }}>
+                                    Sign up
+                                </Link> instead.
+                            </p>
+                            :
+                            <p className="roboto-regular">
+                                Club not registered? <Link to="/club/signup" style={{ color: "#00aaaa" }}>
+                                    Sign up
+                                </Link> instead.
+                            </p>
+                    }
+
                 </div>
             </CardContent>
         </Card>

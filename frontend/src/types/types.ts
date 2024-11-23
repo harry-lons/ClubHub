@@ -68,12 +68,21 @@ export type Club =
 	contact_email: string | string[];
 };
 
-export type userSignup = 
+export type signupInfo = 
 {
 	email: string;
 	password: string;
-	first_name: string; 
-	last_name: string;
+}
+
+// Extend signupInfo for user-specific signup
+export type userSignup = signupInfo & {
+    first_name: string;
+    last_name: string;
+};
+
+// Extend signupInfo for club-specific signup
+export type clubSignup = signupInfo & {
+    name: string;
 };
 
 export type signupResponse =

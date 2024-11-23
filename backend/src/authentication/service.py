@@ -9,7 +9,7 @@ from passlib.context import CryptContext
 
 from ..database import DB
 from ..db_store.conversion import b_club_to_f_club
-from ..identities.schemas import Club, User, UserID
+from ..identities.schemas import Club, User, UserID, ClubID
 from .constants import (
     BAD_CREDIENTIALS_EXCEPTION,
     LOGIN_BAD_EMAIL,
@@ -255,7 +255,7 @@ async def club_signup(info: ClubSignup):
 
     hashed_pw = get_password_hash(info.password)
     club_uuid = DB.db.add_organization(info.email, hashed_pw, info.name)
-    return club_uuid
+    return ClubID(id=club_uuid)
 
 
 @app.get("/user/whoami/", response_model=User, tags=["user"])
