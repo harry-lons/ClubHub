@@ -1,0 +1,210 @@
+/* Container for the entire events list */
+.background {
+   background: url('../../../public/gradientBackground.png');
+   background-size: cover;
+   background-position: center;
+   background-attachment: fixed;
+   background-repeat: repeat-y;
+   width: 100%;
+   height: 100vh;
+   position: fixed;
+   z-index: -1;
+}
+
+/* Container for the entire page */
+.events-list-container {
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   padding-top: 20px; /* Adds some space at the top */
+}
+
+.navbar-container {
+   width: 100%;
+   position: sticky;
+   top: 0px;
+   z-index: 1000;
+}
+
+.events-created-header-container{
+   color:white;
+   width:100%;
+   position: sticky;
+   z-index: 10;
+   padding-left: 40px;
+   padding-top: 30px;
+   text-align: left;
+   font-size: small;
+   color:white;
+   background-color: transparent;
+   top: 60px;
+}
+
+.events-list{
+   display: flex;
+   flex-direction: column;
+   align-items: center; /* Center content horizontally */
+   gap: 20px; /* Add space between months */
+   width: 100%;
+   padding: 35px;
+}
+
+.month-row {
+   display: flex;
+   align-items: center;
+   text-align: center;
+   padding-top: 0px !important;
+}
+
+.month-row h2 {
+   font-size: 24px;
+   color: white;
+   width: 20%;
+   height: 20%;
+   display:flex;
+   align-items: center;
+   justify-content: center;
+}
+
+/* Container for the cards and arrows */
+.event-cards-container {
+   position: relative; /* Enable positioning for the arrows */
+   width: 100%;
+}
+
+.arrow-button {
+   position: absolute;
+   top: 50%; /* Center vertically */
+   transform: translateY(-50%);
+   background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+   border: none;
+   color: white;
+   font-size: 20px;
+   padding: 10px;
+   cursor: pointer;
+   z-index: 1; /* Ensure buttons are above the cards */
+   border-radius: 50%; /* Rounded buttons */
+   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Add shadow for effect */
+}
+
+/* Specific positioning for left and right arrows */
+.arrow-button.left {
+   left: 10px; /* Position the left button */
+}
+
+.arrow-button.right {
+   right: 10px; /* Position the right button */
+}
+
+.event-cards-row {
+   display: flex;
+   flex-wrap: wrap; /* Allow wrapping on smaller screens */
+   justify-content: flex-start; 
+   align-items: flex-start;
+   gap: 15px; 
+   width: 100%;
+   margin-top: 0;
+   margin-bottom: 0; 
+   padding-bottom: 0; 
+   scroll-behavior: smooth;
+}
+
+.event-card {
+   background-color: rgba(255, 255, 255, 0.15)!important; /* Semi-transparent white */
+   color: white!important; 
+   border-radius: 15px; 
+   padding: 0px;
+   width: 90%; /* Make the card width responsive */
+   max-width: 300px; /* Limit the maximum width */
+   min-width: 250px; /* Prevent the card from becoming too small */
+   height: 200px; /* Fixed height for consistency */
+   text-align: center; /* Center-align text */
+   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+   transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth hover effect */
+}
+
+.event-card:hover {
+   transform: translateY(-5px);
+   box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.3);
+}
+
+.MuiCardContent-root {
+   padding-top: 5px !important; /* Reduce top padding */
+   padding-bottom: 5px !important; /* Adjust bottom padding if needed */
+   flex-grow: 1; /* Allow content to take more space if needed */
+}
+
+/* Event card details */
+
+.event-title h3{
+   font-size: 18px;
+   font-weight: bold;
+   margin-bottom: 5px;
+   text-align: center;
+   line-height: 1.5;
+}
+
+.event-card p {
+   margin: 5px 0; 
+   overflow: hidden; 
+   text-overflow: ellipsis; 
+   white-space: nowrap; 
+}
+
+.event-buttons {
+   display: flex; /* Ensure flexbox layout */
+   justify-content: center; /* Center-align buttons */
+   gap: 15px; /* Add consistent spacing between buttons */
+   margin-top: 10px;
+}
+
+/* Buttons styling */
+button {
+   font-size: 10px; 
+   border-radius: 5px;
+   cursor: pointer;
+   padding: 8px 12px; /* Uniform padding */
+   transition: all 0.3s ease; /* Smooth hover effects */
+   height: 5%; /* Ensure consistent height */
+   text-align: center; /* Center text */
+   line-height: 1.5; /* Adjust line height for vertical alignment */
+   white-space: nowrap; /* Prevent wrapping of text */
+   margin: 0 5px; /* Reset individual margins */
+}
+
+button:hover {
+   opacity: 0.9;
+   transform: scale(1.05); /* Add hover scale */
+}
+
+button.edit-button {
+   background-color: #21aba1 !important;
+   color: white;
+   font-size: 10px !important;
+   padding: 3px !important;
+   width: 25% !important; /* Set fixed width */
+}
+
+button.delete-button {
+   background-color:#eb4646;
+   color: white;
+   font-size: 10px !important;
+   padding: 3px !important;
+   width: 25% !important; /* Set fixed width */
+}
+
+.month-divider {
+   border: 0;              /* Removes default border */
+   height: 1px;            /* Sets thickness */
+   background-color: #ccc; /* Sets the line color */
+   margin: 3px 0;         /* Adds space above and below */
+   width: 80%;            /* Makes it span the full width */
+}
+
+
+
+
+
+
+

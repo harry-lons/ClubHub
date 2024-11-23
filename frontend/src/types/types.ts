@@ -15,6 +15,7 @@ export type Event =
 	pictures: { [key: string]: string };
 	type: EventType[];
 	capacity: Number | null;
+	// rsvp_count: string;
 };
 
 export type EventType = 
