@@ -11,7 +11,7 @@ export const exampleEvent = {
   recurrence_type: null,
   stop_date: null,
 	summary: "Join us for an engaging and inspiring Creative Writing Workshop hosted by The Literary Society! Whether you're a seasoned writer or just starting your journey, this workshop is designed to spark your creativity and help you develop your writing skills. Participants will explore various writing prompts, learn about character development, and receive constructive feedback on their work. This is a fantastic opportunity to meet fellow writers, share ideas, and enhance your craft in a supportive environment. Bring your favorite notebook and pen, and let your imagination run wild! Refreshments will be provided. Reserve your spot today!",
-	pictures: { image: "flyer.jpg" },
+	pictures: ["flyer.jpg"],
 	type: ["social", "workshop"] as EventType[],
     capacity: 50
 }
@@ -131,7 +131,7 @@ export const exampleRSVPList = {
 };
 export const exampleEventList: Event[] = [
 	{
-		id: "001",
+		id: "1",
 		title: "Creative Writing Workshop: Unleash Your Imagination!",
 		club_id : "001",
 		location: "Geisel",
@@ -141,11 +141,11 @@ export const exampleEventList: Event[] = [
     recurrence_type: null,
     stop_date: null,
 		summary: "Join us for an engaging and inspiring Creative Writing Workshop hosted by The Literary Society! Whether you're a seasoned writer or just starting your journey, this workshop is designed to spark your creativity and help you develop your writing skills. Participants will explore various writing prompts, learn about character development, and receive constructive feedback on their work. This is a fantastic opportunity to meet fellow writers, share ideas, and enhance your craft in a supportive environment. Bring your favorite notebook and pen, and let your imagination run wild! Refreshments will be provided. Reserve your spot today!",
-		pictures: { image: "flyer.jpg" },
+		pictures: ["flyer.jpg"],
 		type: ["social", "workshop"] as EventType[],
         capacity: null
 	},{
-		id: "002",
+		id: "2",
 		title: "Petting Car Club!",
 		club_id : "001",
 		location: "Geisel",
@@ -155,12 +155,12 @@ export const exampleEventList: Event[] = [
     recurrence_type: null,
     stop_date: null,
 		summary: "Cats are always so cute! Let's pet them!",
-		pictures: { image: "" },
+		pictures: [],
 		type: ["social", "recreational"] as EventType[],
         capacity: 100
 	},
 	{
-        id: "003",
+        id: "3",
         title: "Art & Chill: Paint Your Stress Away",
         club_id: "002",
         location: "Student Center",
@@ -170,12 +170,12 @@ export const exampleEventList: Event[] = [
         recurrence_type: null,
         stop_date: null,
         summary: "Take a break from your busy schedule and join us for a relaxing painting session! Supplies will be provided, and no experience is necessary. Meet new friends, unleash your creativity, and paint away your stress.",
-        pictures: { image: "" },
+        pictures: [],
         type: ["recreational", "arts"] as EventType[],
         capacity: 100
     },
     {
-        id: "004",
+        id: "4",
         title: "Yoga in the Park",
         club_id: "003",
         location: "Main Quad",
@@ -185,12 +185,12 @@ export const exampleEventList: Event[] = [
         recurrence_type: 1,
         stop_date: null,
         summary: "Start your morning with a rejuvenating yoga session led by experienced instructors. All skill levels are welcome! Bring your mat and experience the serenity of yoga in the great outdoors.",
-        pictures: { image: "" },
+        pictures: [],
         type: ["sports"] as EventType[],
         capacity: 100
     },
     {
-        id: "005",
+        id: "5",
         title: "Robotics Club Workshop: Build Your First Robot",
         club_id: "004",
         location: "Engineering Lab",
@@ -200,12 +200,12 @@ export const exampleEventList: Event[] = [
         recurrence_type: null,
         stop_date: null,
         summary: "Join the Robotics Club for a hands-on workshop where you'll learn the basics of building and programming robots. No experience required. All materials will be provided. Come ready to create!",
-        pictures: { image: "" },
+        pictures: [],
         type: ["workshop"] as EventType[],
         capacity: 100
     },
     {
-        id: "006",
+        id: "6",
         title: "Cooking Club: Italian Cuisine Night",
         club_id: "005",
         location: "Cafeteria Kitchen",
@@ -215,7 +215,7 @@ export const exampleEventList: Event[] = [
         recurrence_type: 2,
         stop_date: null,
         summary: "Explore the tastes of Italy with our Cooking Club! Learn how to make classic Italian dishes in a fun, hands-on cooking class. No cooking experience required. Spaces are limited, so sign up now!",
-        pictures: { image: "" },
+        pictures: [],
         type: ["recreational", "cultural", "social"] as EventType[],
         capacity: 100
     },

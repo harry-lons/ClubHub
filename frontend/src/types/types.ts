@@ -2,7 +2,7 @@ import { StringLiteral } from "typescript";
 
 export type Event =
 {
-	id: Number;
+	id: string;
 	title: string;
 	club_id : string;
 	location: string;

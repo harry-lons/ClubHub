@@ -109,7 +109,7 @@ export const EditEventForm = ()=>{
                 recurrence_type: formData.frequency,
                 stop_date: formData.stop_date,
                 summary: formData.summary,
-                pictures: { },
+                pictures: [],
                 type: formData.type,
                 capacity: formData.capacity||null
             };

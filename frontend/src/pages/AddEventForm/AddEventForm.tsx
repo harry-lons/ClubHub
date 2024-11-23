@@ -55,7 +55,7 @@ export const AddEventForm= ()=>{
         stop_date: false,
     });
 
-    const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
 
         const newErrors = {
@@ -73,7 +73,7 @@ export const AddEventForm= ()=>{
             // club id should be a context
             const newEvent: Event =
             {
-                id: 0,
+                id: "0",
                 title: formData.title,
                 club_id : "CLUB ID PLACE HOLDER",
                 location: formData.location,
@@ -87,7 +87,7 @@ export const AddEventForm= ()=>{
                 type: formData.type,
                 capacity:formData.capacity||null
             };
-            const eventID = createEvent(token, newEvent);
+            const eventID = await createEvent(token, newEvent);
             navigate(`/club/events/${eventID}`);
             // navigate(`/testpage`);
         }
@@ -105,7 +105,7 @@ export const AddEventForm= ()=>{
             capacity: null
         };
         setFormData(newFormData);
-      };
+    };
     
 
       const eventTypes = [

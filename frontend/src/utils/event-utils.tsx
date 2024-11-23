@@ -120,18 +120,19 @@ export const fetchPastEvents = async (token: string): Promise<Event[]> => {
 };
 // Function to create an event in the backend. Method: POST
 export const createEvent = async (token: string,event: Event): Promise<string> => {
+    const eventData = { ...event, id: Number(event.id) };
 	const response = await fetch(`${API_BASE_URL}/club/event`, {
     	method: "POST",
     	headers: {
         	"Content-Type": "application/json",
             "Authorization" : `Bearer ${token}`
     	},
-    	body: JSON.stringify(event),
+    	body: JSON.stringify(eventData),
 	});
 	if (!response.ok) {
     	throw new Error("Failed to create event");
 	}
-    const event_id:string = await response.json();
+    const event_id:string = String(await response.json());
 	return event_id;
 };
 
