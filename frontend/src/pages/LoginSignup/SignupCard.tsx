@@ -26,7 +26,7 @@ const SignupCard: React.FC<SignupCardProps> = ({ typeAccount, signupURL }) => {
     const [accountType, setTypeAccount] = useState<string | null>(typeAccount ?? null);
     const [error, setError] = useState<string | null>(null);
 
-    const { saveToken } = useContext(AuthContext);
+    const { saveAuthenticationData } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
