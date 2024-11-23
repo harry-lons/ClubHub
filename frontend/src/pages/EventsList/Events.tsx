@@ -132,17 +132,6 @@ const Events: React.FC = () => {
     if (context.token === "") {
         // Show Log in Button for when there is no token
         return (
-            // Log in Button for when there is no token
-            // 
-            // <div style={{width: "100%"}}>
-            //     <div className="background"/>
-            //     <div className="navbar-container">
-            //         <NavBar />
-            //     </div>
-            //     <h1 style={{color: "white"}}>Please Log In to See All Events</h1>
-            //     <Button variant="contained" onClick={(handleLogIn)} id='logsign-submit-button'>LOG IN</Button>
-            // </div>
-
             <div style={{width: "100%"}}>
                 <div className="background"/>
                 <div className="navbar-container">
