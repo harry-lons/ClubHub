@@ -43,6 +43,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const saveToken = (jwt: string) => {
     localStorage.setItem("token", jwt);
+    setToken(jwt);
   };
 
   const removeToken = () => {

@@ -1,4 +1,4 @@
-import { userSignup, signupResponse, loginResponse, signupInfo, clubSignup } from '../types/types'
+import { userSignup, signupResponse, loginResponse, signupInfo, clubSignup, login } from '../types/types'
 
 export const authenticate = async (endpoint: string, formData: FormData) => {
     // object to return
@@ -11,6 +11,41 @@ export const authenticate = async (endpoint: string, formData: FormData) => {
         const response = await fetch(`${endpoint}/login`, {
             method: 'POST',
             body: formData
+        });
+
+        const data = await response.json();
+        if (response.status === 401) {
+            // return the error message from backend
+            ret.detail = data.detail;
+            throw ("401 Error")
+        }
+        // Check if the response contains a token
+        if (data.access_token) {
+            ret.success = true;
+            ret.token = data.access_token;
+        } else {
+            // Handle incorrect response from backend
+            console.error('No token found in the response');
+        }
+    } catch (error) {
+        // Handle errors
+        console.error('There was a problem with the fetch operation:', error);
+    } finally {
+        return ret;
+    }
+}
+
+export const clubAuthenticate = async (endpoint: string, info:login) => {
+    // object to return
+    let ret:loginResponse = {
+        success: false,
+        token: "",
+        detail: "",
+    }
+    try {
+        const response = await fetch(`${endpoint}/login`, {
+            method: 'POST',
+            body: JSON.stringify(info)
         });
 
         const data = await response.json();
