@@ -1,19 +1,20 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Card, CardContent, TextField, InputAdornment, IconButton, OutlinedInput, Button, Snackbar } from '@mui/material';
+import { Card, CardContent, TextField, InputAdornment, IconButton, OutlinedInput, Button, Snackbar, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { authenticate, whoami, validateLoginInput } from '../../utils/auth-utils';
 import { AuthContext } from '../../context/AuthContext';
 
 interface LoginCardProps {
-    accountType?: string; // Define whether this is a user or club login
+    typeAccount?: string; // Define whether this is a user or club login
 }
-const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
+const LoginCard: React.FC<LoginCardProps> = ({ typeAccount }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [enteredEmail, setEnteredEmail] = useState("");
     const [enteredPassword, setEnteredPassword] = useState("");
     const [badEmailWarning, setBadEmailWarning] = useState<string | null>(null);
     const [badPasswordWarning, setBadPasswordWarning] = useState<string | null>(null);
+    const [accountType, setTypeAccount] = useState<string | null>(typeAccount ?? null);
     const [error, setError] = useState<string | null>(null);
     const { saveToken, setAccountType, setId } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -100,16 +101,22 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
                 />}
             <CardContent style={{ alignItems: 'left', textAlign: 'left', padding: 40 }}>
                 {/* roboto medium, override font size to 18 as per figma */}
-                <p className='roboto-medium' style={{ fontSize: 18, marginBottom: 20 }}>
-                    LOG IN {accountType === 'CLUB' ? '(club)' : null
-                    }
-                </p>
-                <div style={{ marginTop: 15, marginBottom: 15 }}>
-                    <p className="roboto-regular">
-                        <Link to={accountType === 'CLUB' ? '/login' : '/club/login'} style={{ color: "#00cccccc" }}>
-                            Click here for {accountType === 'CLUB' ? 'user' : 'club'} login
-                        </Link>
+                <div className='flex-row-between' >
+                    <p className='roboto-medium' style={{ fontSize: 18 }}>
+                        LOG IN {accountType === 'CLUB' ? '(club)' : null
+                        }
                     </p>
+                    {/* Add an element here which is on the right side of the parent*/}
+                    <ToggleButtonGroup
+                        color="primary"
+                        value={accountType}
+                        exclusive
+                        onChange={(event, value) => setTypeAccount(value)}
+                        aria-label="Platform"
+                    >
+                        <ToggleButton value="USER">User</ToggleButton>
+                        <ToggleButton value="CLUB">Club</ToggleButton>
+                    </ToggleButtonGroup>
                 </div>
                 <div className='loginsignup-input-wrap'
                     // Override styles if there's an email warning above this
