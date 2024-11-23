@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom";
 import { Event, EventType } from "../../types/types";
 import { Club } from "../../types/types";
@@ -17,7 +17,12 @@ import {AuthContext} from "../../context/AuthContext"
 
 export const AddEventForm= ()=>{
 
-    const {token} = useContext(AuthContext);
+    const context = useContext(AuthContext);
+    useEffect(() => {
+        console.log(context.token, context.accountType, context.id);
+    }, []);
+    const club_id = context.id;
+    const token = context.token;
     const navigate = useNavigate();
     const BackButton: React.FC = () => {
         const handleBack = () => { navigate(-1); };
