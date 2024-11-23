@@ -12,6 +12,7 @@ import { AuthContext } from '../../context/AuthContext';
 import { API_BASE_URL } from '../../constants/constants';
 import { CardMedia } from '@mui/material';
 import UploadProfilePicture from './UploadProfilePicture';
+import { useContext,useEffect } from 'react';
 
 interface ProfileCardProps {
   user: User;
@@ -19,7 +20,11 @@ interface ProfileCardProps {
 
 
 export const ProfileCard: React.FC<ProfileCardProps> = ({ user }) =>{ 
-    const {token} = React.useContext(AuthContext);
+    const context = useContext(AuthContext);
+    useEffect(() => {
+        console.log(context.token, context.accountType, context.id);
+    }, []);
+    const token = context.token;
 
     React.useEffect(() => {
         loadPic();
