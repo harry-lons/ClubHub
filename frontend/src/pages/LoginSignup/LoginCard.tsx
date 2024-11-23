@@ -1,19 +1,22 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Card, CardContent, TextField, InputAdornment, IconButton, OutlinedInput, Button } from '@mui/material';
+import { Card, CardContent, TextField, InputAdornment, IconButton, OutlinedInput, Button, Snackbar, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { authenticate, whoami, validateLoginInput } from '../../utils/auth-utils';
 import { AuthContext } from '../../context/AuthContext';
 
 interface LoginCardProps {
-    accountType?: string; // Define whether this is a user or club login
+    typeAccount?: string; // Define whether this is a user or club login
 }
-const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
-    const [showPassword, setShowPassword] = React.useState(false);
-    const [enteredEmail, setEnteredEmail] = React.useState("");
-    const [enteredPassword, setEnteredPassword] = React.useState("");
-    const [badEmailWarning, setBadEmailWarning] = React.useState(false);
-    const [badPasswordWarning, setBadPasswordWarning] = React.useState(false);
-    const { saveToken } = useContext(AuthContext);
+const LoginCard: React.FC<LoginCardProps> = ({ typeAccount }) => {
+    const [showPassword, setShowPassword] = useState(false);
+    const [enteredEmail, setEnteredEmail] = useState("");
+    const [enteredPassword, setEnteredPassword] = useState("");
+    const [badEmailWarning, setBadEmailWarning] = useState<string | null>(null);
+    const [badPasswordWarning, setBadPasswordWarning] = useState<string | null>(null);
+    const [accountType, setTypeAccount] = useState<string | null>(typeAccount ?? null);
+    const [error, setError] = useState<string | null>(null);
+    const { saveToken, setAccountType, setId } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -30,37 +33,18 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
         setEnteredPassword(event.target.value);
     };
 
-    const inputIsValid = () => {
-        var returnValue = true;
-        setBadEmailWarning(false);
-        setBadPasswordWarning(false);
-
-        if (enteredEmail === "") {
-            // No email entered
-            setBadEmailWarning(true);
-            returnValue = false;
-        }
-
-        // Regular expression to validate email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(enteredEmail)) {
-            // Invalid email format
-            setBadEmailWarning(true);
-            returnValue = false;
-        }
-
-        if (enteredPassword === "") {
-            setBadPasswordWarning(true);
-            returnValue = false;
-        }
-
-        return returnValue;
-    }
-
     const handleSubmitForm = async (event: React.MouseEvent<HTMLButtonElement>) => {
-        if (!inputIsValid()) {
-            // Failed input check, do not submit
+        const validation = validateLoginInput(enteredEmail, enteredPassword)
+        if (validation.emailMessage || validation.passwordMessage) {
+            // Failed input check, do not send request
+            setBadEmailWarning(validation.emailMessage);
+            setBadPasswordWarning(validation.passwordMessage);
             return;
+        }
+        else {
+            // disable input warnings
+            setBadEmailWarning(null);
+            setBadPasswordWarning(null);
         }
         let baseURL = process.env.REACT_APP_BACKEND_URL;
         if (!baseURL) {
@@ -74,38 +58,33 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
 
         if (!accountType || (accountType !== 'USER' && accountType !== 'CLUB')) {
             // Something went very wrong, just go back to / with error
-            console.error("Lost state on whether this was club or user login!");
+            console.error("Somehow lost state on whether this was club or user login!");
             window.location.href = '/';
         }
+
         // Convert to lowercase for consistency
         let lcAccount = accountType?.toLowerCase();
 
         // Determine the specific backend endpoint based on what type of account this is
-        const tokenURL = `${baseURL}/${lcAccount}/login`;
-
-        try {
-            const response = await fetch(tokenURL, {
-                method: 'POST',
-                body: formData
-            });
-
-            const data = await response.json();
-            console.log('Response:', data);
-
-            // Check if the response contains a token
-            if (data.access_token) {
-                console.log('Token received:', data.access_token);
-                saveToken(data.access_token);  // Store the token in context
-                navigate('/events');     // Redirect to /events page
-            } else {
-                // Handle (unexpected) incorrect response from backend
-                console.error('No token found in the response');
-            }
-
-        } catch (error) {
-            // Handle other error codes (401 unauthorized, etc)
-            console.error('There was a problem with the fetch operation:', error);
+        const endpoint = `${baseURL}/${lcAccount}`;
+        const authResponse = await authenticate(endpoint, formData);
+        if (!authResponse.success) {
+            console.log("unsuccessful")
+            // error in fetch was already printed to console in authenticate, just show user an error
+            console.log(authResponse.detail)
+            setError(authResponse.detail)
+            return;
         }
+        else if (authResponse.token !== "") {
+            const token = authResponse.token;
+            saveToken(token);  // Store the token in context
+            setAccountType(accountType === 'CLUB' ? 'club' : 'user');
+            const id = await whoami(endpoint, token);
+            // Put the id in context
+            setId(id);
+        }
+        navigate('/events');     // Redirect to /events page
+
     };
 
     const handleMouseUpPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -113,18 +92,31 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
     };
     return (
         <Card style={{ width: '100%' }}>
+            {error &&
+                <Snackbar
+                    open={true}
+                    autoHideDuration={6000}
+                    message={error}
+                    onClose={() => setError(null)}
+                />}
             <CardContent style={{ alignItems: 'left', textAlign: 'left', padding: 40 }}>
                 {/* roboto medium, override font size to 18 as per figma */}
-                <p className='roboto-medium' style={{ fontSize: 18, marginBottom: 20 }}>
-                    LOG IN {accountType === 'CLUB' ? '(club)' : null
-                    }
-                </p>
-                <div style={{ marginTop: 15, marginBottom:15 }}>
-                    <p className="roboto-regular">
-                        <Link to={ accountType === 'CLUB' ? '/login' : '/club/login' } style={{ color: "#00cccccc" }}>
-                            Click here for { accountType === 'CLUB' ? 'user' : 'club' } login
-                        </Link> 
+                <div className='flex-row-between' >
+                    <p className='roboto-medium' style={{ fontSize: 18 }}>
+                        LOG IN {accountType === 'CLUB' ? '(club)' : null
+                        }
                     </p>
+                    {/* Add an element here which is on the right side of the parent*/}
+                    <ToggleButtonGroup
+                        color="primary"
+                        value={accountType}
+                        exclusive
+                        onChange={(event, value) => setTypeAccount(value)}
+                        aria-label="Platform"
+                    >
+                        <ToggleButton value="USER">User</ToggleButton>
+                        <ToggleButton value="CLUB">Club</ToggleButton>
+                    </ToggleButtonGroup>
                 </div>
                 <div className='loginsignup-input-wrap'
                     // Override styles if there's an email warning above this
@@ -140,12 +132,10 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
                         type="email"
                         onChange={handleEmailChange}
                     />
-                    {badEmailWarning ?
+                    {badEmailWarning &&
                         <p
                             style={{ color: "red", marginTop: 10 }}
-                        > Enter a valid email</p>
-                        :
-                        null
+                        > {badEmailWarning}</p>
                     }
                 </div>
 
@@ -179,12 +169,10 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
                         }
                     />
                 </div>
-                {badPasswordWarning ?
+                {badPasswordWarning &&
                     <p
                         style={{ color: "red", marginTop: 10, marginBottom: 10 }}
-                    > Enter a password</p>
-                    :
-                    null
+                    >{badPasswordWarning}</p>
                 }
                 <Button
                     variant="contained"
@@ -195,11 +183,21 @@ const LoginCard: React.FC<LoginCardProps> = ({ accountType }) => {
                     LOG IN
                 </Button>
                 <div style={{ marginTop: 15 }}>
-                    <p className="roboto-regular">
-                        Don't have an account? <Link to="/signup" style={{ color: "#00aaaa" }}>
-                            Sign up
-                        </Link> instead.
-                    </p>
+                    {
+                        accountType === "USER" ?
+                            <p className="roboto-regular">
+                                Don't have an account? <Link to="/signup" style={{ color: "#00aaaa" }}>
+                                    Sign up
+                                </Link> instead.
+                            </p>
+                            :
+                            <p className="roboto-regular">
+                                Club not registered? <Link to="/club/signup" style={{ color: "#00aaaa" }}>
+                                    Sign up
+                                </Link> instead.
+                            </p>
+                    }
+
                 </div>
             </CardContent>
         </Card>

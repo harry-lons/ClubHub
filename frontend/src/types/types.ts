@@ -67,3 +67,33 @@ export type Club =
 	board_members: string[];
 	contact_email: string | string[];
 };
+
+export type signupInfo = 
+{
+	email: string;
+	password: string;
+}
+
+// Extend signupInfo for user-specific signup
+export type userSignup = signupInfo & {
+    first_name: string;
+    last_name: string;
+};
+
+// Extend signupInfo for club-specific signup
+export type clubSignup = signupInfo & {
+    name: string;
+};
+
+export type signupResponse =
+{
+	success: boolean;
+	detail: string;
+}
+
+export type loginResponse = 
+{
+	success: boolean,
+    token: string,
+    detail: string,
+}
