@@ -4,7 +4,7 @@ from src.database import DB
 from src.db_store.models import Events
 from src.events.constants import fake_event_1, fake_event_2
 
-from .utils import club_auth_header
+from .utils import club_auth_header, user_auth_header
 
 # TODO:
 # - club login fixutre
@@ -26,6 +26,19 @@ def test_get_event(client):
     assert event_data["location"] == fake_event_1.location
     assert event_data["capacity"] == 101
     assert len(event_data["type"]) == len(fake_event_1.type)
+
+
+def test_user_get_events_folowed(client, user_auth_header):
+    """Test a user getting a list of their followed events"""
+    resp = client.get("/user/myevents", headers=user_auth_header)
+
+    assert resp.status_code == 200
+    resp_data = resp.json()
+
+    assert len(resp_data) == 1
+    events = resp_data["events"]
+    item1 = events[0]
+    assert item1["title"] == fake_event_1.title
 
 
 def test_update_event(client, club_auth_header):

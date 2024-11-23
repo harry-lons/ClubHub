@@ -1,16 +1,18 @@
-from typing import Annotated
+from typing import Annotated, List
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from ..authentication import service as auth_service
 from ..authentication.schemas import User
 from ..database import DB
+from ..db_store.conversion import b_event_to_f_event
+from ..db_store.models import Events
 from ..identities.schemas import Club
 from .constants import fake_event_1, mock_events
 from .rsvp import rsvp_user_create, rsvp_user_delete, rsvp_user_get
 
 # from ..app import app
-from .schemas import Event, EventCalendarData, EventID, EventIDList, EventWithoutID
+from .schemas import Event, EventCalendarData, EventID, EventIDList
 
 app = APIRouter()
 
@@ -19,7 +21,7 @@ app = APIRouter()
 async def get_events(
     current_user: Annotated[User, Depends(auth_service.get_current_user)]
 ) -> EventCalendarData:
-    return mock_events
+    raise HTTPException(status_code=status.HTTP_301_MOVED_PERMANENTLY)
 
 
 @app.get("/event/{id}", response_model=Event)
@@ -28,7 +30,7 @@ async def event(id: int) -> Event:
     return event
 
 
-@app.post("/rsvp/{event_id}")
+@app.post("/rsvp/{event_id}", tags=["user"])
 async def rsvp_enter(
     current_user: Annotated[User, Depends(auth_service.get_current_user)], event_id: int
 ) -> bool:
@@ -38,7 +40,7 @@ async def rsvp_enter(
     return res
 
 
-@app.delete("/rsvp/{event_id}")
+@app.delete("/rsvp/{event_id}", tags=["user"])
 async def rsvp_delete(
     current_user: Annotated[User, Depends(auth_service.get_current_user)], event_id: int
 ) -> bool:
@@ -48,7 +50,7 @@ async def rsvp_delete(
     return res
 
 
-@app.get("/rsvp/", response_model=EventIDList)
+@app.get("/rsvp/", response_model=EventIDList, tags=["user"])
 async def rsvp(
     current_user: Annotated[User, Depends(auth_service.get_current_user)]
 ) -> EventIDList:
@@ -56,7 +58,7 @@ async def rsvp(
     return events
 
 
-@app.post("/club/event")
+@app.post("/club/event", tags=["club", "event"])
 async def add_event(
     current_club: Annotated[Club, Depends(auth_service.get_current_logged_in_club)],
     new_event: Event,
@@ -65,7 +67,7 @@ async def add_event(
 
     Pass in an Event object. The `id` attribute and `club_id` attribute can be anything, they are
     ignored."""
-    print(new_event)
+    # TODO change return to EventID
     # try:
     event_id = DB.db.create_event(new_event, current_club.id)
     return event_id
@@ -76,7 +78,7 @@ async def add_event(
     #     )
 
 
-@app.patch("/club/event")
+@app.patch("/club/event", tags=["club", "event"])
 async def update_event(
     current_club: Annotated[Club, Depends(auth_service.get_current_logged_in_club)],
     event: Event,
@@ -94,7 +96,7 @@ async def update_event(
     #     return False
 
 
-@app.delete("/club/event/{event_id}")
+@app.delete("/club/event/{event_id}", tags=["club", "event"])
 async def delete_event(
     current_club: Annotated[Club, Depends(auth_service.get_current_logged_in_club)],
     event_id: int,
@@ -114,3 +116,14 @@ async def delete_event(
     return True
     # except ValueError as exc:
     #     return False
+
+
+@app.get("/user/myevents", response_model=EventCalendarData, tags=["user", "event"])
+async def user_follow_events(
+    current_user: Annotated[User, Depends(auth_service.get_current_user)]
+):
+    """Returns the events that a user follows (is RSVP'd)"""
+    user = DB.db.get_user_from_id(current_user.id)
+    events: List[Events] = user.events
+    events_api = [b_event_to_f_event(e) for e in events]
+    return EventCalendarData(events=events_api)

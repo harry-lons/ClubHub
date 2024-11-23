@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Tuple
 
-from ..events.schemas import Event, EventWithoutID
+from ..events.schemas import Event
 from .models import *
 
 

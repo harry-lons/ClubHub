@@ -103,8 +103,12 @@ def test_club_token(client):
     response_data = response.json()
     assert len(response_data) > 0, "Response is empty"
 
-    assert response_data["contact_email"] == "cats@example.com" == club.contact_email
-    assert response_data["name"] == club.name
+    assert response_data["id"], response_data
+    assert (
+        response_data["contact_email"] == "cats@example.com" == club.contact_email
+    ), response_data
+    assert response_data["name"] == club.name, response_data
+    assert len(response_data["board_members"]) == 1, response_data
 
 
 def test_club_token_expired(client):

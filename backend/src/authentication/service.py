@@ -8,8 +8,8 @@ from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 from passlib.context import CryptContext
 
 from ..database import DB
-from ..db_store.conversion import b_club_to_f_club
-from ..identities.schemas import Club, User, UserID
+from ..db_store.conversion import b_club_to_f_club, b_club_to_f_club_full
+from ..identities.schemas import Club, ClubWithBoardMembers, User, UserID
 from .constants import (
     BAD_CREDIENTIALS_EXCEPTION,
     LOGIN_BAD_EMAIL,
@@ -19,28 +19,6 @@ from .constants import (
 )
 from .schemas import BearerToken, ClubSignup, UserLogin, UserSignup
 from .utils import useracc_to_user
-
-## TODO: implement the merged(UserLogin and UserSignup) class across all the functions
-# creds: username1:password
-
-
-fake_users_db = {
-    "username1": {
-        "id": 5,
-        "username": "username1",
-        "first_name": "First",
-        "last_name": "Last",
-        "hashed_password": "$argon2id$v=19$m=65536,t=3,p=4$KYUwppQyxjgnBIBQyrkXAg$OmDVsUIY90aOTyvp0kbrtLuSKsSaewP64MfSDEwH7+w",
-    },
-    "email@gmail.com": {
-        "id": 6,
-        "username": "email@gmail.com",
-        "first_name": "First2",
-        "last_name": "Last2",
-        "hashed_password": "$argon2id$v=19$m=65536,t=3,p=4$KYUwppQyxjgnBIBQyrkXAg$OmDVsUIY90aOTyvp0kbrtLuSKsSaewP64MfSDEwH7+w",
-    },
-}
-
 
 app = APIRouter()
 
@@ -63,30 +41,6 @@ def verify_password(plain_password, hashed_password) -> bool:
 
 def get_password_hash(password) -> str:
     return pwd_context.hash(password)
-
-
-def get_user_from_db(db, username: str) -> UserLogin:
-    """Returns a User information from the database.
-    Throws ValueError if the user does not exist.
-    """
-    if username not in db:
-        raise ValueError()
-    user = UserLogin(**db[username])
-    return user
-
-
-def authenticate_user(db, username: str, entered_passwd: str) -> UserLogin:
-    """Returns the user record for a given username and password.
-    If incorrect credientials, throws ValueError"""
-
-    # get user data from db based on username
-    if username not in db:
-        raise LOGIN_BAD_EMAIL
-    user = UserLogin(**db[username])
-
-    if not verify_password(entered_passwd, user.hashed_password):
-        raise LOGIN_BAD_PASSWORD
-    return user
 
 
 def authenticate_user2(email: str, entered_passwd: str) -> UserLogin:
@@ -122,12 +76,6 @@ def authenticate_club(email: str, entered_pw: str) -> Club:
     return club
 
 
-def authenticate_signup(db, username: str, password: str) -> str:
-    if username in db:
-        raise SIGNUP_EMAIL_EXISTS
-    return get_password_hash(password)
-
-
 def create_access_token(data: Dict, expires_in: timedelta) -> str:
     """Creates a jwt token from data."""
     expires_at = datetime.now(timezone.utc) + expires_in
@@ -142,14 +90,6 @@ async def get_current_user(
 ) -> User:
     """Validates a given (bearer) token. If the token is correct, returns
     the user the token corresponds to."""
-
-    # TODO change this
-
-    """
-    TODO Fix the token expiration issue (stringifying the datetime object)
-    process involves turning the the datetime object into a string and we
-    turn it back to a datetime object and the issue lies in the latter..
-    """
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
@@ -171,7 +111,7 @@ async def get_current_user(
 
 async def get_current_logged_in_club(
     token: Annotated[str, Depends(oauth2_scheme_club_login)]
-) -> Club:
+) -> ClubWithBoardMembers:
     """Returns the currently loged in club's data"""
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -186,7 +126,7 @@ async def get_current_logged_in_club(
 
     try:
         club_from_db = DB.db.get_org_from_email(email)
-        club = b_club_to_f_club(club_from_db)
+        club = b_club_to_f_club_full(club_from_db)
         return club
     except ValueError:
         raise BAD_CREDIENTIALS_EXCEPTION
@@ -209,10 +149,7 @@ async def user_login(
     return BearerToken(access_token=access_token, token_type="bearer")
 
 
-@app.post(
-    "/user/signup",
-    tags=["user"],
-)
+@app.post("/user/signup", tags=["user"])
 async def user_signup(info: UserSignup) -> UserID:
     try:
         DB.db.get_user_from_email(info.email)
@@ -262,15 +199,13 @@ async def club_signup(info: ClubSignup):
 async def user_whoami(
     current_user: Annotated[User, Depends(get_current_user)],
 ) -> User:
-    # TODO Change this
     """Returns the current logged in user."""
     return current_user
 
 
-@app.get("/club/whoami", response_model=Club, tags=["club"])
+@app.get("/club/whoami", response_model=ClubWithBoardMembers, tags=["club"])
 async def club_whoami(
-    current_club: Annotated[Club, Depends(get_current_logged_in_club)]
-) -> Club:
-    # TODO: Change this to return a club object
+    current_club: Annotated[ClubWithBoardMembers, Depends(get_current_logged_in_club)]
+) -> ClubWithBoardMembers:
     """Returns the id of the club that is logged in"""
     return current_club

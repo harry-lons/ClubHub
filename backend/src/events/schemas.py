@@ -26,22 +26,6 @@ class Event(EventID):
     type: List[str]
 
 
-# Has all the attributes as Event, but without the `id` attribute. This data
-# is passed in when creating  an event - as when creating an event, the entity
-# creating does not know the id of the event (the id is created later by the backend)
-class EventWithoutID(BaseModel):
-    # id: int
-    title: str
-    # club_id: int
-    location: str = Field(default="")
-    begin_time: datetime
-    end_time: datetime
-    recurrence: str
-    summary: str = Field(default="")
-    pictures: List[str] = Field(default=[])
-    type: List[str]  # for now
-
-
 class EventCalendarData(BaseModel):
     events: List[Event]
 
