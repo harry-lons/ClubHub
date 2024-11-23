@@ -2,7 +2,7 @@ import { StringLiteral } from "typescript";
 
 export type Event =
 {
-	id: string;
+	id: Number;
 	title: string;
 	club_id : string;
 	location: string;
@@ -12,7 +12,7 @@ export type Event =
 	recurrence_type: Number | null;
 	stop_date: Date|null;
 	summary: string;
-	pictures: { [key: string]: string };
+	pictures: string[];
 	type: EventType[];
 	capacity: Number | null;
 };

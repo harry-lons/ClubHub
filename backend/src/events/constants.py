@@ -12,7 +12,9 @@ fake_event_1 = Event(
     location="Earth",
     begin_time=datetime(2024, 11, 3, 5),
     end_time=datetime(2024, 11, 3, 6),
-    recurrence=(False, None, None),
+    recurrence=False,
+    recurrence_type=None,
+    stop_date=None,
     capacity=101,
     type=["social"],
 )
@@ -24,7 +26,9 @@ fake_event_2 = Event(
     location="Cat Cafe",
     begin_time=datetime(2024, 11, 3, 20),
     end_time=datetime(2024, 11, 3, 22),
-    recurrence=(False, None, None),
+    recurrence=False, 
+    recurrence_type=None, 
+    stop_date=None,
     capacity=None,
     type=["food"],
 )
