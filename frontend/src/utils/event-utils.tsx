@@ -75,7 +75,7 @@ export const fetchEvents = async (): Promise<Event[]> => {
 };
 
 // All events RSVPed by the user
-export const fetchRSVPEvents = async (token: string): Promise<Event[]> => {
+export const fetchEvents = async (token: string): Promise<Event[]> => {
 
     const response = await fetch(`${API_BASE_URL}/user/myevents`, {
         method: "GET",
