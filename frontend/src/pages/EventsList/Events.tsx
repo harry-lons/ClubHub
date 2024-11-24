@@ -12,28 +12,61 @@ import { AuthContext } from "../../context/AuthContext";
 
 const Events: React.FC = () => {
     const navigate = useNavigate();
-    const [events, setEvents] = useState<Event[]> ([]);
-    const [eventList, setEventList] = useState<Record<string, [string, Event][]>> ();
+    const [renderedEvents, setRenderedEvents] = useState<Record<string, [string, Event][]>> ();
+    const [eventsList, setEventsList] = useState<Record<string, [string, Event][]>> ();
+    const [rsvpEventsList, setRsvpEventsList] = useState<Record<string, [string, Event][]>> ();
+    const [followedEventsList, setFollowedEventsList] = useState<Record<string, [string, Event][]>> ();
+    const [combinedEventsList, setCombinedEventsList] = useState<Record<string, [string, Event][]>> ();
+    const [rendering, setRendering] = useState(true);
     const context = useContext(AuthContext);
     const [checked, setChecked] = useState({
         RSVP: false,
         Followed: true,
       });
     const {RSVP, Followed} = checked;
-    const [loading, setLoading] = useState(true);
-    const [fetching, setFetching] = useState(true);
 
     useEffect(() => {
         loadEvents();
-    }, [events]);
+    }, []);
 
     const loadEvents = async () => {
+        // Load Followed Events List
         try {
-            console.log(events);
-            const result = await processEvents(events);
-            setEventList(result);
+            console.log("Followed");
+            const followedList = await fetchEvents();
+            const result = await processEvents(followedList);
+            setFollowedEventsList(result);
+            setRenderedEvents(result);
+        } catch (err: any) {
+            console.error("Error loading RSVP event list:", err.message);
+        }
+        // Load Total Events List
+        try {
+            console.log("Events");
+            const eventsList = await fetchEvents();
+            const result = await processEvents(eventsList);
+            setEventsList(result);
         } catch (err: any) {
             console.error("Error loading event list:", err.message);
+        }
+        // Load RSVP Events List
+        try {
+            console.log("RSVP");
+            const rsvpList = await fetchRSVPEvents(context.token);
+            const result = await processEvents(rsvpList);
+            setRsvpEventsList(result);
+        } catch (err: any) {
+            console.error("Error loading RSVP event list:", err.message);
+        }
+        // Load RSVP and Followed Events List
+        try {
+            console.log("RSVP/Followed");
+            const rsvpList = await fetchRSVPEvents(context.token);
+            const followedList = await fetchEvents();
+            const result = await processEvents(rsvpList.concat(followedList));
+            setCombinedEventsList(result);
+        } catch (err: any) {
+            console.error("Error loading RSVP event list:", err.message);
         }
     }
 
@@ -50,8 +83,7 @@ const Events: React.FC = () => {
             acc[dateKey].sort((a,b) => {
                 return a[1].begin_time.getTime() - b[1].begin_time.getTime();
             });
-    
-            setLoading(false);
+
             return acc;
         }, Promise.resolve({} as Record<string, [string, Event][]>));
         
@@ -62,101 +94,31 @@ const Events: React.FC = () => {
         navigate(`/events/${event_id}`);
     }
 
-    const handleLogIn = () => {
+    const handleLoadLogIn = () => {
         navigate('/');
-    };
+    }; 
 
     const handleCheck = (check: any) => {
-        setFetching(true);
+        setRendering(true);
         setChecked({...checked, [check.target.name]: check.target.checked,});
     };
 
-    const getEvents = async () => {
-        console.log("Events");
-        try {
-            const eventsList = await fetchEvents()
-            setEvents(eventsList);
-        } catch (err: any) {
-            console.error("Error loading event list:", err.message);
-        }
-    }
-
-    const getRSVP = async () => {
-        console.log("RSVP");
-        try {
-            const rsvpList = await fetchRSVPEvents(context.token);
-            setEvents(rsvpList);
-        } catch (err: any) {
-            console.error("Error loading RSVP list:", err.message);
-        }
-    }
-
-    // NO ENDPOINT OR UTIL YET
-    const getFollowed = async () => {
-        console.log("Followed");
-        try {
-            const followedList = await fetchEvents();
-            setEvents(followedList);
-        } catch (err: any) {
-            console.error("Error loading followed list:", err.message);
-        }
-    }
-
-    const getRSVPFollowed = async () => {
-        console.log("RSVP/Followed");
-        try {
-            const followedList = await fetchEvents(); //NO ENDPOINT OR UTIL YET
-            try {
-                const rsvpIDList = await fetchRSVP(context.token);
-                const rsvpList = await rsvpIDList.reduce(async (accPromise, id) => {
-                    const acc: Event[] = await accPromise;
-                    try {
-                        const event = await fetchEventById(Number(id));
-                        acc.push(event);
-                    } catch (err: any) {
-                        console.error("Error fetching event by ID", err.message);
-                    }
-            
-                    return acc;
-                }, Promise.resolve([] as Event[]));
-                const combinedList = followedList.concat(rsvpList);
-                setEvents(combinedList);
-            } catch (err: any) {
-                console.error("Error loading RSVP list:", err.message);
-            }
-        } catch (err: any) {
-            console.error("Error loading followed list:", err.message);
-        }
-    }
-
     //Check the filter to load the correct list
-    if (!RSVP && !Followed) {
-        if (fetching) {
-            getEvents();
-            setLoading(true);
-            setFetching(false);
-        }
+    if (!RSVP && !Followed && rendering) {
+        setRenderedEvents(eventsList);
+        setRendering(false);
     }
-    if (RSVP && !Followed) {
-        if (fetching) {
-            getRSVP();
-            setLoading(true);
-            setFetching(false);
-        }
+    if (RSVP && !Followed && rendering) {
+        setRenderedEvents(rsvpEventsList);
+        setRendering(false);
     }
-    if (!RSVP && Followed) {
-        if (fetching) {
-            getFollowed();
-            setLoading(true);
-            setFetching(false);
-        }
+    if (!RSVP && Followed && rendering) {
+        setRenderedEvents(followedEventsList);
+        setRendering(false);
     }
-    if (RSVP && Followed) {
-        if (fetching) {
-            getRSVPFollowed();
-            setLoading(true);
-            setFetching(false);
-        }
+    if (RSVP && Followed && rendering) {
+        setRenderedEvents(combinedEventsList);
+        setRendering(false);
     }
     
     if (context.token === "") {
@@ -168,123 +130,83 @@ const Events: React.FC = () => {
                     <NavBar />
                 </div>
                 <h1 style={{color: "white"}}>Please Log In to See All Events</h1>
-                <Button variant="contained" onClick={(handleLogIn)} id='logsign-submit-button'>LOG IN</Button>
+                <Button variant="contained" onClick={(handleLoadLogIn)} id='logsign-submit-button'>LOG IN</Button>
             </div>
         )
     }
     else {
         // Event List not loaded properly
-        if (eventList === undefined) {
+        if (renderedEvents === undefined) {
             return (
                 <div style={{width: "100%"}}>
                     <div className="background"/>
                     <div className="navbar-container">
                         <NavBar />
                     </div>
-                    <h1 style={{color: "white"}}>Error Loading Events</h1>
-                    <h1 style={{color: "white"}}>Please Try Again</h1>
+                    <h1 style={{color: "white"}}>Loading Events...</h1>
                 </div>
             )
         }
         // Real screen
         else {
-            // Screen to display while events are loading
-            if (loading) {
-                return (
-                    <div style={{width: "100%"}}>
-                        <div className="background"/>
-                        <Grid container rowSpacing={4} className="events-list-container">
-                            <div className="navbar-container">
-                                <NavBar />
-                            </div>
-                            <Grid item xs={9.5} sx={{display: 'flex', justifyContent: 'flex-end'}}>
-                                <FormGroup>
-                                    <FormControlLabel 
-                                        control={
-                                            <Checkbox checked={RSVP} onChange={handleCheck} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="RSVP"/>
-                                        } 
-                                        label="RSVP Events" 
-                                        sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
-                                    } />
-                                </FormGroup>
-                            </Grid>
-                            <Grid item xs={.2}/>
-                            <Grid item xs={2.3}>
-                                <FormGroup>
-                                    <FormControlLabel 
-                                        control={
-                                            <Checkbox checked={Followed} onChange={handleCheck} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="Followed"/>
-                                        } 
-                                        label="Followed Events" 
-                                        sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
-                                    } />
-                                </FormGroup>
-                            </Grid>
-                            <h1 style={{color: "white"}}>Loading Events...</h1>
-                        </Grid>
-                    </div>
-                )
-            }
             // Loaded Events List
-            else {
-                return (
-                    <div style={{width: "100%"}}>
-                        <div className="background"/>
-                        <Grid container rowSpacing={4} className="events-list-container">
-                            <div className="navbar-container">
-                                <NavBar />
-                            </div>
-                            <Grid item xs={9.5} sx={{display: 'flex', justifyContent: 'flex-end'}}>
-                                <FormGroup>
-                                    <FormControlLabel 
-                                        control={
-                                            <Checkbox checked={RSVP} onChange={handleCheck} onClick={() => setLoading(true)} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="RSVP"/>
-                                        } 
-                                        label="RSVP Events" 
-                                        sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
-                                    } />
-                                </FormGroup>
-                            </Grid>
-                            <Grid item xs={.2}/>
-                            <Grid item xs={2.3}>
-                                <FormGroup>
-                                    <FormControlLabel 
-                                        control={
-                                            <Checkbox checked={Followed} onChange={handleCheck} onClick={() => setLoading(true)} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="Followed"/>
-                                        } 
-                                        label="Followed Events" 
-                                        sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
-                                    } />
-                                </FormGroup>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Grid container rowSpacing={4} className="events-list">
-                                    {Object.entries(eventList).map(([date, events]) => (
-                                        <Grid item xs={12} key={date} className="event-item">
-                                            <div className="event-date-column">
-                                                <h3>{date}</h3>
-                                            </div >
-                                            <div className="event-details-column">
-                                                {events.map((event) => (
-                                                    <div className="event-info" key={event[1].id}>
-                                                        <div className="event-time">
-                                                            {event[1].begin_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                        </div>
-                                                        <div className="event-details">
-                                                            <p className="event-title" onClick={()=>goToDetailPage(event[1].id)}>{event[1].title}</p>
-                                                            <p className="event-club-location">{event[0]}, {event[1].location}</p>
-                                                        </div>
+            return (
+                <div style={{width: "100%"}}>
+                    <div className="background"/>
+                    <Grid container rowSpacing={4} className="events-list-container">
+                        <div className="navbar-container">
+                            <NavBar />
+                        </div>
+                        <Grid item xs={9.5} sx={{display: 'flex', justifyContent: 'flex-end'}}>
+                            <FormGroup>
+                                <FormControlLabel 
+                                    control={
+                                        <Checkbox checked={RSVP} onChange={handleCheck} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="RSVP"/>
+                                    } 
+                                    label="RSVP Events" 
+                                    sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
+                                } />
+                            </FormGroup>
+                        </Grid>
+                        <Grid item xs={.2}/>
+                        <Grid item xs={2.3}>
+                            <FormGroup>
+                                <FormControlLabel 
+                                    control={
+                                        <Checkbox checked={Followed} onChange={handleCheck} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="Followed"/>
+                                    } 
+                                    label="Followed Events" 
+                                    sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
+                                } />
+                            </FormGroup>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Grid container rowSpacing={4} className="events-list">
+                                {Object.entries(renderedEvents).map(([date, events]) => (
+                                    <Grid item xs={12} key={date} className="event-item">
+                                        <div className="event-date-column">
+                                            <h3>{date}</h3>
+                                        </div >
+                                        <div className="event-details-column">
+                                            {events.map((event) => (
+                                                <div className="event-info" key={event[1].id}>
+                                                    <div className="event-time">
+                                                        {event[1].begin_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                     </div>
-                                                ))}
-                                            </div>
-                                        </Grid>
-                                    ))}
-                                </Grid>
+                                                    <div className="event-details">
+                                                        <p className="event-title" onClick={()=>goToDetailPage(event[1].id)}>{event[1].title}</p>
+                                                        <p className="event-club-location">{event[0]}, {event[1].location}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </Grid>
+                                ))}
                             </Grid>
                         </Grid>
-                    </div>
-                );
-            }
+                    </Grid>
+                </div>
+            );
         };
     }
 }
