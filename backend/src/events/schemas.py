@@ -31,7 +31,7 @@ class EventCalendarData(BaseModel):
 
 
 class RSVP(BaseModel):
-    user_id: int
+    user_id: str
     event_id: int
 
 class RSVPList(BaseModel):

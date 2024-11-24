@@ -54,7 +54,7 @@ async def rsvp_delete(
     return res
 
 
-@app.get("/RSVP/", response_model=List, tags=["user"])
+@app.get("/RSVP/rsvps", response_model=List, tags=["user"])
 async def rsvp_user(
     current_user: Annotated[User, Depends(auth_service.get_current_user)]
 ) -> RSVPList:

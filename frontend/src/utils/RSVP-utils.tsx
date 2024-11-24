@@ -2,6 +2,8 @@ import { API_BASE_URL } from "../constants/constants"
 import { RSVP,User } from "../types/types"
 // Function to create an expense in the backend. Method: POST
 export const createRSVP = async (token: string,rsvp: RSVP): Promise<boolean> => {
+	// console.log(rsvp)
+	console.log(`${API_BASE_URL}`)
 	const response = await fetch(`${API_BASE_URL}/RSVP`, {
     	method: "POST",
     	headers: {
@@ -10,6 +12,7 @@ export const createRSVP = async (token: string,rsvp: RSVP): Promise<boolean> => 
     	},
     	body: JSON.stringify(rsvp),
 	});
+	console.log(response.url)
 	if (!response.ok) {
     	throw new Error("Failed to create RSVP");
 	}
@@ -18,12 +21,14 @@ export const createRSVP = async (token: string,rsvp: RSVP): Promise<boolean> => 
 
 // Function to delete an expense in the backend. Method: DELETE
 export const deleteRSVP = async (token:string,event_id: string): Promise<boolean> => { //id should be event-id
+	console.log(`${API_BASE_URL}`)
 	const response = await fetch(`${API_BASE_URL}/RSVP/${event_id}`, { // url need to be changed 
     	method: "DELETE",
 		headers:{
 			"Authorization" : `Bearer ${token}`
 		}
 	});
+	console.log(response.url)
 	if (!response.ok) {
     	throw new Error("Failed to delete RSVP");
 	}
@@ -32,7 +37,7 @@ export const deleteRSVP = async (token:string,event_id: string): Promise<boolean
 // fetch all RSVP by a certain user
 // Function to get all expenses from the backend. Method: GET
 export const fetchRSVP = async (token:string): Promise<RSVP[]> => { 
-	const response = await fetch(`${API_BASE_URL}/RSVP/`, { //NOTICE CHANGE
+	const response = await fetch(`${API_BASE_URL}/RSVP/rsvps`, { //NOTICE CHANGE
         method: "GET",
         headers: {
             "Authorization" : `Bearer ${token}`
