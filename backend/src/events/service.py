@@ -6,13 +6,15 @@ from ..authentication import service as auth_service
 from ..authentication.schemas import User
 from ..database import DB
 from ..db_store.conversion import b_event_to_f_event
-from ..db_store.models import Events
+from ..db_store.models import Events, UserRSVPs
 from ..identities.schemas import Club
 from .constants import fake_event_1, mock_events
+# from ..db_store.
 from .rsvp import rsvp_user_create, rsvp_user_delete, rsvp_user_get
 
 # from ..app import app
 from .schemas import Event, EventCalendarData, EventID, EventIDList
+from ..identities.schemas import UserIDList
 
 app = APIRouter()
 
@@ -30,33 +32,52 @@ async def event(id: int) -> Event:
     return event
 
 
-@app.post("/rsvp/{event_id}", tags=["user"])
+@app.post("/RSVP", tags=["user"])
 async def rsvp_enter(
     current_user: Annotated[User, Depends(auth_service.get_current_user)], event_id: int
 ) -> bool:
     """RSVPs the currently loged in user to the event `event_id`. Returns a boolean determining
     whether adding is successful."""
-    res = await rsvp_user_create(current_user.id, event_id)
+    # res = await rsvp_user_create(current_user.id, event_id)
+    res = DB.db.add_rsvp_user(current_user.id, event_id)
     return res
 
 
-@app.delete("/rsvp/{event_id}", tags=["user"])
+@app.delete("/RSVP/{event_id}", tags=["user"])
 async def rsvp_delete(
     current_user: Annotated[User, Depends(auth_service.get_current_user)], event_id: int
 ) -> bool:
     """Removes a RSVP of the currently loged in user to event `event_id`. Returns a boolean
     determining whether the operation was successful."""
-    res = await rsvp_user_delete(current_user.id, event_id)
+    #res = await rsvp_user_delete(current_user.id, event_id)
+    res = DB.db.remove_rsvp_user(current_user.id, event_id)
     return res
 
 
-@app.get("/rsvp/", response_model=EventIDList, tags=["user"])
-async def rsvp(
+@app.get("/RSVP/", response_model=List, tags=["user"])
+async def rsvp_user(
     current_user: Annotated[User, Depends(auth_service.get_current_user)]
 ) -> EventIDList:
-    events = await rsvp_user_get(current_user.id)
-    return events
+    '''
+    Fetches all the events the user has RSVP'd to 
+    '''
+    # events = await rsvp_user_get(current_user.id)
+    user_events = EventIDList()
+    events_rsvp = DB.db.fetch_rsvp_events(current_user.id)
+    user_events.events = events_rsvp
+    return user_events
 
+@app.get("/RSVP/Attendees/{event_id}", response_model=List, tags=["user"])
+async def rsvp_event(
+    current_club: Annotated[Club, Depends(auth_service.get_current_logged_in_club)], event_id: int
+) -> UserIDList:
+    '''
+    Fetches all attendees given a certain event
+    '''
+    attendees = UserIDList()
+    users_rsvp = DB.db.fetch_rsvp_users(event_id)
+    attendees.users = users_rsvp
+    return attendees
 
 @app.post("/club/event", tags=["club", "event"])
 async def add_event(
