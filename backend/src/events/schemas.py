@@ -34,6 +34,8 @@ class RSVP(BaseModel):
     user_id: int
     event_id: int
 
+class RSVPList(BaseModel):
+    rsvps: List[RSVP]
 
 class EventIDList(BaseModel):
     events: List[int]

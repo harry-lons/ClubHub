@@ -13,7 +13,7 @@ from .constants import fake_event_1, mock_events
 from .rsvp import rsvp_user_create, rsvp_user_delete, rsvp_user_get
 
 # from ..app import app
-from .schemas import Event, EventCalendarData, EventID, EventIDList
+from .schemas import Event, EventCalendarData, EventID, EventIDList, RSVP, RSVPList
 from ..identities.schemas import UserIDList
 
 app = APIRouter()
@@ -57,15 +57,15 @@ async def rsvp_delete(
 @app.get("/RSVP/", response_model=List, tags=["user"])
 async def rsvp_user(
     current_user: Annotated[User, Depends(auth_service.get_current_user)]
-) -> EventIDList:
+) -> RSVPList:
     '''
     Fetches all the events the user has RSVP'd to 
     '''
     # events = await rsvp_user_get(current_user.id)
-    user_events = EventIDList()
-    events_rsvp = DB.db.fetch_rsvp_events(current_user.id)
-    user_events.events = events_rsvp
-    return user_events
+    rsvp_events = RSVPList()
+    rsvp = DB.db.fetch_rsvp(current_user.id)
+    rsvp_events.rsvps = rsvp
+    return rsvp_events
 
 @app.get("/RSVP/Attendees/{event_id}", response_model=List, tags=["user"])
 async def rsvp_event(
@@ -75,7 +75,7 @@ async def rsvp_event(
     Fetches all attendees given a certain event
     '''
     attendees = UserIDList()
-    users_rsvp = DB.db.fetch_rsvp_users(event_id)
+    users_rsvp = DB.db.fetch_rsvp_attendees(event_id)
     attendees.users = users_rsvp
     return attendees
 

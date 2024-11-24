@@ -187,7 +187,18 @@ class PostgresDatabase(IAuth, IEvents):
             self.session.rollback()
             raise ValueError(f"Error deleting RSVP: {e}")
         
-    def fetch_rsvp_users(self, event_id: int)-> List[str]:
+    def fetch_rsvp(self, user_id: str)-> List[UserRSVPs]:
+        '''
+        Fetches all the rsvps that a specific user 
+        '''
+        # user = self._get_by(UserAccounts, id=user_id) ## fetch the user
+        rsvps = self.session.query(UserRSVPs).filter(user_id=user_id).all()
+        if len(rsvps) == 0:
+            raise ValueError(f"User {user_id} has not RSVP'd for any events")
+        return rsvps
+
+    
+    def fetch_rsvp_attendees(self, event_id: int)-> List[str]:
         '''
         Fetches all the users who have RSVP'd for a
         specified event
@@ -198,17 +209,6 @@ class PostgresDatabase(IAuth, IEvents):
             raise ValueError(f"Event {event.title} is not an RSVP'd event")
         return users
         
-        
-    def fetch_rsvp_events(self, user_id: str)-> List[int]:
-        '''
-        Fetches all the events that a specific user RSVP'd for
-        '''
-        # user = self._get_by(UserAccounts, id=user_id) ## fetch the user
-        events = self.session.query(UserRSVPs.event_id).filter(user_id=user_id).all()
-        if len(events) == 0:
-            raise ValueError(f"User {user_id} has not RSVP'd for any events")
-        return events
-
     def _get_by(self, model: Type[M], **filters) -> M:
         """Fetch an object by arbitrary filters. Returns an object of type `model`.
 
