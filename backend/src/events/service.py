@@ -17,11 +17,11 @@ from .schemas import Event, EventID, EventIDList, ListOfEvents
 app = APIRouter()
 
 
-@app.get("/events", response_model=ListOfEvents)
-async def get_events(
-    current_user: Annotated[User, Depends(auth_service.get_current_user)]
-) -> ListOfEvents:
-    raise HTTPException(status_code=status.HTTP_301_MOVED_PERMANENTLY)
+@app.get("/events", response_model=EventCalendarData)
+async def get_events() -> EventCalendarData:
+    all_events = DB.db.get_all_events()
+    all_events_api = [b_event_to_f_event(e) for e in all_events]
+    return EventCalendarData(events=all_events_api)
 
 
 @app.get("/event/{id}", response_model=Event)

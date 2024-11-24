@@ -53,10 +53,31 @@ export const fetchEventById = async (eventId: number): Promise<Event> => {
     return event;
 };
 
-// All events RSVPed by the user
-export const fetchEvents = async (token: string): Promise<Event[]> => {
+// All events
+export const fetchEvents = async (): Promise<Event[]> => {
 
     const response = await fetch(`${API_BASE_URL}/events`, {
+        method: "GET",
+    })
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch event list")
+    }    
+
+    const events: Event[] = (await response.json()).events;
+    
+    events.forEach((event)=>{
+        if (event.begin_time) {event.begin_time = new Date(event.begin_time); }
+        if (event.end_time) {event.end_time = new Date(event.end_time);}
+    })
+
+    return events;
+};
+
+// All events RSVPed by the user
+export const fetchRSVPEvents = async (token: string): Promise<Event[]> => {
+
+    const response = await fetch(`${API_BASE_URL}/user/myevents`, {
         method: "GET",
         headers: {
             "Authorization" : `Bearer ${token}`
@@ -76,6 +97,7 @@ export const fetchEvents = async (token: string): Promise<Event[]> => {
 
     return events;
 };
+
 //get all upcoming events of a club
 export const fetchClubEvents = async (club_id: Number): Promise<Event[]>=>{
     const response = await fetch(`${API_BASE_URL}/events/club/${club_id}`, {

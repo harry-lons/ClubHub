@@ -5,7 +5,7 @@ import { useState, useEffect, useContext } from "react";
 import "./Events.css";
 import { Grid, FormGroup, FormControlLabel, Checkbox, Button } from '@mui/material';
 import { NavBar } from "../NavBar/NavBar";
-import { fetchEvents, fetchEventById } from "../../utils/event-utils";
+import { fetchEvents, fetchEventById, fetchRSVPEvents } from "../../utils/event-utils";
 import { fetchClubById } from "../../utils/club-utils";
 import { fetchRSVP } from "../../utils/RSVP-utils";
 import { AuthContext } from "../../context/AuthContext";
@@ -21,6 +21,7 @@ const Events: React.FC = () => {
       });
     const {RSVP, Followed} = checked;
     const [loading, setLoading] = useState(true);
+    const [fetching, setFetching] = useState(true);
 
     useEffect(() => {
         loadEvents();
@@ -50,6 +51,7 @@ const Events: React.FC = () => {
                 return a[1].begin_time.getTime() - b[1].begin_time.getTime();
             });
     
+            setLoading(false);
             return acc;
         }, Promise.resolve({} as Record<string, [string, Event][]>));
         
@@ -65,91 +67,95 @@ const Events: React.FC = () => {
     };
 
     const handleCheck = (check: any) => {
+        setFetching(true);
         setChecked({...checked, [check.target.name]: check.target.checked,});
     };
 
     const getEvents = async () => {
         console.log("Events");
-        setEvents(exampleEventList);
-        setLoading(false);
+        try {
+            const eventsList = await fetchEvents()
+            setEvents(eventsList);
+        } catch (err: any) {
+            console.error("Error loading event list:", err.message);
+        }
     }
 
     const getRSVP = async () => {
         console.log("RSVP");
         try {
-            const rsvpIDList = await fetchRSVP(context.token);
-            const rsvpList = await rsvpIDList.reduce(async (accPromise, id) => {
-                const acc: Event[] = await accPromise;
-                try {
-                    const event = await fetchEventById(Number(id));
-                    acc.push(event);
-                } catch (err: any) {
-                    console.error("Error fetching event by ID", err.message);
-                }
-        
-                return acc;
-            }, Promise.resolve([] as Event[]));
+            const rsvpList = await fetchRSVPEvents(context.token);
             setEvents(rsvpList);
         } catch (err: any) {
             console.error("Error loading RSVP list:", err.message);
         }
-        setLoading(false);
     }
 
+    // NO ENDPOINT OR UTIL YET
     const getFollowed = async () => {
         console.log("Followed");
         try {
-            const followedList = await fetchEvents(context.token);
+            const followedList = await fetchEvents();
             setEvents(followedList);
         } catch (err: any) {
             console.error("Error loading followed list:", err.message);
         }
-        setLoading(false);
     }
 
     const getRSVPFollowed = async () => {
         console.log("RSVP/Followed");
         try {
-            const followedList = await fetchEvents(context.token);
-            const rsvpIDList = await fetchRSVP(context.token);
-            const rsvpList = await rsvpIDList.reduce(async (accPromise, id) => {
-                const acc: Event[] = await accPromise;
-                try {
-                    const event = await fetchEventById(Number(id));
-                    acc.push(event);
-                } catch (err: any) {
-                    console.error("Error fetching event by ID", err.message);
-                }
-        
-                return acc;
-            }, Promise.resolve([] as Event[]));
-            const combinedList = followedList.concat(rsvpList);
-            setEvents(combinedList);
+            const followedList = await fetchEvents(); //NO ENDPOINT OR UTIL YET
+            try {
+                const rsvpIDList = await fetchRSVP(context.token);
+                const rsvpList = await rsvpIDList.reduce(async (accPromise, id) => {
+                    const acc: Event[] = await accPromise;
+                    try {
+                        const event = await fetchEventById(Number(id));
+                        acc.push(event);
+                    } catch (err: any) {
+                        console.error("Error fetching event by ID", err.message);
+                    }
+            
+                    return acc;
+                }, Promise.resolve([] as Event[]));
+                const combinedList = followedList.concat(rsvpList);
+                setEvents(combinedList);
+            } catch (err: any) {
+                console.error("Error loading RSVP list:", err.message);
+            }
         } catch (err: any) {
             console.error("Error loading followed list:", err.message);
         }
-        setLoading(false);
     }
 
     //Check the filter to load the correct list
     if (!RSVP && !Followed) {
-        if (loading) {
+        if (fetching) {
             getEvents();
+            setLoading(true);
+            setFetching(false);
         }
     }
     if (RSVP && !Followed) {
-        if (loading) {
+        if (fetching) {
             getRSVP();
+            setLoading(true);
+            setFetching(false);
         }
     }
     if (!RSVP && Followed) {
-        if (loading) {
+        if (fetching) {
             getFollowed();
+            setLoading(true);
+            setFetching(false);
         }
     }
     if (RSVP && Followed) {
-        if (loading) {
+        if (fetching) {
             getRSVPFollowed();
+            setLoading(true);
+            setFetching(false);
         }
     }
     
@@ -167,7 +173,7 @@ const Events: React.FC = () => {
         )
     }
     else {
-        // Screen to display while events are loading
+        // Event List not loaded properly
         if (eventList === undefined) {
             return (
                 <div style={{width: "100%"}}>
@@ -175,69 +181,110 @@ const Events: React.FC = () => {
                     <div className="navbar-container">
                         <NavBar />
                     </div>
-                    <h1 style={{color: "white"}}>Loading Events</h1>
+                    <h1 style={{color: "white"}}>Error Loading Events</h1>
+                    <h1 style={{color: "white"}}>Please Try Again</h1>
                 </div>
             )
         }
-        // Real screen from backend access
+        // Real screen
         else {
-            return (
-                <div style={{width: "100%"}}>
-                    <div className="background"/>
-                    <Grid container rowSpacing={4} className="events-list-container">
-                        <div className="navbar-container">
-                            <NavBar />
-                        </div>
-                        <Grid item xs={9.5} sx={{display: 'flex', justifyContent: 'flex-end'}}>
-                            <FormGroup>
-                                <FormControlLabel 
-                                    control={
-                                        <Checkbox checked={RSVP} onChange={handleCheck} onClick={() => setLoading(true)} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="RSVP"/>
-                                    } 
-                                    label="RSVP Events" 
-                                    sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
-                                } />
-                            </FormGroup>
+            // Screen to display while events are loading
+            if (loading) {
+                return (
+                    <div style={{width: "100%"}}>
+                        <div className="background"/>
+                        <Grid container rowSpacing={4} className="events-list-container">
+                            <div className="navbar-container">
+                                <NavBar />
+                            </div>
+                            <Grid item xs={9.5} sx={{display: 'flex', justifyContent: 'flex-end'}}>
+                                <FormGroup>
+                                    <FormControlLabel 
+                                        control={
+                                            <Checkbox checked={RSVP} onChange={handleCheck} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="RSVP"/>
+                                        } 
+                                        label="RSVP Events" 
+                                        sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
+                                    } />
+                                </FormGroup>
+                            </Grid>
+                            <Grid item xs={.2}/>
+                            <Grid item xs={2.3}>
+                                <FormGroup>
+                                    <FormControlLabel 
+                                        control={
+                                            <Checkbox checked={Followed} onChange={handleCheck} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="Followed"/>
+                                        } 
+                                        label="Followed Events" 
+                                        sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
+                                    } />
+                                </FormGroup>
+                            </Grid>
+                            <h1 style={{color: "white"}}>Loading Events...</h1>
                         </Grid>
-                        <Grid item xs={.2}/>
-                        <Grid item xs={2.3}>
-                            <FormGroup>
-                                <FormControlLabel 
-                                    control={
-                                        <Checkbox checked={Followed} onChange={handleCheck} onClick={() => setLoading(true)} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="Followed"/>
-                                    } 
-                                    label="Followed Events" 
-                                    sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
-                                } />
-                            </FormGroup>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Grid container rowSpacing={4} className="events-list">
-                                {Object.entries(eventList).map(([date, events]) => (
-                                    <Grid item xs={12} key={date} className="event-item">
-                                        <div className="event-date-column">
-                                            <h3>{date}</h3>
-                                        </div >
-                                        <div className="event-details-column">
-                                            {events.map((event) => (
-                                                <div className="event-info" key={event[1].id}>
-                                                    <div className="event-time">
-                                                        {event[1].begin_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                )
+            }
+            // Loaded Events List
+            else {
+                return (
+                    <div style={{width: "100%"}}>
+                        <div className="background"/>
+                        <Grid container rowSpacing={4} className="events-list-container">
+                            <div className="navbar-container">
+                                <NavBar />
+                            </div>
+                            <Grid item xs={9.5} sx={{display: 'flex', justifyContent: 'flex-end'}}>
+                                <FormGroup>
+                                    <FormControlLabel 
+                                        control={
+                                            <Checkbox checked={RSVP} onChange={handleCheck} onClick={() => setLoading(true)} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="RSVP"/>
+                                        } 
+                                        label="RSVP Events" 
+                                        sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
+                                    } />
+                                </FormGroup>
+                            </Grid>
+                            <Grid item xs={.2}/>
+                            <Grid item xs={2.3}>
+                                <FormGroup>
+                                    <FormControlLabel 
+                                        control={
+                                            <Checkbox checked={Followed} onChange={handleCheck} onClick={() => setLoading(true)} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="Followed"/>
+                                        } 
+                                        label="Followed Events" 
+                                        sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
+                                    } />
+                                </FormGroup>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Grid container rowSpacing={4} className="events-list">
+                                    {Object.entries(eventList).map(([date, events]) => (
+                                        <Grid item xs={12} key={date} className="event-item">
+                                            <div className="event-date-column">
+                                                <h3>{date}</h3>
+                                            </div >
+                                            <div className="event-details-column">
+                                                {events.map((event) => (
+                                                    <div className="event-info" key={event[1].id}>
+                                                        <div className="event-time">
+                                                            {event[1].begin_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                        </div>
+                                                        <div className="event-details">
+                                                            <p className="event-title" onClick={()=>goToDetailPage(event[1].id)}>{event[1].title}</p>
+                                                            <p className="event-club-location">{event[0]}, {event[1].location}</p>
+                                                        </div>
                                                     </div>
-                                                    <div className="event-details">
-                                                        <p className="event-title" onClick={()=>goToDetailPage(event[1].id)}>{event[1].title}</p>
-                                                        <p className="event-club-location">{event[0]}, {event[1].location}</p>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </Grid>
-                                ))}
+                                                ))}
+                                            </div>
+                                        </Grid>
+                                    ))}
+                                </Grid>
                             </Grid>
                         </Grid>
-                    </Grid>
-                </div>
-            );
+                    </div>
+                );
+            }
         };
     }
 }
