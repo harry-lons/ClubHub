@@ -155,6 +155,57 @@ class PostgresDatabase(IAuth, IEvents):
         new_tag = EventTags(tag_name=tag)
 
         self.session.add(new_tag)
+        
+    def add_rsvp_user(self, user_id: str, event_id: int) -> bool:
+        '''
+        Adds a user-event pair into the UserRSVP database 
+        '''
+        try:
+            rsvp_user = UserRSVPs(user_id, event_id)
+            self.session.add(rsvp_user)
+            self.session.commit()
+            
+            return True
+        
+        except IntegrityError:
+            self.session.rollback()
+            raise ValueError(f"Server error")   
+    
+    def remove_rsvp_user(self, user_id: str, event_id: int):
+        '''
+        Removes a user-event pair from the UserRSVP database 
+        It first checks for existence of the user-event pair
+        '''
+        try:
+            self.session.query(UserRSVPs).filter(user_id=user_id, event_id=event_id).delete()
+            self.session.commit()
+        
+        except SQLAlchemyError as e:
+            # If anything goes wrong, rollback the transaction
+            self.session.rollback()
+            raise ValueError(f"Error deleting RSVP: {e}")
+        
+    def fetch_rsvp_users(self, event_id: int)->UserRSVPs:
+        '''
+        Fetches all the users who have RSVP'd for a
+        specified event
+        '''
+        event = self._get_by(Events, id=event_id) ## fetch the event
+        users = self.session.query(UserRSVPs).filter(event_id=event_id)
+        if not users:
+            raise ValueError(f"Event {event.title} is not an RSVP'd event")
+        return users
+        
+        
+    def fetch_rsvp_events(self, user_id: str):
+        '''
+        Fetches all the events that a specific user RSVP'd for
+        '''
+        # user = self._get_by(UserAccounts, id=user_id) ## fetch the user
+        events = self.session.query(UserRSVPs).filter(user_id=user_id)
+        if not events:
+            raise ValueError(f"User {user_id} has not RSVP'd for any events")
+        return events
 
     def _get_by(self, model: Type[M], **filters) -> M:
         """Fetch an object by arbitrary filters. Returns an object of type `model`.
