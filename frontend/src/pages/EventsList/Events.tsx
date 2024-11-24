@@ -25,6 +25,7 @@ const Events: React.FC = () => {
       });
     const {RSVP, Followed} = checked;
     const [loading, setLoading] = useState(true);
+    const [fetching, setFetching] = useState(true);
 
     useEffect(() => {
         loadEvents();
