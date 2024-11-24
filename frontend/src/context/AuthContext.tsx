@@ -1,30 +1,26 @@
-import { createContext, useState, useEffect, ReactNode } from 'react';
-import { Event, Club, User, RSVP } from '../types/types';
+import { createContext, useState, useEffect, ReactNode } from "react";
+import {Event,Club,User,RSVP} from "../types/types";
+
+// Exercise: Create add budget to the context
 
 interface AuthContextType {
   token: string;
   id: string;
   accountType: string;
-  setToken: (jwt: string) => void;
+  saveToken: (jwt: string) => void;
   setAccountType: (type: string) => void;
   setId: (type: string) => void;
   removeToken: () => void;
-  saveAuthenticationData: (
-    jwt: string,
-    accountType: string,
-    id: string
-  ) => void;
 }
 
 const defaultContextValue: AuthContextType = {
-  token: '',
-  id: '',
-  accountType: '',
-  setToken: () => {},
+  token: "",
+  id: "",
+  accountType: "",
+  saveToken: () => {},
   setAccountType: () => {},
   setId: () => {},
-  removeToken: () => {},
-  saveAuthenticationData: () => {},
+  removeToken: () => {}
 };
 
 export const AuthContext = createContext<AuthContextType>(defaultContextValue);
@@ -34,65 +30,26 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [token, setToken] = useState('');
-  const [accountType, setAccountType] = useState('');
-  const [id, setId] = useState('');
+  const [token,setToken] = useState("");
+  const [accountType, setAccountType] = useState("");
+  const [id, setId] = useState("");
 
   useEffect(() => {
-    const storedToken = Cookies.get('token');
-    const storedAccountType = Cookies.get('accountType');
-    const storedId = Cookies.get('id');
+    const storedToken = localStorage.getItem("token");
     if (storedToken) {
       setToken(storedToken);
     }
-    if (storedAccountType) {
-      setAccountType(storedAccountType);
-    }
-    if (storedId) {
-      setId(storedId);
-    }
   }, []);
 
-  let COOKIE_EXP_DAYS = 7;
-  const saveAuthenticationData = (
-    jwt: string,
-    accountType: string,
-    id: string
-  ) => {
-    Cookies.set('token', jwt, { expires: COOKIE_EXP_DAYS, secure: true });
-    Cookies.set('accountType', accountType, {
-      expires: COOKIE_EXP_DAYS,
-      secure: true,
-    });
-    Cookies.set('id', id, { expires: COOKIE_EXP_DAYS, secure: true });
+  const saveToken = (jwt: string) => {
+    localStorage.setItem("token", jwt);
     setToken(jwt);
-    setAccountType(accountType);
-    setId(id);
   };
 
   const removeToken = () => {
-    Cookies.remove('token');
-    Cookies.remove('accountType');
-    Cookies.remove('id');
-    setToken('');
-    setAccountType('');
-    setId('');
+    setToken(""); // Reset the token state
   };
 
-  return (
-    <AuthContext.Provider
-      value={{
-        token,
-        accountType,
-        id,
-        setId,
-        setAccountType,
-        setToken,
-        removeToken,
-        saveAuthenticationData,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
-};
+  return (<AuthContext.Provider value={{token, accountType, id, setId, setAccountType, saveToken, removeToken}}>{children}</AuthContext.Provider>);
+
+}

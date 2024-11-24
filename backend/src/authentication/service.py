@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Annotated, Dict
 
 import jwt
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status, Response
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 from passlib.context import CryptContext
@@ -134,7 +134,7 @@ async def get_current_logged_in_club(
 
 @app.post("/user/login", tags=["user"])
 async def user_login(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], response: Response
 ) -> BearerToken:
     try:
         user = authenticate_user2(form_data.username, form_data.password)
@@ -146,6 +146,17 @@ async def user_login(
     access_token = create_access_token(
         data={"sub": user.username, "role": "user"}, expires_in=access_token_expires
     )
+
+    # Set the token in an HttpOnly cookie
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,  # Prevents JavaScript access
+        secure=False,  # False because we're using HTTP
+        samesite="Lax",  # For development
+        expires=datetime.now(timezone.utc) + access_token_expires,
+    )
+
     return BearerToken(access_token=access_token, token_type="bearer")
 
 

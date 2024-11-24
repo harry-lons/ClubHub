@@ -16,7 +16,8 @@ const LoginCard: React.FC<LoginCardProps> = ({ typeAccount }) => {
     const [badPasswordWarning, setBadPasswordWarning] = useState<string | null>(null);
     const [accountType, setTypeAccount] = useState<string | null>(typeAccount ?? null);
     const [error, setError] = useState<string | null>(null);
-    const { saveAuthenticationData } = useContext(AuthContext);
+    const { saveToken, setAccountType, setId } = useContext(AuthContext);
+
     const navigate = useNavigate();
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -78,11 +79,10 @@ const LoginCard: React.FC<LoginCardProps> = ({ typeAccount }) => {
         else if (authResponse.token !== "") {
             const token = authResponse.token;
             const id = await whoami(endpoint, token);
-            saveAuthenticationData(token, accountType === 'CLUB' ? 'club' : 'user', id)
-            // saveToken(token);  // Store the token in context
-            // setAccountType(accountType === 'CLUB' ? 'club' : 'user');
-            // // Put the id in context
-            // setId(id);
+            saveToken(token);  // Store the token in context
+            setAccountType(accountType === 'CLUB' ? 'club' : 'user');
+            // Put the id in context
+            setId(id);
         }
         navigate('/events');     // Redirect to /events page
 

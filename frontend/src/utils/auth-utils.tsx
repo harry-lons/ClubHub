@@ -10,7 +10,8 @@ export const authenticate = async (endpoint: string, formData: FormData) => {
     try {
         const response = await fetch(`${endpoint}/login`, {
             method: 'POST',
-            body: formData
+            body: formData,
+            credentials: 'include' // include cookie
         });
 
         const data = await response.json();
