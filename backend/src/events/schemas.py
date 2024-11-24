@@ -26,7 +26,7 @@ class Event(EventID):
     type: List[str]
 
 
-class EventCalendarData(BaseModel):
+class ListOfEvents(BaseModel):
     events: List[Event]
 
 

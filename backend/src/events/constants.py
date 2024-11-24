@@ -3,7 +3,7 @@ from enum import Enum
 
 from fastapi import HTTPException, status
 
-from .schemas import Event, EventCalendarData
+from .schemas import Event, ListOfEvents
 
 fake_event_1 = Event(
     id=1,  # will autoincrement
@@ -38,7 +38,7 @@ fake_event_2 = Event(
 # )
 
 
-mock_events = EventCalendarData(events=[fake_event_1, fake_event_2])
+mock_events = ListOfEvents(events=[fake_event_1, fake_event_2])
 
 ## RSVPs
 

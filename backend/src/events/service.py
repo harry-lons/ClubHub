@@ -12,15 +12,15 @@ from .constants import fake_event_1, mock_events
 from .rsvp import rsvp_user_create, rsvp_user_delete, rsvp_user_get
 
 # from ..app import app
-from .schemas import Event, EventCalendarData, EventID, EventIDList
+from .schemas import Event, EventID, EventIDList, ListOfEvents
 
 app = APIRouter()
 
 
-@app.get("/events", response_model=EventCalendarData)
+@app.get("/events", response_model=ListOfEvents)
 async def get_events(
     current_user: Annotated[User, Depends(auth_service.get_current_user)]
-) -> EventCalendarData:
+) -> ListOfEvents:
     raise HTTPException(status_code=status.HTTP_301_MOVED_PERMANENTLY)
 
 
@@ -118,7 +118,7 @@ async def delete_event(
     #     return False
 
 
-@app.get("/user/myevents", response_model=EventCalendarData, tags=["user", "event"])
+@app.get("/user/myevents", response_model=ListOfEvents, tags=["user", "event"])
 async def user_follow_events(
     current_user: Annotated[User, Depends(auth_service.get_current_user)]
 ):
@@ -126,4 +126,12 @@ async def user_follow_events(
     user = DB.db.get_user_from_id(current_user.id)
     events: List[Events] = user.events
     events_api = [b_event_to_f_event(e) for e in events]
-    return EventCalendarData(events=events_api)
+    return ListOfEvents(events=events_api)
+
+
+@app.get("/club/{club_id}/events", response_model=ListOfEvents, tags=["club", "events"])
+async def get_club_events(club_id: str):
+    """Get all the events of the club with id=club_id"""
+    club = DB.db.get_org_from_id(club_id)
+    events = ListOfEvents(events=[b_event_to_f_event(event) for event in club.events])
+    return events
