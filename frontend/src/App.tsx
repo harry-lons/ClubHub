@@ -14,6 +14,8 @@ import Clubs from './pages/ClubSearch/Clubs';
 import { EditEventForm } from './pages/AddEventForm/EditEventForm';
 import ClubDetail from './pages/ClubDetail/ClubDetail';
 import { HomePage } from './pages/HomePage/HomePage';
+import {TestPage} from './pages/TestPage';
+import {TempClubEventListPage} from './pages/TempClubEventListPage';
 
 function App() {
   return (
@@ -37,7 +39,10 @@ function App() {
             <Route path="/clubs" element={<Clubs/>} />
             <Route path = "/clubDetail/:id" element = {<ClubDetail which="USER"/>}/>
             <Route path = "/club/clubDetail/:id" element = {<ClubDetail which="CLUB"/>}/>
+            <Route path = "/club/profile" element = {<ClubDetail which = "CLUB"/>}/>
             <Route path = "/homepage" element = {<HomePage/>}/>
+            {/* <Route path = "/testpage" element = {<TestPage/>}/> */}
+            <Route path = "/club/tempEventList" element = {<TempClubEventListPage/>}/>
           </Routes>
         </div>
       </Router>

@@ -1,6 +1,6 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom";
-import { Event, EventType } from "../../types/types";
+import { Event, EventType} from "../../types/types";
 import { Club } from "../../types/types";
 import DatePicker from "react-datepicker";
 import { DateField, DateTimePicker} from "@mui/x-date-pickers";
@@ -17,7 +17,15 @@ import {AuthContext} from "../../context/AuthContext"
 
 export const AddEventForm= ()=>{
 
-    const {token} = useContext(AuthContext);
+    const context = useContext(AuthContext);
+    useEffect(() => {
+        console.log(context.token, context.accountType, context.id);
+    }, []);
+    const club_id = context.id;
+    const token = context.token;
+    // TESTING
+    // const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYXRzQGV4YW1wbGUuY29tIiwicm9sZSI6ImNsdWIiLCJleHAiOjE3MzIzNTU5NzF9.cStDPbCmiM-oc6udrucFxkZxCJrAkas-dYCR_CHdy8w"
+    
     const navigate = useNavigate();
     const BackButton: React.FC = () => {
         const handleBack = () => { navigate(-1); };
@@ -33,9 +41,9 @@ export const AddEventForm= ()=>{
         summary: "",
         type: [] as EventType[],
         recur: false,
-        frequency: -1,
+        frequency: 1,
         stop_date: new Date(),
-        capacity:null
+        capacity: null as Number | null
 	    // pictures: { [key: string]: string };
     });
 
@@ -47,7 +55,7 @@ export const AddEventForm= ()=>{
         stop_date: false,
     });
 
-    const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
 
         const newErrors = {
@@ -65,7 +73,7 @@ export const AddEventForm= ()=>{
             // club id should be a context
             const newEvent: Event =
             {
-                id: `${formData.title}-${Date.now()}`,
+                id: "0",
                 title: formData.title,
                 club_id : "CLUB ID PLACE HOLDER",
                 location: formData.location,
@@ -75,12 +83,13 @@ export const AddEventForm= ()=>{
                 recurrence_type: formData.frequency,
                 stop_date: formData.stop_date,
                 summary: formData.summary,
-                pictures: { },
+                pictures: [],
                 type: formData.type,
                 capacity:formData.capacity||null
             };
-            const eventID = createEvent(token, newEvent);
+            const eventID = await createEvent(token, newEvent);
             navigate(`/club/events/${eventID}`);
+            // navigate(`/testpage`);
         }
     
         const newFormData = {
@@ -96,7 +105,7 @@ export const AddEventForm= ()=>{
             capacity: null
         };
         setFormData(newFormData);
-      };
+    };
     
 
       const eventTypes = [
@@ -125,7 +134,7 @@ export const AddEventForm= ()=>{
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
             ...formData,
-            [event.target.name]: event.target.value,
+            [event.target.name]: event.target.name === 'capacity' ? (event.target.value === '' ? null : Number(event.target.value)) : event.target.value,
         });
     };
 
@@ -211,15 +220,16 @@ export const AddEventForm= ()=>{
                         input={<OutlinedInput/>}
                         renderValue={(selected) => (
                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                {selected.map((value) => (
-                                    <Chip key={value} label={value} />
-                                ))}
+                                {selected.map((value) => {
+                                    const label = eventTypes.find((t) => t.value === value)?.label;
+                                    return <Chip key={value} label={label} />;
+                                })}
                             </Box>
                         )}
                         MenuProps={MenuProps}
                         >
                         {eventTypes.map((t) => (
-                            <MenuItem key={t.label} value={t.label}>
+                            <MenuItem key={t.label} value={t.value}>
                             <Checkbox checked={formData.type.includes(t.label as EventType)} />
                             <ListItemText primary={t.label} />
                             </MenuItem>

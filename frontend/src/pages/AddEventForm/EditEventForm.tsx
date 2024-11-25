@@ -21,7 +21,11 @@ import {AuthContext} from "../../context/AuthContext"
 
 export const EditEventForm = ()=>{
     const { id } = useParams<{ id: string }>();
-    const {token} = useContext(AuthContext);
+    const context = useContext(AuthContext);
+    useEffect(() => {
+        console.log(context.token, context.accountType, context.id);
+    }, []);
+    const token = context.token;
     const navigate = useNavigate();
     const [attendees,setAttendees] = useState<User[]>(exampleUsers);
     const BackButton: React.FC = () => {
@@ -105,7 +109,7 @@ export const EditEventForm = ()=>{
                 recurrence_type: formData.frequency,
                 stop_date: formData.stop_date,
                 summary: formData.summary,
-                pictures: { },
+                pictures: [],
                 type: formData.type,
                 capacity: formData.capacity||null
             };

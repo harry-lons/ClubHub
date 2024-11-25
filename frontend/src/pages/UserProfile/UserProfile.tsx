@@ -11,7 +11,11 @@ import { AuthContext } from "../../context/AuthContext";
 export const UserProfile = () => {
     const user = exampleUser as User;
     const [events, setEvents] = useState<Event[]>([]);
-    const {token} = useContext(AuthContext);
+    const context = useContext(AuthContext);
+    useEffect(() => {
+        console.log(context.token, context.accountType, context.id);
+    }, []);
+    const token = context.token;
 
     useEffect(() => {
         if(!token) return;

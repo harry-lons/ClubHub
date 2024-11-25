@@ -22,13 +22,16 @@ interface DetailedEventProps {
 const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const {token} = useContext(AuthContext);
-    // const { userId } = useContext(AuthContext);
-    
+    const context = useContext(AuthContext);
+    useEffect(() => {
+        console.log(context.token, context.accountType, context.id);
+    }, []);
+    const club_id = context.id;
+    const token = context.token;
+    const userId = context.id;
     const [event, setEvent] = useState<Event> (exampleEvent);
     const [club, setClub] = useState<Club> (exampleClub);
     const [rsvp, setRsvp] = useState(false);
-    const userId = "001";
     const [attendees, setAttendees] = useState<User[]>(exampleUsers);
 
 
