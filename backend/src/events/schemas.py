@@ -26,9 +26,8 @@ class Event(EventID):
     type: List[str]
 
 
-class EventCalendarData(BaseModel):
+class ListOfEvents(BaseModel):
     events: List[Event]
-
 
 class RSVP(BaseModel):
     user_id: str
