@@ -45,7 +45,11 @@ function App() {
             <Route path = "/homepage" element = {<HomePage/>}/>
             {/* <Route path = "/testpage" element = {<TestPage/>}/> */}
             <Route path = "/club/tempEventList" element = {<TempClubEventListPage/>}/>
+<<<<<<< Updated upstream
         
+=======
+            <Route path = "/club/clubEventList" element = {<TempClubEventListPage/>}/>
+>>>>>>> Stashed changes
           </Routes>
         </div>
       </LocalizationProvider>
