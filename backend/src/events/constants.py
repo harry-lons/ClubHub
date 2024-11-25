@@ -45,6 +45,18 @@ fake_event_3 = Event(
     type=["food"],
 )
 
+fake_event_3 = Event(
+    id=3,
+    title="Dog Party",
+    club_id="3",
+    location="Dog Cafe",
+    begin_time=datetime(2024, 11, 4, 20),
+    end_time=datetime(2024, 11, 4, 22),
+    recurrence=(False, None, None),
+    capacity=None,
+    type=["food"],
+)
+
 
 mock_events = ListOfEvents(events=[fake_event_1, fake_event_2])
 

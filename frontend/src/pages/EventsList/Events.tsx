@@ -45,6 +45,14 @@ const Events: React.FC = () => {
                 const result = await processEvents(followedList, rsvpList);
                 setFollowedEventsList(result);
                 setRenderedEvents(result);
+                // Load RSVP and Followed Events List
+                try {
+                    console.log("RSVP/Followed");
+                    const result = await processEvents(rsvpList.concat(followedList), rsvpList);
+                    setCombinedEventsList(result);
+                } catch (err: any) {
+                    console.error("Error loading RSVP/Followed event list:", err.message);
+                }
             } catch (err: any) {
                 console.error("Error loading RSVP event list:", err.message);
             }
@@ -56,16 +64,6 @@ const Events: React.FC = () => {
                 setEventsList(result);
             } catch (err: any) {
                 console.error("Error loading event list:", err.message);
-            }
-            // Load RSVP and Followed Events List
-            try {
-                console.log("RSVP/Followed");
-                const rsvpList = await fetchRSVPEvents(context.token);
-                const followedList = await fetchEvents();
-                const result = await processEvents(rsvpList.concat(followedList), rsvpList);
-                setCombinedEventsList(result);
-            } catch (err: any) {
-                console.error("Error loading RSVP/Followed event list:", err.message);
             }
         } catch (err: any) {
             console.error("Error loading RSVP event list:", err.message);
