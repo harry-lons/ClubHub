@@ -123,7 +123,7 @@ export const emptyClub =
 	id : "",
 	name: "",
 	board_members: [""],
-	contact_email: ["contact@example.com"],
+	contact_email: [""],
   description: ""
 }
 export const exampleClub =
@@ -137,6 +137,8 @@ export const exampleClub =
 export const exampleRSVPList = {
 
 };
+export const emptyEventList: Event[] = [];
+
 export const exampleEventList: Event[] = [
 	{
 		id: "1",

@@ -1,7 +1,7 @@
 import React, { useContext, useState,useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom";
 import { Event, Club, RSVP, User} from "../../types/types";
-import {exampleClub, exampleUsers, exampleEventList, emptyClub } from "../../constants/constants";
+import {exampleClub, exampleUsers, exampleEventList, emptyClub, emptyEventList } from "../../constants/constants";
 import {AuthContext} from "../../context/AuthContext"
 import { fetchClubEvents} from "../../utils/event-utils";
 import { createFollow, deleteFollow } from "../../utils/follow-utils";
@@ -21,12 +21,12 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
     const navigate = useNavigate();
     const {token} = useContext(AuthContext);
     // const { userId } = useContext(AuthContext);
-    const [club, setClub] = useState<Club> (exampleClub);
+    const [club, setClub] = useState<Club> (emptyClub);
     const [rsvp, setRsvp] = useState(false);
     const userId = "001";
     const [attendees, setAttendees] = useState<User[]>(exampleUsers);
-    const [pastEvents,setPastEvents] = useState<Event[]>(exampleEventList);
-    const [nextEvents,setNextEvents] = useState<Event[]>(exampleEventList);
+    const [pastEvents,setPastEvents] = useState<Event[]>(emptyEventList);
+    const [nextEvents,setNextEvents] = useState<Event[]>(emptyEventList);
     const [follow, setFollow] = useState(false);
     const [loading, setLoading] = useState(true); // New loading state
 
