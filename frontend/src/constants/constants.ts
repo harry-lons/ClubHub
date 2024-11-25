@@ -118,6 +118,14 @@ export const exampleUsers: User[] = [
       }
   ];
 
+export const emptyClub =
+{
+	id : "",
+	name: "",
+	board_members: [""],
+	contact_email: [""],
+  description: ""
+}
 export const exampleClub =
 {
 	id : "001",
@@ -129,6 +137,8 @@ export const exampleClub =
 export const exampleRSVPList = {
 
 };
+export const emptyEventList: Event[] = [];
+
 export const exampleEventList: Event[] = [
 	{
 		id: "1",
