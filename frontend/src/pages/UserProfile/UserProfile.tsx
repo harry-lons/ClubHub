@@ -6,7 +6,7 @@ import { User,Event} from "../../types/types";
 import { exampleUser,exampleEventList } from "../../constants/constants";
 import React, { useContext, useState,useEffect } from "react"
 import "./UserProfile.css"
-import { fetchPastEvents } from "../../utils/event-utils";
+import { fetchPastEvents, fetchRSVPEvents } from "../../utils/event-utils";
 import { AuthContext } from "../../context/AuthContext";
 export const UserProfile = () => {
     const user = exampleUser as User;
@@ -24,7 +24,8 @@ export const UserProfile = () => {
 
     const loadEvent = async () => {
         try {
-            const PastEvents = await fetchPastEvents(token); 
+            const PastEvents = await fetchRSVPEvents(token); 
+            //FILTER
             setEvents(PastEvents);
         } catch (err: any) {
             console.error("Error loading event:", err.message);
