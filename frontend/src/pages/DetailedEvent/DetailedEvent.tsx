@@ -1,7 +1,7 @@
 import React, { useContext, useState,useEffect } from "react"
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import { useParams, useNavigate } from "react-router-dom";
-import { Event, Club, RSVP, User} from "../../types/types";
+import { Event, Club, RSVP, User, RSVPInt} from "../../types/types";
 import { exampleEvent, exampleClub, exampleUsers, emptyClub } from "../../constants/constants";
 import { TextField, Button, MenuItem } from '@mui/material';
 import "./DetailedEvent.css"
@@ -71,7 +71,6 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
         try {
             // ! bug RSVPList is undefined
             const RSVPList = await fetchRSVP(token); // Convert id to a number
-            
             RSVPList.forEach((rl)=> {if(rl.event_id === event.id){setRsvp(true);}});
         } catch (err: any) {
             console.error("Error loading RSVP:", err.message);
@@ -187,13 +186,14 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
             message: '',
             severity: null,
         });
+        console.info("RSVP status:",rsvp);
         const toggleRSVP = async () => {
             setRsvp(!rsvp);
-    
+            
             if (!rsvp) {
-                const newRSVP: RSVP = {
+                const newRSVP: RSVPInt = {
                     user_id: userId,
-                    event_id: event.id,
+                    event_id: Number(event.id),
                 };
     
                 const successful = await createRSVP(token, newRSVP);

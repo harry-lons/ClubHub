@@ -5,7 +5,7 @@ import { Club} from "../types/types"
 // Function to get the club information from the backend. Method: GET
 
 export const fetchClubById = async (id: string): Promise<Club> => {
-	const response = await fetch(`${API_BASE_URL}/club?club_id=${Number(id)}`);
+	const response = await fetch(`${API_BASE_URL}/club?club_id=${id}`);
 	if (!response.ok) {
     	throw new Error('Failed to fetch club information');
 	}
