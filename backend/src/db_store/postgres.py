@@ -1,4 +1,5 @@
 import uuid
+import logging
 from typing import Any, Dict, List, Optional, Tuple, Type, TypeVar
 
 from sqlalchemy.exc import (
@@ -15,6 +16,8 @@ from .db_interface import IAuth, IDatabase, IEvents
 from .models import *
 
 M = TypeVar("M")
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class PostgresDatabase(IAuth, IEvents):
@@ -161,7 +164,9 @@ class PostgresDatabase(IAuth, IEvents):
         Adds a user-event pair into the UserRSVP database 
         '''
         try:
-            rsvp_user = UserRSVPs(user_id, event_id)
+            logger.info(f"Inputs: {user_id}, {event_id}")
+            rsvp_user = UserRSVPs(user_id=user_id, event_id=event_id)
+            logger.info(rsvp_user)
             self.session.add(rsvp_user)
             self.session.commit()
             
@@ -169,6 +174,7 @@ class PostgresDatabase(IAuth, IEvents):
         
         except IntegrityError:
             # If anything goes wrong, rollback the transaction
+            logger.error(f"Error creating RSVP")
             self.session.rollback()
             raise ValueError(f"Server error")   
     

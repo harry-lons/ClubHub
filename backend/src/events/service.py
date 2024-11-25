@@ -54,7 +54,7 @@ async def rsvp_delete(
     return res
 
 
-@app.get("/RSVP/rsvps", response_model=List, tags=["user"])
+@app.get("/RSVP/rsvps", response_model=RSVPList, tags=["user"])
 async def rsvp_user(
     current_user: Annotated[User, Depends(auth_service.get_current_user)]
 ) -> RSVPList:
@@ -62,19 +62,19 @@ async def rsvp_user(
     Fetches all the events the user has RSVP'd to 
     '''
     # events = await rsvp_user_get(current_user.id)
-    rsvp_events = RSVPList()
+    rsvp_events = RSVPList(rsvps=None)
     rsvp = DB.db.fetch_rsvp(current_user.id)
-    rsvp_events.rsvps = rsvp
+    rsvp_events.rsvps = [RSVP(user_id=r.user_id,event_id=r.event_id) for r in rsvp]
     return rsvp_events
 
-@app.get("/RSVP/Attendees/{event_id}", response_model=List, tags=["user"])
+@app.get("/RSVP/Attendees/{event_id}", response_model=UserIDList, tags=["user"])
 async def rsvp_event(
     current_club: Annotated[Club, Depends(auth_service.get_current_logged_in_club)], event_id: int
 ) -> UserIDList:
     '''
     Fetches all attendees given a certain event
     '''
-    attendees = UserIDList()
+    attendees = UserIDList(users=None)
     users_rsvp = DB.db.fetch_rsvp_attendees(event_id)
     attendees.users = users_rsvp
     return attendees

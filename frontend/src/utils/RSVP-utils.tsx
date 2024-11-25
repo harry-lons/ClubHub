@@ -3,7 +3,7 @@ import { RSVP,User } from "../types/types"
 // Function to create an expense in the backend. Method: POST
 export const createRSVP = async (token: string,rsvp: RSVP): Promise<boolean> => {
 	// console.log(rsvp)
-	console.log(`${API_BASE_URL}`)
+	console.log(`${API_BASE_URL}/RSVP, ${rsvp.user_id}, ${rsvp.event_id}`)
 	const response = await fetch(`${API_BASE_URL}/RSVP`, {
     	method: "POST",
     	headers: {
