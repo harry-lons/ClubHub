@@ -81,36 +81,67 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
         );
     };
     const FollowButton : React.FC = () => {
+        const [alert, setAlert] = useState<{ message: string; severity: 'success' | 'error' | null }>({
+            message: '',
+            severity: null,
+        });
         const toggleFollow = async () => {
             setFollow(!rsvp);
             if (!follow) {
                 const newFollow: Follow = {
                     user_id: userId,
-                    club_id: id as string
+                    club_id: id as string,
                 };
-                const successful = await createFollow(token,newFollow);
-                if(successful){
-                    <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
-                        You have successfully Followed this club! We're very happy to have you here!
-                    </Alert>
-                }else{
-                    <Alert severity="error">Follow Action unsuccessful please contact webpage administrator</Alert>
+    
+                const successful = await createFollow(token, newFollow);
+    
+                if (successful) {
+                    setAlert({
+                        message: "You have successfully followed this club! We're very happy to have you here!",
+                        severity: 'success',
+                    });
+                } else {
+                    setAlert({
+                        message: 'Follow action unsuccessful. Please contact the webpage administrator.',
+                        severity: 'error',
+                    });
                 }
             } else {
-                const successful = await deleteFollow(token,id as string);
-                if(successful){
-                    <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
-                        You have successfully canceled RSVP to this event!
-                    </Alert>
-                }else{
-                    <Alert severity="error">Cancel RSVP unsuccessful please contact webpage administrator</Alert>
+                const successful = await deleteFollow(token, id as string);
+    
+                if (successful) {
+                    setAlert({
+                        message: 'You have successfully unfollowed this club!',
+                        severity: 'success',
+                    });
+                } else {
+                    setAlert({
+                        message: 'Unfollow action unsuccessful. Please contact the webpage administrator.',
+                        severity: 'error',
+                    });
                 }
             }
+            // Automatically hide the alert after 3 seconds
+            setTimeout(() => {
+                setAlert({ message: '', severity: null });
+            }, 3000); // 3000ms = 3 seconds
         }
+        
         return (
+            <>
+            {alert.severity && (
+                <Alert
+                    icon={<CheckIcon fontSize="inherit" />}
+                    severity={alert.severity}
+                    onClose={() => setAlert({ message: '', severity: null })} // Allow closing the alert
+                >
+                    {alert.message}
+                </Alert>
+            )}
             <Button className="follow-button" variant="contained" onClick={toggleFollow}>
                 {rsvp? 'unFOLLOW' : 'FOLLOW' }
             </Button>
+            </>
         );
     };
     const goToDetailPage = (event_id: string) =>{
@@ -118,6 +149,7 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
     }
     return (
         <div id="club-detail-container">
+            
             {/* Backdrop for loading */}
             <Backdrop
                 sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}

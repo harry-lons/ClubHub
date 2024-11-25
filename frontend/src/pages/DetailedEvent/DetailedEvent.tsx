@@ -182,37 +182,70 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
     };
 
     const RSVPButton : React.FC = () => {
+        const [alert, setAlert] = useState<{ message: string; severity: 'success' | 'error' | null }>({
+            message: '',
+            severity: null,
+        });
         const toggleRSVP = async () => {
             setRsvp(!rsvp);
-
+    
             if (!rsvp) {
                 const newRSVP: RSVP = {
                     user_id: userId,
-                    event_id: event.id
+                    event_id: event.id,
                 };
-                const successful = await createRSVP(token,newRSVP);
-                if(successful){
-                    <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
-                        You have successfully RSVPed to this event! Looking forward to see you there!
-                    </Alert>
-                }else{
-                    <Alert severity="error">RSVP unsuccessful please contact webpage administrator</Alert>
+    
+                const successful = await createRSVP(token, newRSVP);
+    
+                if (successful) {
+                    setAlert({
+                        message: "You have successfully RSVPed to this event! Looking forward to seeing you there!",
+                        severity: 'success',
+                    });
+                } else {
+                    setAlert({
+                        message: "RSVP unsuccessful. Please contact the webpage administrator.",
+                        severity: 'error',
+                    });
                 }
             } else {
-                const successful = await deleteRSVP(token,event.id);
-                if(successful){
-                    <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
-                        You have successfully canceled RSVP to this event!
-                    </Alert>
-                }else{
-                    <Alert severity="error">Cancel RSVP unsuccessful please contact webpage administrator</Alert>
+                const successful = await deleteRSVP(token, event.id);
+    
+                if (successful) {
+                    setAlert({
+                        message: "You have successfully canceled your RSVP to this event!",
+                        severity: 'success',
+                    });
+                } else {
+                    setAlert({
+                        message: "Cancel RSVP unsuccessful. Please contact the webpage administrator.",
+                        severity: 'error',
+                    });
                 }
             }
-        }
+    
+            // Automatically hide the alert after 3 seconds
+            setTimeout(() => {
+                setAlert({ message: '', severity: null });
+            }, 3000); // 3000ms = 3 seconds
+        };
         return (
+            <>
+            {alert.severity && (
+                <Alert
+                    icon={<CheckIcon fontSize="inherit" />}
+                    severity={alert.severity}
+                    onClose={() => setAlert({ message: '', severity: null })} // Allow manual dismissal
+                    style={{ marginBottom: '16px' }}
+                >
+                    {alert.message}
+                </Alert>
+            )}
+            
             <Button className="rsvp-button" variant="contained" onClick={toggleRSVP}>
                 {rsvp? 'Cancel RSVP' : 'RSVP' }
             </Button>
+            </>
         );
     };
 
