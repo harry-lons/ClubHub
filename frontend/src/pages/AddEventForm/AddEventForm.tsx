@@ -23,8 +23,6 @@ export const AddEventForm= ()=>{
     }, []);
     const club_id = context.id;
     const token = context.token;
-    // TESTING
-    // const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYXRzQGV4YW1wbGUuY29tIiwicm9sZSI6ImNsdWIiLCJleHAiOjE3MzIzNTU5NzF9.cStDPbCmiM-oc6udrucFxkZxCJrAkas-dYCR_CHdy8w"
     
     const navigate = useNavigate();
     const BackButton: React.FC = () => {
@@ -75,7 +73,7 @@ export const AddEventForm= ()=>{
             {
                 id: "0",
                 title: formData.title,
-                club_id : "CLUB ID PLACE HOLDER",
+                club_id : club_id,
                 location: formData.location,
                 begin_time: formData.begin_time,
                 end_time: formData.end_time,
