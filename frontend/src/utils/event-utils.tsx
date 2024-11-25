@@ -99,7 +99,6 @@ export const fetchRSVPEvents = async (token: string): Promise<Event[]> => {
 };
 
 
-//get all upcoming events of a club
 //get all events of a club
 export const fetchClubEvents = async (club_id: String): Promise<Event[]>=>{
     const response = await fetch(`${API_BASE_URL}/club/${club_id}/events`, {
