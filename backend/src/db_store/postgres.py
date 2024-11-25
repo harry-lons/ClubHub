@@ -201,7 +201,7 @@ class PostgresDatabase(IAuth, IEvents):
         Fetches all the rsvps that a specific user 
         '''
         # user = self._get_by(UserAccounts, id=user_id) ## fetch the user
-        rsvps = self.session.query(UserRSVPs).filter(user_id=user_id).all()
+        rsvps = self.session.query(UserRSVPs).filter_by(user_id=user_id).all()
         if len(rsvps) == 0:
             raise ValueError(f"User {user_id} has not RSVP'd for any events")
         return rsvps
@@ -212,10 +212,10 @@ class PostgresDatabase(IAuth, IEvents):
         Fetches all the users who have RSVP'd for a
         specified event
         '''
-        event = self._get_by(Events, id=event_id) ## fetch the event
-        users = self.session.query(UserRSVPs.user_id).filter(event_id=event_id).all()
+        #event = self._get_by(Events, id=event_id) ## fetch the event
+        users = self.session.query(UserRSVPs.user_id).filter_by(event_id=event_id).all()
         if len(users) == 0:
-            raise ValueError(f"Event {event.title} is not an RSVP'd event")
+            raise ValueError(f"Event is not an RSVP'd event")
         return users
         
     def _get_by(self, model: Type[M], **filters) -> M:

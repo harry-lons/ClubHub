@@ -127,6 +127,7 @@ def init_test_data(db: PostgresDatabase):
     fake_event_1.club_id = test_club_1
     db.create_event(fake_event_1, test_club_1)  # should have id 1
 
+    print(test_user_1)
     user_4_rsvp_event_1 = UserRSVPs(user_id=test_user_1, event_id=1)
     db.session.add(user_4_rsvp_event_1)
 

@@ -62,8 +62,8 @@ async def rsvp_user(
     Fetches all the events the user has RSVP'd to 
     '''
     # events = await rsvp_user_get(current_user.id)
-    rsvp_events = RSVPList(rsvps=None)
-    rsvp = DB.db.fetch_rsvp(current_user.id)
+    rsvp_events = RSVPList(rsvps=[])
+    rsvp = DB.db.fetch_rsvp(user_id=current_user.id)
     rsvp_events.rsvps = [RSVP(user_id=r.user_id,event_id=r.event_id) for r in rsvp]
     return rsvp_events
 
@@ -74,8 +74,8 @@ async def rsvp_event(
     '''
     Fetches all attendees given a certain event
     '''
-    attendees = UserIDList(users=None)
-    users_rsvp = DB.db.fetch_rsvp_attendees(event_id)
+    attendees = UserIDList(users=[])
+    users_rsvp = DB.db.fetch_rsvp_attendees(event_id=event_id)
     attendees.users = users_rsvp
     return attendees
 
