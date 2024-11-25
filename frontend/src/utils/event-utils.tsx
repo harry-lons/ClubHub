@@ -98,9 +98,11 @@ export const fetchRSVPEvents = async (token: string): Promise<Event[]> => {
     return events;
 };
 
+
 //get all upcoming events of a club
-export const fetchClubEvents = async (club_id: Number): Promise<Event[]>=>{
-    const response = await fetch(`${API_BASE_URL}/events/club/${club_id}`, {
+//get all events of a club
+export const fetchClubEvents = async (club_id: String): Promise<Event[]>=>{
+    const response = await fetch(`${API_BASE_URL}/club/${club_id}/events`, {
         method: "GET"
     })
 
@@ -118,9 +120,9 @@ export const fetchClubEvents = async (club_id: Number): Promise<Event[]>=>{
 
 };
 //Should implement backend to fit both user and club
-export const fetchPastEvents = async (token: string): Promise<Event[]> => {
+export const fetchPastEvents = async (token: string, type:string): Promise<Event[]> => {
 
-    const response = await fetch(`${API_BASE_URL}/events/past`, { //NOTICE THIS CHANGE
+    const response = await fetch(`${API_BASE_URL}/${type}/events/past`, { //NOTICE THIS CHANGE
         method: "GET",
         headers: {
             "Authorization" : `Bearer ${token}`
@@ -159,13 +161,14 @@ export const createEvent = async (token: string,event: Event): Promise<string> =
 };
 
 export const updateEvent = async (token: string,event: Event): Promise<Event> => {
+    const eventData = { ...event, id: Number(event.id) };
 	const response = await fetch(`${API_BASE_URL}/club/event`, {
     	method: "PATCH",
     	headers: {
         	"Content-Type": "application/json",
             "Authorization" : `Bearer ${token}`
     	},
-    	body: JSON.stringify(event),
+    	body: JSON.stringify(eventData),
 	});
 	if (!response.ok) {
     	throw new Error("Failed to update event");
