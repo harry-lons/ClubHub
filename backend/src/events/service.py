@@ -127,3 +127,36 @@ async def user_follow_events(
     events: List[Events] = user.events
     events_api = [b_event_to_f_event(e) for e in events]
     return EventCalendarData(events=events_api)
+
+@app.get("/events/past", response_model=EventCalendarData, tags=["club", "event"])
+async def user_past_events(
+    current_club: Annotated[Club, Depends(auth_service.get_current_logged_in_club)],
+):
+    """Returns the events that a user has attended in the past."""
+    user = DB.db.get_user_from_id(current_user.id)
+    now = datetime.now(timezone.utc)  # Current timestamp in UTC
+    
+    # Filter the user's events to include only those with end_time < now
+    past_events = [event for event in user.events if event.end_time < now]
+    
+    # Convert the filtered events to the required API format
+    events_api = [b_event_to_f_event(event) for event in past_events]
+    
+    return EventCalendarData(events=events_api)
+
+
+@app.get("/events/past", response_model=EventCalendarData, tags=["user", "event"])
+async def user_past_events(
+    current_user: Annotated[User, Depends(auth_service.get_current_user)]
+):
+    """Returns the events that a user has attended in the past."""
+    user = DB.db.get_user_from_id(current_user.id)
+    now = datetime.now(timezone.utc)  # Current timestamp in UTC
+    
+    # Filter the user's events to include only those with end_time < now
+    past_events = [event for event in user.events if event.end_time < now]
+    
+    # Convert the filtered events to the required API format
+    events_api = [b_event_to_f_event(event) for event in past_events]
+    
+    return EventCalendarData(events=events_api)
