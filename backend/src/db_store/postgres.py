@@ -1,5 +1,5 @@
 import uuid
-from typing import Any, Dict, Optional, Tuple, Type, TypeVar
+from typing import Any, Dict, Optional, Tuple, Type, TypeVar, List
 
 from sqlalchemy.exc import (
     IntegrityError,
@@ -89,6 +89,9 @@ class PostgresDatabase(IAuth, IEvents):
         if not acc:
             raise ValueError(f"Organization with email {email} not found.")
         return acc
+    
+    def get_all_orgs(self) -> List[ClubAccounts]:
+        return self._get_all(ClubAccounts)
 
     def get_f_event(self, event_id: int) -> FrontendEvent:
         event = self._get_by(Events, id=event_id)
@@ -170,6 +173,20 @@ class PostgresDatabase(IAuth, IEvents):
         if res is None:
             raise ValueError("No result returned")
         return res
+    
+    def _get_all(self, model: Type[M]) -> List[M]:
+        """
+        Fetch all objects of a given model. Returns a list of objects of type `model`.
+
+        Example: `_get_all(ClubAccounts)` returns all records in the ClubAccounts table.
+        """
+        try:
+            results = self.session.query(model).all()
+        except SQLAlchemyError as e:
+            raise ValueError(f"Error retrieving all records for {model.__name__}: {e}")
+        if not results:
+            raise ValueError(f"No records found for {model.__name__}")
+        return results
 
     def _create(self, model: Any, data: dict) -> Any:
         instance = model(**data)

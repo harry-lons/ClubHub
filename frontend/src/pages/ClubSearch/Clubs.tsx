@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavBar } from "../NavBar/NavBar";
 import { useNavigate } from "react-router-dom";
+import { fetchClubList } from "../../utils/club-utils"
 import "./Clubs.css";
 
 const Clubs: React.FC = () => {

@@ -7,6 +7,8 @@ from ..authentication.schemas import User
 from fastapi import APIRouter, Depends, FastAPI, UploadFile, File, HTTPException, status, Query
 from fastapi.responses import FileResponse, Response 
 
+from ..database import DB
+
 from .schemas import Club, ClubWithBoardMembers, UserProfilePictureImgKey
 from .constants import cat_club, cat_club_board_members
 from ..object_store import InMemoryFileStorage, IStorage
@@ -81,3 +83,26 @@ async def search_club(
         )
 
     return {"clubs": [dict(row) for row in results]}
+
+@app.get("/clubs")
+async def fetch_all_clubs():
+    results = DB.db.get_all_orgs()
+
+    if not results:
+        raise HTTPException(
+            status_code=404,
+            detail="No clubs found"
+        )
+
+    # Exclude the hashed_password field in the response
+    return {
+        "clubs": [
+            {
+                "email": row.email,
+                "id": row.id,
+                "profile_picture": row.profile_picture,
+                "name": row.name
+            }
+            for row in results
+        ]
+    }

@@ -32,7 +32,7 @@ export const fetchFollowedClubList = async (token: string): Promise<Club[]> => {
     const clubs: Club[] = await response.json();
     return clubs;
 };
-export const fetchClubList = async (): Promise<Club[]> => {//RETURN ALL exiting clubs
+export const fetchClubList = async (): Promise<Club[]> => {//RETURN ALL existing clubs
 
     const response = await fetch(`${API_BASE_URL}/clubs`, { //NOTICE CHANGE
         method: "GET"
