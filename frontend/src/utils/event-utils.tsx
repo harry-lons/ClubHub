@@ -137,13 +137,14 @@ export const createEvent = async (token: string,event: Event): Promise<string> =
 };
 
 export const updateEvent = async (token: string,event: Event): Promise<Event> => {
+    const eventData = { ...event, id: Number(event.id) };
 	const response = await fetch(`${API_BASE_URL}/club/event`, {
     	method: "PATCH",
     	headers: {
         	"Content-Type": "application/json",
             "Authorization" : `Bearer ${token}`
     	},
-    	body: JSON.stringify(event),
+    	body: JSON.stringify(eventData),
 	});
 	if (!response.ok) {
     	throw new Error("Failed to update event");
