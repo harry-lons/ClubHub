@@ -26,7 +26,6 @@ function App() {
           <Routes>
             <Route path="/" element={<LoginSignup which="LOG IN"/>} />
             <Route path="/login" element={<LoginSignup which="LOG IN"/>} />
-            <Route path="/user/login" element={<LoginSignup which="LOG IN"/>} />
             <Route path="/signup" element={<LoginSignup which="SIGN UP" />} />
             <Route path="/club/signup" element={<LoginSignup which="CLUB SIGN UP" />} />
             <Route path="/club/login" element={<LoginSignup which="CLUB LOG IN" />} />
