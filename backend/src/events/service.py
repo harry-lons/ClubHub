@@ -13,7 +13,7 @@ from .constants import fake_event_1, mock_events
 from .rsvp import rsvp_user_create, rsvp_user_delete, rsvp_user_get
 
 # from ..app import app
-from .schemas import Event, EventCalendarData, EventID, EventIDList, RSVP, RSVPList
+from .schemas import Event, EventCalendarData, EventID, EventIDList, RSVP, RSVPList, ListOfEvents
 from ..identities.schemas import UserIDList
 
 app = APIRouter()
@@ -61,7 +61,6 @@ async def rsvp_user(
     '''
     Fetches all the events the user has RSVP'd to 
     '''
-    # events = await rsvp_user_get(current_user.id)
     rsvp_events = RSVPList(rsvps=[])
     rsvp = DB.db.fetch_rsvp(user_id=current_user.id)
     rsvp_events.rsvps = [RSVP(user_id=r.user_id,event_id=r.event_id) for r in rsvp]

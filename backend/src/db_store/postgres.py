@@ -16,8 +16,8 @@ from .db_interface import IAuth, IDatabase, IEvents
 from .models import *
 
 M = TypeVar("M")
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# logging.basicConfig(level=logging.INFO)
+# logger = logging.getLogger(__name__)
 
 
 class PostgresDatabase(IAuth, IEvents):
@@ -168,9 +168,7 @@ class PostgresDatabase(IAuth, IEvents):
             or self.session.query(UserRSVPs).filter_by(user_id=user_id,event_id=event_id):
                 return False
         try:
-            logger.info(f"Inputs: {user_id}, {event_id}")
             rsvp_user = UserRSVPs(user_id=user_id, event_id=event_id)
-            logger.info(rsvp_user)
             self.session.add(rsvp_user)
             self.session.commit()
             
