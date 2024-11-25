@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.engine import URL
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-from .. import ENV
+from ..__init__ import ENV
 from ..db_store.models import ClubBoardMembers, UserRSVPs
 from ..events.constants import fake_event_1, fake_event_2
 from .models import (

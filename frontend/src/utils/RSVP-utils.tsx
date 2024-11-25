@@ -26,7 +26,8 @@ export const deleteRSVP = async (token:string,event_id: string): Promise<boolean
     	method: "DELETE",
 		headers:{
 			"Authorization" : `Bearer ${token}`
-		}
+		},
+		body: JSON.stringify(Number(event_id)),
 	});
 	console.log(response.url)
 	if (!response.ok) {

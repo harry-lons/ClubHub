@@ -34,12 +34,12 @@ async def event(id: int) -> Event:
 
 @app.post("/RSVP", tags=["user"])
 async def rsvp_enter(
-    current_user: Annotated[User, Depends(auth_service.get_current_user)], event_id: int
+    current_user: Annotated[User, Depends(auth_service.get_current_user)], rsvp: RSVP
 ) -> bool:
     """RSVPs the currently loged in user to the event `event_id`. Returns a boolean determining
     whether adding is successful."""
     # res = await rsvp_user_create(current_user.id, event_id)
-    res = DB.db.add_rsvp_user(current_user.id, event_id)
+    res = DB.db.add_rsvp_user(current_user.id, rsvp.event_id)
     return res
 
 

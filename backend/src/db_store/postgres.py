@@ -163,6 +163,10 @@ class PostgresDatabase(IAuth, IEvents):
         '''
         Adds a user-event pair into the UserRSVP database 
         '''
+        ## perform a check (previously RSVP'd or event does not exist)
+        if not self.session.query(Events).filter_by(id=event_id).first() \
+            or self.session.query(UserRSVPs).filter_by(user_id=user_id,event_id=event_id):
+                return False
         try:
             logger.info(f"Inputs: {user_id}, {event_id}")
             rsvp_user = UserRSVPs(user_id=user_id, event_id=event_id)
@@ -174,9 +178,8 @@ class PostgresDatabase(IAuth, IEvents):
         
         except IntegrityError:
             # If anything goes wrong, rollback the transaction
-            logger.error(f"Error creating RSVP")
             self.session.rollback()
-            raise ValueError(f"Server error")   
+            raise ValueError(f"Server Error while creating RSVP")   
     
     def remove_rsvp_user(self, user_id: str, event_id: int)-> bool:
         '''
@@ -184,7 +187,7 @@ class PostgresDatabase(IAuth, IEvents):
         It first checks for existence of the user-event pair
         '''
         try:
-            self.session.query(UserRSVPs).filter(user_id=user_id, event_id=event_id).delete()
+            self.session.query(UserRSVPs).filter_by(user_id=user_id, event_id=event_id).delete()
             self.session.commit()
         
             return True
