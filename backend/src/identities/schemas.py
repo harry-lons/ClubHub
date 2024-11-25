@@ -17,8 +17,6 @@ class Club(ClubID):
 class UserID(BaseModel):
     id: str
 
-class UserIDList(BaseModel):
-    users: List[str]
 
 class User(UserID):
     # id: int

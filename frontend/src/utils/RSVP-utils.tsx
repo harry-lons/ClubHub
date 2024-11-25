@@ -22,8 +22,7 @@ export const deleteRSVP = async (token:string,event_id: string): Promise<boolean
     	method: "DELETE",
 		headers:{
 			"Authorization" : `Bearer ${token}`
-		},
-		body: JSON.stringify(Number(event_id)),
+		}
 	});
 	if (!response.ok) {
     	throw new Error("Failed to delete RSVP");
@@ -32,7 +31,7 @@ export const deleteRSVP = async (token:string,event_id: string): Promise<boolean
 };
 // fetch all RSVP by a certain user
 export const fetchRSVP = async (token:string): Promise<RSVP[]> => { 
-	const response = await fetch(`${API_BASE_URL}/RSVP/rsvps`, { //NOTICE CHANGE
+	const response = await fetch(`${API_BASE_URL}/rsvp/`, { //NOTICE CHANGE
         method: "GET",
         headers: {
             "Authorization" : `Bearer ${token}`
