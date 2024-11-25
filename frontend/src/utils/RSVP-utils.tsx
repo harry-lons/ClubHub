@@ -1,7 +1,7 @@
 import { API_BASE_URL } from "../constants/constants"
-import { RSVP,User } from "../types/types"
+import { RSVP,User, RSVPInt } from "../types/types"
 // Function to create an expense in the backend. Method: POST
-export const createRSVP = async (token: string,rsvp: RSVP): Promise<boolean> => {
+export const createRSVP = async (token: string,rsvp: RSVPInt): Promise<boolean> => {
 	const response = await fetch(`${API_BASE_URL}/RSVP`, {
     	method: "POST",
     	headers: {
@@ -30,34 +30,44 @@ export const deleteRSVP = async (token:string,event_id: string): Promise<boolean
 	}
 	return response.json();
 };
-// fetch all RSVP by a certain user
-export const fetchRSVP = async (token:string): Promise<RSVP[]> => { 
-	const response = await fetch(`${API_BASE_URL}/RSVP/rsvps`, { //NOTICE CHANGE
+export const fetchRSVP = async (token: string): Promise<RSVP[]> => {
+    const response = await fetch(`${API_BASE_URL}/RSVP/rsvps`, {
         method: "GET",
         headers: {
-            "Authorization" : `Bearer ${token}`
+            "Authorization": `Bearer ${token}`
         }
-    })
-	if (!response.ok) {
-    	throw new Error('Failed to fetch RSVP');
-	}
+    });
 
-	const jsonResponse = await response.json();
+    if (!response.ok) {
+        throw new Error(`Failed to fetch RSVP. Status: ${response.status}, Message: ${await response.text()}`);
+    }
 
-    // Log and return the `data` property safely
-    console.log("data in fetchRSVP", jsonResponse);
+    const jsonResponse = await response.json();
 
-    // Ensure `jsonResponse.data` is an array or return an empty array
-    return Array.isArray(jsonResponse.data) ? jsonResponse.data : [];
-	// Parsing the response to get the data
-	// let rsvpList = response.json().then((jsonResponse) => {
-    // 	console.log("data in fetchExpenses", jsonResponse);
-    // 	return jsonResponse.data;
-	// });
+    // Log the raw API response
+    console.log("Raw API response:", jsonResponse);
 
-	// console.log("response in fetch RSVPs", rsvpList);
-	// return rsvpList;
+    // Handle nested 'data' field if present
+    if (jsonResponse.rsvp && Array.isArray(jsonResponse.rsvp)) {
+        const new_responses = jsonResponse.rsvp.map((rsvp: any) => ({
+            event_id: String(rsvp.event_id),
+            user_id: rsvp.user_id,
+        }));
+		console.log("New response:",new_responses);
+		return new_responses;
+    }
+
+    // Handle empty response or unexpected structure
+    if (!jsonResponse.rsvp) {
+        console.warn("No RSVPs found in the response.");
+        return []; // Return an empty array if no RSVPs are found
+    }
+
+    // If response is still unexpected, throw an error
+    throw new Error("Unexpected response structure: RSVP list is not an array.");
 };
+
+
 // fetch all attendees to a certain event
 export const fetchCurrentAttendees = async(event_id:number): Promise<User[]> =>{
 	const response = await fetch(`${API_BASE_URL}/rsvp/Attendees/${event_id}`, { //NOTICE CHANGE
