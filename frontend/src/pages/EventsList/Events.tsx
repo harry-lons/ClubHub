@@ -12,11 +12,11 @@ import { AuthContext } from "../../context/AuthContext";
 
 const Events: React.FC = () => {
     const navigate = useNavigate();
-    const [renderedEvents, setRenderedEvents] = useState<Record<string, [string, Event][]>> ();
-    const [eventsList, setEventsList] = useState<Record<string, [string, Event][]>> ();
-    const [rsvpEventsList, setRsvpEventsList] = useState<Record<string, [string, Event][]>> ();
-    const [followedEventsList, setFollowedEventsList] = useState<Record<string, [string, Event][]>> ();
-    const [combinedEventsList, setCombinedEventsList] = useState<Record<string, [string, Event][]>> ();
+    const [renderedEvents, setRenderedEvents] = useState<Record<string, [string, Event, boolean][]>> ();
+    const [eventsList, setEventsList] = useState<Record<string, [string, Event, boolean][]>> ();
+    const [rsvpEventsList, setRsvpEventsList] = useState<Record<string, [string, Event, boolean][]>> ();
+    const [followedEventsList, setFollowedEventsList] = useState<Record<string, [string, Event, boolean][]>> ();
+    const [combinedEventsList, setCombinedEventsList] = useState<Record<string, [string, Event, boolean][]>> ();
     const [rendering, setRendering] = useState(true);
     const context = useContext(AuthContext);
     const [checked, setChecked] = useState({
@@ -30,47 +30,49 @@ const Events: React.FC = () => {
     }, []);
 
     const loadEvents = async () => {
-        // Load Followed Events List
-        try {
-            console.log("Followed");
-            const followedList = await fetchEvents();
-            const result = await processEvents(followedList);
-            setFollowedEventsList(result);
-            setRenderedEvents(result);
-        } catch (err: any) {
-            console.error("Error loading RSVP event list:", err.message);
-        }
-        // Load Total Events List
-        try {
-            console.log("Events");
-            const eventsList = await fetchEvents();
-            const result = await processEvents(eventsList);
-            setEventsList(result);
-        } catch (err: any) {
-            console.error("Error loading event list:", err.message);
-        }
         // Load RSVP Events List
         try {
             console.log("RSVP");
+            // const rsvpList = await fetchEvents();
             const rsvpList = await fetchRSVPEvents(context.token);
-            const result = await processEvents(rsvpList);
+            const result = await processEvents(rsvpList, rsvpList);
             setRsvpEventsList(result);
-        } catch (err: any) {
-            console.error("Error loading RSVP event list:", err.message);
-        }
-        // Load RSVP and Followed Events List
-        try {
-            console.log("RSVP/Followed");
-            const rsvpList = await fetchRSVPEvents(context.token);
-            const followedList = await fetchEvents();
-            const result = await processEvents(rsvpList.concat(followedList));
-            setCombinedEventsList(result);
+            // Load All other lists and compare with RSVP
+            // Load Followed Events List
+            try {
+                console.log("Followed");
+                const followedList = await fetchEvents();
+                const result = await processEvents(followedList, rsvpList);
+                setFollowedEventsList(result);
+                setRenderedEvents(result);
+            } catch (err: any) {
+                console.error("Error loading RSVP event list:", err.message);
+            }
+            // Load Total Events List
+            try {
+                console.log("Events");
+                const eventsList = await fetchEvents();
+                const result = await processEvents(eventsList, rsvpList);
+                setEventsList(result);
+            } catch (err: any) {
+                console.error("Error loading event list:", err.message);
+            }
+            // Load RSVP and Followed Events List
+            try {
+                console.log("RSVP/Followed");
+                const rsvpList = await fetchRSVPEvents(context.token);
+                const followedList = await fetchEvents();
+                const result = await processEvents(rsvpList.concat(followedList), rsvpList);
+                setCombinedEventsList(result);
+            } catch (err: any) {
+                console.error("Error loading RSVP/Followed event list:", err.message);
+            }
         } catch (err: any) {
             console.error("Error loading RSVP event list:", err.message);
         }
     }
 
-    const processEvents = async (events: Event[]): Promise<Record<string, [string, Event][]>> => {
+    const processEvents = async (events: Event[], rsvp: Event[]): Promise<Record<string, [string, Event, boolean][]>> => {
         const result = await events.reduce(async (accPromise, event) => {
             const acc = await accPromise;
             const dateKey = event.begin_time.toDateString();
@@ -79,13 +81,18 @@ const Events: React.FC = () => {
             if (!acc[dateKey]) {
               acc[dateKey] = [];
             }
-            acc[dateKey].push([club.name, event]);
+            if (rsvp.find(rsvpEvent => rsvpEvent.id === event.id)) {
+                acc[dateKey].push([club.name, event, true]);
+            }
+            else {
+                acc[dateKey].push([club.name, event, false]);
+            }
             acc[dateKey].sort((a,b) => {
                 return a[1].begin_time.getTime() - b[1].begin_time.getTime();
             });
 
             return acc;
-        }, Promise.resolve({} as Record<string, [string, Event][]>));
+        }, Promise.resolve({} as Record<string, [string, Event, boolean][]>));
         
         return result;
     }
@@ -175,7 +182,7 @@ const Events: React.FC = () => {
                                     control={
                                         <Checkbox checked={Followed} onChange={handleCheck} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="Followed"/>
                                     } 
-                                    label="Followed Events" 
+                                    label="Followed Clubs" 
                                     sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
                                 } />
                             </FormGroup>
@@ -195,7 +202,12 @@ const Events: React.FC = () => {
                                                     </div>
                                                     <div className="event-details">
                                                         <p className="event-title" onClick={()=>goToDetailPage(event[1].id)}>{event[1].title}</p>
-                                                        <p className="event-club-location">{event[0]}, {event[1].location}</p>
+                                                        <p className="event-club-location">
+                                                            Club: {event[0]}&emsp;Location: {event[1].location}
+                                                        </p>
+                                                    </div>
+                                                    <div className="event-rsvpd">
+                                                        {event[2] ? "I'm Going!" : ""}
                                                     </div>
                                                 </div>
                                             ))}

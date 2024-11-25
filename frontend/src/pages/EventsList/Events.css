@@ -91,6 +91,12 @@
     width: 80%;
  }
  
+
+ .event-rsvpd {
+   text-align: center;
+   width: 10%;
+}
+
  
  /* Event title styling */
  .event-title {
