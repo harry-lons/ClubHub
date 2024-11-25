@@ -31,11 +31,12 @@ class Event(EventID):
 class ListOfEvents(BaseModel):
     events: List[Event]
 
-
 class RSVP(BaseModel):
-    user_id: int
+    user_id: str
     event_id: int
 
+class RSVPList(BaseModel):
+    rsvps: List[RSVP]
 
 class EventIDList(BaseModel):
     events: List[int]
