@@ -30,7 +30,6 @@ export const deleteRSVP = async (token:string,event_id: string): Promise<boolean
 	return response.json();
 };
 // fetch all RSVP by a certain user
-// Function to get all expenses from the backend. Method: GET
 export const fetchRSVP = async (token:string): Promise<RSVP[]> => { 
 	const response = await fetch(`${API_BASE_URL}/rsvp/`, { //NOTICE CHANGE
         method: "GET",
@@ -53,7 +52,7 @@ export const fetchRSVP = async (token:string): Promise<RSVP[]> => {
 };
 // fetch all attendees to a certain event
 export const fetchCurrentAttendees = async(event_id:number): Promise<User[]> =>{
-	const response = await fetch(`${API_BASE_URL}/RSVP/Attendees/${event_id}`, { //NOTICE CHANGE
+	const response = await fetch(`${API_BASE_URL}/rsvp/Attendees/${event_id}`, { //NOTICE CHANGE
         method: "GET"
     })
 	if (!response.ok) {
