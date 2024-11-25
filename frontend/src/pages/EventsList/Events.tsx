@@ -38,6 +38,15 @@ const Events: React.FC = () => {
             const result = await processEvents(rsvpList, rsvpList);
             setRsvpEventsList(result);
             // Load All other lists and compare with RSVP
+            // Load Total Events List
+            try {
+                console.log("Events");
+                const eventsList = await fetchEvents();
+                const result = await processEvents(eventsList, rsvpList);
+                setEventsList(result);
+            } catch (err: any) {
+                console.error("Error loading event list:", err.message);
+            }
             // Load Followed Events List
             try {
                 console.log("Followed");

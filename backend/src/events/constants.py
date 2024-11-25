@@ -40,7 +40,9 @@ fake_event_3 = Event(
     location="Dog Cafe",
     begin_time=datetime(2024, 11, 4, 20),
     end_time=datetime(2024, 11, 4, 22),
-    recurrence=(False, None, None),
+    recurrence=False, 
+    recurrence_type=None, 
+    stop_date=None,
     capacity=None,
     type=["food"],
 )
