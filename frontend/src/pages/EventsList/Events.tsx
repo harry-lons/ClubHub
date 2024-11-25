@@ -6,7 +6,7 @@ import "./Events.css";
 import { Grid, FormGroup, FormControlLabel, Checkbox, Button } from '@mui/material';
 import { NavBar } from "../NavBar/NavBar";
 import { fetchEvents, fetchEventById, fetchRSVPEvents } from "../../utils/event-utils";
-import { fetchClubById } from "../../utils/club-utils";
+import { fetchClubById, fetchClubList } from "../../utils/club-utils";
 import { fetchRSVP } from "../../utils/RSVP-utils";
 import { AuthContext } from "../../context/AuthContext";
 
@@ -33,16 +33,16 @@ const Events: React.FC = () => {
         // Load RSVP Events List
         try {
             console.log("RSVP");
-            const rsvpList = (await fetchEvents()).slice(0,5); // Testing filter function with using half of the full event list
-            // const rsvpList = await fetchRSVPEvents(context.token);
-            const result = await processEvents(rsvpList, rsvpList);
+            const clubList = await fetchClubList();
+            const rsvpList = await fetchRSVPEvents(context.token);
+            const result = await processEvents(rsvpList, rsvpList, clubList);
             setRsvpEventsList(result);
             // Load All other lists and compare with RSVP
             // Load Total Events List
             try {
                 console.log("Events");
                 const eventsList = await fetchEvents();
-                const result = await processEvents(eventsList, rsvpList);
+                const result = await processEvents(eventsList, rsvpList, clubList);
                 setEventsList(result);
             } catch (err: any) {
                 console.error("Error loading event list:", err.message);
@@ -51,14 +51,14 @@ const Events: React.FC = () => {
             try {
                 console.log("Followed");
                 const followedList = (await fetchEvents()).slice(2,7);
-                const result = await processEvents(followedList, rsvpList);
+                const result = await processEvents(followedList, rsvpList, clubList);
                 setFollowedEventsList(result);
                 setRenderedEvents(result);
                 // Load RSVP and Followed Events List
                 try {
                     console.log("RSVP/Followed");
                     const combinedList = Array.from(new Map(rsvpList.concat(followedList).map(event => [event.id, event])).values());
-                    const result = await processEvents(combinedList, rsvpList);
+                    const result = await processEvents(combinedList, rsvpList, clubList);
                     setCombinedEventsList(result);
                 } catch (err: any) {
                     console.error("Error loading RSVP/Followed event list:", err.message);
@@ -71,20 +71,30 @@ const Events: React.FC = () => {
         }
     }
 
-    const processEvents = async (events: Event[], rsvp: Event[]): Promise<Record<string, [string, Event, boolean][]>> => {
+    const processEvents = async (events: Event[], rsvp: Event[], clubs: Club[]): Promise<Record<string, [string, Event, boolean][]>> => {
         const result = await events.reduce(async (accPromise, event) => {
             const acc = await accPromise;
             const dateKey = event.begin_time.toDateString();
-            const club = await fetchClubById(event.club_id);
+            const club = clubs.find(club => club.id === event.club_id)
     
             if (!acc[dateKey]) {
               acc[dateKey] = [];
             }
-            if (rsvp.find(rsvpEvent => rsvpEvent.id === event.id)) {
-                acc[dateKey].push([club.name, event, true]);
+            if (club === undefined) {
+                if (rsvp.find(rsvpEvent => rsvpEvent.id === event.id)) {
+                    acc[dateKey].push(["No Club Found", event, true]);
+                }
+                else {
+                    acc[dateKey].push(["No Club Found", event, false]);
+                }
             }
             else {
-                acc[dateKey].push([club.name, event, false]);
+                if (rsvp.find(rsvpEvent => rsvpEvent.id === event.id)) {
+                    acc[dateKey].push([club.name, event, true]);
+                }
+                else {
+                    acc[dateKey].push([club.name, event, false]);
+                }
             }
             acc[dateKey].sort((a,b) => {
                 return a[1].begin_time.getTime() - b[1].begin_time.getTime();
