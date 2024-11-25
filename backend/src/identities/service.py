@@ -4,12 +4,13 @@ import tempfile
 
 from ..authentication import service as auth_service
 from ..authentication.schemas import User
-from fastapi import APIRouter, Depends, FastAPI, UploadFile, File, HTTPException, status
-from fastapi.responses import FileResponse, Response
+from fastapi import APIRouter, Depends, FastAPI, UploadFile, File, HTTPException, status, Query
+from fastapi.responses import FileResponse, Response 
 
 from .schemas import Club, ClubWithBoardMembers, UserProfilePictureImgKey
 from .constants import cat_club, cat_club_board_members
 from ..object_store import InMemoryFileStorage, IStorage
+
 
 app = APIRouter()
 
@@ -28,6 +29,7 @@ async def validate_file(file: BytesIO):
 
     # TODO
     return True
+
 
 
 @app.post("/myself/upload_profile_picture", response_model=UserProfilePictureImgKey)
@@ -57,3 +59,25 @@ async def get_profile_picture(
     return Response(file.read(), media_type="image/png")
 
     # returns file (it is BinaryIO)
+
+@app.get("/search_club")
+async def search_club(
+    name: str = Query(..., description="Search query for club name")
+):
+    """
+    Search for clubs by name (partial match allowed).
+    """
+    query = """
+    SELECT id, name, description, logo
+    FROM clubs
+    WHERE LOWER(name) LIKE $1
+    """
+    results = await object_db.fetch(query, f"%{name.lower()}%")
+
+    if not results:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No clubs found matching '{name}'"
+        )
+
+    return {"clubs": [dict(row) for row in results]}
