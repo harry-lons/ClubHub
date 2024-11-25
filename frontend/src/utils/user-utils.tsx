@@ -16,7 +16,7 @@ export const fetchUser = async (token: string): Promise<User> => {
         }
 
         const user = await response.json(); // Assuming the response is the `User` model
-        return user.id;
+        return user;
     } catch (error) {
         console.error("Failed to fetch user info:", error);
         throw error;
