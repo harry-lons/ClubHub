@@ -2,37 +2,20 @@ import React, { useState, useEffect } from "react";
 import { NavBar } from "../NavBar/NavBar";
 import { useNavigate } from "react-router-dom";
 import { fetchClubList } from "../../utils/club-utils"
+import { Club } from "../../types/types";
 import "./Clubs.css";
 
 const Clubs: React.FC = () => {
-  const [clubs, setClubs] = useState<any[]>([]); // Store the list of clubs
+  const [clubs, setClubs] = useState<Club[]>([]); // Store the list of clubs
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false); // Loading state
   const [error, setError] = useState<string | null>(null); // Error state
   const navigate = useNavigate();
   const [following, setFollowing] = useState<string[]>([]);
 
-  // Function to fetch clubs from the backend
-  const fetchClubs = async (query: string) => {
-    setLoading(true); // Show loading spinner
-    setError(null); // Clear any previous errors
-
-    try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/search_club?name=${query}`
-      );
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
-      const data = await response.json();
-      setClubs(data.clubs); // Update clubs with the API response
-    } catch (err: any) {
-      console.error("Failed to fetch clubs:", err);
-      setError(err.message);
-    } finally {
-      setLoading(false); // Stop loading spinner
-    }
-  };
+  const filteredClubs = clubs.filter((club) =>
+    club.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Fetch data whenever the search query changes
   useEffect(() => {
@@ -40,8 +23,6 @@ const Clubs: React.FC = () => {
       try {
         const clubList = await fetchClubList();
         await setClubs(clubList);
-        console.log(Array.isArray(clubs));
-        console.log(clubs);
       } catch (error) {
         console.error("Error fetching clubs:", error);
       }
@@ -83,7 +64,7 @@ const Clubs: React.FC = () => {
         {loading && <p>Loading...</p>} {/* Show loading spinner */}
         {error && <p className="error">{error}</p>} {/* Show error message */}
         <div className="clubs-list">
-        {Array.isArray(clubs) && clubs.length > 0 && (clubs.map((club, index) => (
+        {Array.isArray(filteredClubs) && filteredClubs.length > 0 && (filteredClubs.map((club, index) => (
             <div key={index} className="club-card">
               <div
                 className="club-logo"
