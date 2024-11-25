@@ -36,12 +36,19 @@ const Clubs: React.FC = () => {
 
   // Fetch data whenever the search query changes
   useEffect(() => {
-    if (searchQuery) {
-      fetchClubs(searchQuery);
-    } else {
-      setClubs([]); // Clear the clubs list if the search is empty
-    }
-  }, [searchQuery]);
+    const fetchData = async () => {
+      try {
+        const clubList = await fetchClubList();
+        await setClubs(clubList);
+        console.log(Array.isArray(clubs));
+        console.log(clubs);
+      } catch (error) {
+        console.error("Error fetching clubs:", error);
+      }
+    };
+  
+    fetchData();
+  }, []);
 
   const goToClubProfile = (club_id: string) => {
     navigate(`/clubDetail/${club_id}`);
@@ -76,7 +83,7 @@ const Clubs: React.FC = () => {
         {loading && <p>Loading...</p>} {/* Show loading spinner */}
         {error && <p className="error">{error}</p>} {/* Show error message */}
         <div className="clubs-list">
-          {clubs.map((club, index) => (
+        {Array.isArray(clubs) && clubs.length > 0 && (clubs.map((club, index) => (
             <div key={index} className="club-card">
               <div
                 className="club-logo"
@@ -99,7 +106,7 @@ const Clubs: React.FC = () => {
                 {following.includes(club.name) ? "Unfollow" : "Follow"}
               </button>
             </div>
-          ))}
+          )))}
         </div>
       </div>
     </div>

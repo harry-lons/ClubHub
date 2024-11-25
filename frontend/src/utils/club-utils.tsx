@@ -41,8 +41,8 @@ export const fetchClubList = async (): Promise<Club[]> => {//RETURN ALL existing
     if (!response.ok) {
         throw new Error("Failed to fetch clubs")
     }    
-
-	const clubs: Club[] = await response.json();
+	const result = await response.json();
+	const clubs = result.clubs;
     return clubs;
 };
 export const createClub = async (token: string,club: Club): Promise<boolean> => {
