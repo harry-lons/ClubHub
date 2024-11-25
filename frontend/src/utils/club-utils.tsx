@@ -33,7 +33,7 @@ export const fetchFollowedClubList = async (token: string): Promise<Club[]> => {
     return clubs;
 };
 
-export const fetchClubList = async (): Promise<Club[]> => {//RETURN ALL exiting clubs
+export const fetchClubList = async (): Promise<Club[]> => {//RETURN ALL existing clubs
 
     const response = await fetch(`${API_BASE_URL}/clubs`, { //NOTICE CHANGE
         method: "GET"
@@ -42,7 +42,7 @@ export const fetchClubList = async (): Promise<Club[]> => {//RETURN ALL exiting 
     if (!response.ok) {
         throw new Error("Failed to fetch clubs")
     }    
-
-	const clubs: Club[] = await response.json();
+	const result = await response.json();
+	const clubs = result.clubs;
     return clubs;
 };

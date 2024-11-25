@@ -91,6 +91,12 @@
     width: 80%;
  }
  
+
+ .event-rsvpd {
+   text-align: center;
+   width: 10%;
+}
+
  
  /* Event title styling */
  .event-title {
@@ -117,6 +123,11 @@
    text-decoration: underline;
  }
  
- 
+ #logsign-submit-button {
+   background-color: #A556EE;
+   color: white;
+   padding-top: 10px;
+   padding-bottom: 10px;
+}
  
  
