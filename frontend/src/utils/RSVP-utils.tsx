@@ -42,14 +42,21 @@ export const fetchRSVP = async (token:string): Promise<RSVP[]> => {
     	throw new Error('Failed to fetch RSVP');
 	}
 
-	// Parsing the response to get the data
-	let rsvpList = response.json().then((jsonResponse) => {
-    	console.log("data in fetchExpenses", jsonResponse);
-    	return jsonResponse.data;
-	});
+	const jsonResponse = await response.json();
 
-	console.log("response in fetch RSVPs", rsvpList);
-	return rsvpList;
+    // Log and return the `data` property safely
+    console.log("data in fetchRSVP", jsonResponse);
+
+    // Ensure `jsonResponse.data` is an array or return an empty array
+    return Array.isArray(jsonResponse.data) ? jsonResponse.data : [];
+	// Parsing the response to get the data
+	// let rsvpList = response.json().then((jsonResponse) => {
+    // 	console.log("data in fetchExpenses", jsonResponse);
+    // 	return jsonResponse.data;
+	// });
+
+	// console.log("response in fetch RSVPs", rsvpList);
+	// return rsvpList;
 };
 // fetch all attendees to a certain event
 export const fetchCurrentAttendees = async(event_id:number): Promise<User[]> =>{

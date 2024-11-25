@@ -2,7 +2,7 @@ import React, { useContext, useState,useEffect } from "react"
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import { useParams, useNavigate } from "react-router-dom";
 import { Event, Club, RSVP, User} from "../../types/types";
-import { exampleEvent, exampleClub, exampleUsers } from "../../constants/constants";
+import { exampleEvent, exampleClub, exampleUsers, emptyClub } from "../../constants/constants";
 import { TextField, Button, MenuItem } from '@mui/material';
 import "./DetailedEvent.css"
 import {AuthContext} from "../../context/AuthContext"
@@ -30,7 +30,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
     const token = context.token;
     const userId = context.id;
     const [event, setEvent] = useState<Event> (exampleEvent);
-    const [club, setClub] = useState<Club> (exampleClub);
+    const [club, setClub] = useState<Club> (emptyClub);
     const [rsvp, setRsvp] = useState(false);
     const [attendees, setAttendees] = useState<User[]>(exampleUsers);
 
@@ -60,7 +60,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
 
     const loadClub = async () => {
         try {
-            const club_ = await fetchClubById(event.club_id); // Convert id to a number
+            const club_ = await fetchClubById(event.club_id); 
             setClub(club_);
         } catch (err: any) {
             console.error("Error loading club:", err.message);
@@ -69,6 +69,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
     //load all the RSVP of the user 
     const loadRSVP = async () => {
         try {
+            // ! bug RSVPList is undefined
             const RSVPList = await fetchRSVP(token); // Convert id to a number
             
             RSVPList.forEach((rl)=> {if(rl.event_id === event.id){setRsvp(true);}});
