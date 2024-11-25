@@ -6,7 +6,7 @@ import { Grid, Button, Card, CardContent } from '@mui/material';
 import { NavBar } from "../NavBar/NavBar";
 import { fetchRSVPEvents } from "../../utils/event-utils";
 import { AuthContext } from "../../context/AuthContext";
-import "./ClubEventList1.css";
+import "./ClubEventList.css";
 
 interface ClubEventListProps {
     which?: string;
@@ -37,7 +37,6 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
         loadEvents();
     }, [club_id, token]);
  
-
     const groupEventsByDate = (events: Event[]): Record<string, [string, Event][]> => {
         return events.reduce((acc, event) => {
             // Get the month name (e.g., "January")
@@ -55,14 +54,14 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
             return acc;
         }, {} as Record<string, [string, Event][]>);
     };
-
+    
     const goToDetailPage = (event_id: string) => {
         navigate(`/events/${event_id}`);
     }
     
     const handleDelete = (eventId: string) => console.log("Delete event:", eventId);
     const handleEdit = (eventId: string) => console.log("Edit event:", eventId);
-
+    
     //Placeholder screen for when no access to backend
     if (eventList === undefined) {
         return (
@@ -122,6 +121,10 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
                     </div>
                     <div className="events-created-header-container">
                         <h1 className="header-title">Events Created</h1>
+                        <Button className="add-event-button" variant="contained" 
+                                onClick={() => navigate(`/clubs/${club_id}/add-event`)} >
+                                + Add Event
+                        </Button>
                     </div>
                     <Grid item xs={12}>
                         <Grid container rowSpacing={4} className="events-list">
@@ -158,7 +161,7 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
                 </Grid>
             </div>
         );
-    };
+    };    
 }
 
 export default ClubEventList;

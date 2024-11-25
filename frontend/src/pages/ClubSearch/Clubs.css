@@ -66,12 +66,23 @@
    max-height: 70vh;
 }
 
-.club-card {
+/* .club-card {
    display: flex;
    align-items: center;
    background-color: rgba(255, 255, 255, 0.1);
    border-radius: 10px;
    padding: 15px;
+   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+   color: #fff;
+} */
+
+.club-card {
+   display: flex;
+   align-items: center;
+   justify-content: space-between; /* Ensures proper spacing */
+   background-color: rgba(255, 255, 255, 0.1);
+   border-radius: 10px;
+   padding: 15px 20px;
    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
    color: #fff;
 }
@@ -87,9 +98,9 @@
 .club-details {
    display: flex;
    flex-direction: column;
-   align-items: center;
-   /* justify-content: space-between; */
-   min-width: 150px;
+   justify-content: flex-start; /* Aligns content to the top-left */
+   align-items: flex-start; /* Ensures title is close to the left */
+   flex-grow: 1; /* Allows this section to expand and take space */
 }
 
 .club-name {
@@ -115,3 +126,21 @@ p.club-name{
  p.club-name:hover {
    text-decoration: underline;
  }
+
+ .follow-button {
+   background-color: #28a745;
+   color: white;
+   border: none;
+   border-radius: 5px;
+   padding: 5px 8px; /* Smaller padding for reduced width */
+   font-size: 14px;
+   cursor: pointer;
+   text-align: center;
+   flex-shrink: 0;
+   width: 80px; /* Fixed smaller width */
+}
+
+ .follow-button:hover {
+   background-color: #0056b3;
+ }
+ 
