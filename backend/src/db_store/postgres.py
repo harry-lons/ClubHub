@@ -96,6 +96,10 @@ class PostgresDatabase(IAuth, IEvents):
     def get_all_clubs(self) -> List[ClubAccounts]:
         entries = self.session.query(ClubAccounts).all()
         return entries
+    
+    def get_all_events(self) -> List[FrontendEvent]:
+        entries = self.session.query(Events).all()
+        return entries
 
     def get_f_event(self, event_id: int) -> FrontendEvent:
         event = self._get_by(Events, id=event_id)

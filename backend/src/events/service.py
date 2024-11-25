@@ -16,14 +16,15 @@ from .rsvp import rsvp_user_create, rsvp_user_delete, rsvp_user_get
 from .schemas import Event, ListOfEvents, EventID, EventIDList, RSVP, RSVPList
 from ..identities.schemas import UserIDList
 
+
 app = APIRouter()
 
 
-@app.get("/events", response_model=EventCalendarData)
-async def get_events(
-    current_user: Annotated[User, Depends(auth_service.get_current_user)]
-) -> EventCalendarData:
-    raise HTTPException(status_code=status.HTTP_301_MOVED_PERMANENTLY)
+@app.get("/events", response_model=ListOfEvents)
+async def get_events() -> ListOfEvents:
+    all_events = DB.db.get_all_events()
+    all_events_api = [b_event_to_f_event(e) for e in all_events]
+    return ListOfEvents(events=all_events_api)
 
 
 @app.get("/event/{id}", response_model=Event)
@@ -138,7 +139,7 @@ async def delete_event(
     #     return False
 
 
-@app.get("/user/myevents", response_model=EventCalendarData, tags=["user", "event"])
+@app.get("/user/myevents", response_model=ListOfEvents, tags=["user", "event"])
 async def user_follow_events(
     current_user: Annotated[User, Depends(auth_service.get_current_user)]
 ):
@@ -146,4 +147,28 @@ async def user_follow_events(
     user = DB.db.get_user_from_id(current_user.id)
     events: List[Events] = user.events
     events_api = [b_event_to_f_event(e) for e in events]
-    return EventCalendarData(events=events_api)
+    return ListOfEvents(events=events_api)
+
+
+@app.get("/club/{club_id}/events", response_model=ListOfEvents, tags=["club", "events"])
+async def get_club_events(club_id: str):
+    """Get all the events of the club with id=club_id"""
+    club = DB.db.get_org_from_id(club_id)
+    events = ListOfEvents(events=[b_event_to_f_event(event) for event in club.events])
+    return events
+
+# @app.get("/events/past", response_model=EventCalendarData, tags=["club", "event"])
+# async def user_past_events(
+#     current_club: Annotated[Club, Depends(auth_service.get_current_logged_in_club)],
+# ):
+#     """Returns the events that a user has attended in the past."""
+#     user = DB.db.get_user_from_id(current_user.id)
+#     now = datetime.now(timezone.utc)  # Current timestamp in UTC
+    
+#     # Filter the user's events to include only those with end_time < now
+#     past_events = [event for event in user.events if event.end_time < now]
+    
+#     # Convert the filtered events to the required API format
+#     events_api = [b_event_to_f_event(event) for event in past_events]
+    
+#     return EventCalendarData(events=events_api)

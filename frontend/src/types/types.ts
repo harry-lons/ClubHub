@@ -12,7 +12,7 @@ export type Event =
 	recurrence_type: Number | null;
 	stop_date: Date|null;
 	summary: string;
-	pictures: { [key: string]: string };
+	pictures: string[];
 	type: EventType[];
 	capacity: Number | null;
 };
