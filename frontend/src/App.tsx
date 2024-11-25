@@ -45,6 +45,7 @@ function App() {
             <Route path = "/homepage" element = {<HomePage/>}/>
             {/* <Route path = "/testpage" element = {<TestPage/>}/> */}
             <Route path = "/club/tempEventList" element = {<TempClubEventListPage/>}/>
+        
           </Routes>
         </div>
       </LocalizationProvider>
