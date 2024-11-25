@@ -16,6 +16,7 @@ import ClubDetail from './pages/ClubDetail/ClubDetail';
 import { HomePage } from './pages/HomePage/HomePage';
 import {TestPage} from './pages/TestPage';
 import {TempClubEventListPage} from './pages/TempClubEventListPage';
+import ClubEventList from './pages/ClubEventList/ClubEventList';
 
 function App() {
   return (
@@ -44,11 +45,7 @@ function App() {
             <Route path = "/homepage" element = {<HomePage/>}/>
             {/* <Route path = "/testpage" element = {<TestPage/>}/> */}
             <Route path = "/club/tempEventList" element = {<TempClubEventListPage/>}/>
-<<<<<<< Updated upstream
-        
-=======
-            <Route path = "/club/clubEventList" element = {<TempClubEventListPage/>}/>
->>>>>>> Stashed changes
+            <Route path="/clubEventList/:id" element={<ClubEventList which="CLUB"/>} />
           </Routes>
         </div>
       </Router>

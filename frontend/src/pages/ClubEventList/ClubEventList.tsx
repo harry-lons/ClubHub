@@ -1,7 +1,8 @@
+
 import { Event } from "../../types/types";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
-import { /*exampleClubEventList*/ exampleRSVPList } from "../../constants/constants";
+import { exampleClubEventList, exampleRSVPList } from "../../constants/constants";
 import { Grid, Button, Card, CardContent } from '@mui/material';
 import { NavBar } from "../NavBar/NavBar";
 import { fetchRSVPEvents } from "../../utils/event-utils";
@@ -61,12 +62,19 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
     
     const handleDelete = (eventId: string) => console.log("Delete event:", eventId);
     const handleEdit = (eventId: string) => console.log("Edit event:", eventId);
-    
-    //Placeholder screen for when no access to backend
+
+    const scrollRow = (rowId: string, direction: "left" | "right") => {
+        const row = document.getElementById(rowId);
+        if (row) {
+            const scrollAmount = 300; // Adjust to match card widths and gaps
+            row.scrollBy({ left: direction === "left" ? -scrollAmount : scrollAmount, behavior: "smooth" });
+        }
+    };
+
     if (eventList === undefined) {
         return (
-            <div style={{width: "100%"}}>
-                <div className="background"/>
+            <div style={{ width: "100%" }}>
+                <div className="background" />
                 <Grid container rowSpacing={4} className="events-list-container">
                     <div className="navbar-container">
                         <NavBar />
@@ -79,27 +87,42 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
                             {Object.entries(eventList || {}).map(([month, events]) => (
                                 <Grid item xs={12} key={month} className="month-row">
                                     <h2>{month}</h2>
-                                    <div className="event-cards-row">
-                                        {(events as [string, Event][]).map(([clubName, event]) => (
-                                        <Card key={event.id} className="event-card">
-                                            <CardContent>
-                                                <h3>{event.title}</h3>
-                                                <p>{event.location}</p>
-                                                <p>{event.begin_time.toLocaleDateString()}</p> 
-                                                <p>{event.begin_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                                                <p>{exampleRSVPList[event.id] || 0} RSVPs</p>
-                                                <div className="button-container">
-                                                    <Button className="edit-button" variant="contained" onClick={() => handleEdit(event.id)}>
-                                                        Edit
-                                                    </Button>
-                                                    <Button className="delete-button" variant="contained" onClick={() => handleDelete(event.id)}>
-                                                        Delete
-                                                    </Button>
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    ))}
-                                    </div >
+                                    <div className="event-cards-container">
+                                        <button
+                                            className="arrow-button left"
+                                            onClick={() => scrollRow(`${month}-row`, "left")}
+                                        >
+                                            &#8249;
+                                        </button>
+                                        <div id={`${month}-row`} className="event-cards-row">
+                                            {(events as [string, Event][]).map(([clubName, event]) => (
+                                                <Card key={event.id} className="event-card">
+                                                    <CardContent>
+                                                        <h3>{event.title}</h3>
+                                                        <p>{event.location}</p>
+                                                        <p>{event.begin_time.toLocaleDateString()}</p>
+                                                        <p>{event.begin_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                                        <p>{exampleRSVPList[event.id] || 0} RSVPs</p>
+                                                        <div className="event-buttons">
+                                                            <Button className="edit-button" variant="contained" onClick={() => handleEdit(event.id)}>
+                                                                Edit
+                                                            </Button>
+                                                            <Button className="delete-button" variant="contained" onClick={() => handleDelete(event.id)}>
+                                                                Delete
+                                                            </Button>
+                                                        </div>
+                                                    </CardContent>
+                                                </Card>
+                                            ))}
+                                        </div>
+                                        <button
+                                            className="arrow-button right"
+                                            onClick={() => scrollRow(`${month}-row`, "right")}
+                                        >
+                                            &#8250;
+                                        </button>
+                                    </div>
+                                    <hr className="month-divider"></hr>
                                 </Grid>
                             ))}
                         </Grid>
@@ -109,59 +132,55 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
         );
     }
 
-
-    //Real screen from backend access
-    else {
-        return (
-            <div style={{width: "100%"}}>
-                <div className="background"/>
-                <Grid container rowSpacing={4} className="events-list-container">
-                    <div className="navbar-container">
-                        <NavBar />
-                    </div>
-                    <div className="events-created-header-container">
-                        <h1 className="header-title">Events Created</h1>
-                        <Button className="add-event-button" variant="contained" 
-                                onClick={() => navigate(`/clubs/${club_id}/add-event`)} >
-                                + Add Event
-                        </Button>
-                    </div>
-                    <Grid item xs={12}>
-                        <Grid container rowSpacing={4} className="events-list">
-                            {Object.entries(eventList || {}).map(([month, events]) => (
-                                <Grid item xs={12} key={month} className="month-row">
-                                    <h2>{month}</h2>
-                                    <div className="event-cards-row">
+    return (
+        <div style={{ width: "100%" }}>
+            <div className="background" />
+            <Grid container rowSpacing={4} className="events-list-container">
+                <div className="navbar-container">
+                    <NavBar />
+                </div>
+                <div className="events-created-header-container">
+                    <h1 className="header-title">Events Created</h1>
+                    <Button className="add-event-button" variant="contained" onClick={() => navigate(`/clubs/${club_id}/add-event`)}>+ Add Event</Button>
+                </div>
+                <Grid item xs={12}>
+                    <Grid container rowSpacing={4} className="events-list">
+                        {Object.entries(eventList || {}).map(([month, events]) => (
+                            <Grid item xs={12} key={month} className="month-row">
+                                <h2>{month}</h2>
+                                <div className="event-cards-container">
+                                    <button className="arrow-button left" onClick={() => scrollRow(`${month}-row`, "left")}>&#8249;</button>
+                                    <div id={`${month}-row`} className="event-cards-row">
                                         {(events as [string, Event][]).map(([clubName, event]) => (
-                                        <Card key={event.id} className="event-card">
-                                            <CardContent>
-                                            <h3>{event.title}</h3>
-                                                <p>{event.location}</p>
-                                                <p>{`${event.begin_time.toLocaleDateString()} at ${event.begin_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}</p>
-                                                <p>{exampleRSVPList[event.id] || 0} RSVPed</p>
-                                                <div className="event-buttons">
-                                                    <Button className="edit-button" variant="contained" onClick={() => handleEdit(event.id)}>
-                                                        Edit
-                                                    </Button>
-                                                    <Button className="delete-button" variant="contained" onClick={() => handleDelete(event.id)}>
-                                                        Delete
-                                                    </Button>
-                                                </div>
-
-                                               
-                                            </CardContent>
-                                        </Card>
-                                    ))}
-                                      <hr className="month-divider"></hr>
-                                    </div >
-                                </Grid>
-                            ))}
-                        </Grid>
+                                            <Card key={event.id} className="event-card">
+                                                <CardContent>
+                                                    <h3>{event.title}</h3>
+                                                    <p>{event.location}</p>
+                                                    <p>{`${event.begin_time.toLocaleDateString()} at ${event.begin_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}</p>
+                                                    <p>{exampleRSVPList[event.id] || 0} RSVPed</p>
+                                                    <div className="event-buttons">
+                                                        <Button className="edit-button" variant="contained" onClick={() => handleEdit(event.id)}>
+                                                            Edit
+                                                        </Button>
+                                                        <Button className="delete-button" variant="contained" onClick={() => handleDelete(event.id)}>
+                                                            Delete
+                                                        </Button>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        ))}
+                                    </div>
+                                    <button className="arrow-button right" onClick={() => scrollRow(`${month}-row`, "right")}>&#8250;</button>
+                                </div>
+                            </Grid>
+                            
+                        ))}
+                          
                     </Grid>
                 </Grid>
-            </div>
-        );
-    };    
-}
+            </Grid>
+        </div>
+    );
+};
 
 export default ClubEventList;
