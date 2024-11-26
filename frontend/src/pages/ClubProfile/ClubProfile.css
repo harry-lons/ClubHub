@@ -1,0 +1,85 @@
+/* .club-profile-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+    padding: 20px;
+    background: linear-gradient(to bottom right, #4c3e99, #8158c9);
+    color: #fff;
+    font-family: Arial, sans-serif;
+  }
+  
+  .club-info {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  .club-logo {
+    width: 100px;
+    height: 100px;
+    background: #ccc;
+    border-radius: 50%;
+    margin: 0 auto 10px;
+  }
+  
+  .club-info h2 {
+    margin: 10px 0;
+  }
+  
+  .club-info p {
+    margin: 5px 0;
+  }
+  
+  .club-board-members,
+  .club-about,
+  .club-events {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  .club-board-members h3,
+  .club-about h3,
+  .club-events h3 {
+    margin-bottom: 10px;
+  }
+  
+  .club-board-members ul,
+  .club-events ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .club-board-members li {
+    margin-bottom: 8px;
+  }
+  
+  .club-events li {
+    margin-bottom: 20px;
+  }
+  
+  .club-about p,
+  .club-events p {
+    line-height: 1.6;
+  }
+   */
+
+   .background {
+    background: url('../../../public/gradientBackground.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: repeat-y;
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    z-index: -1;
+ }
+
+ .navbar-container {
+    width: 100%;
+    position: sticky;
+    top: 0px;
+    z-index: 1000;
+ }
