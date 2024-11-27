@@ -135,8 +135,8 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
         }
     }
     const handleRecur = (event: Event)=>{
-        if(event.recurrence){
-            return(<p>Yes. Recur {recurrenceDescription(event.recurrence_type as number)}. End Date {event.stop_date?.getFullYear()}-{event.stop_date?.getMonth()}-{event.stop_date?.getDate()}</p >);
+        if(event.recurrence && event.stop_date){
+            return(<p>Yes. Recur {recurrenceDescription(event.recurrence_type as number)}. End date: {event.stop_date.getFullYear()}-{event.stop_date.getMonth()+1}-{event.stop_date.getDate()}.</p >);
         }else{
             return (<p>Not a recurring event.</p >);
         }
