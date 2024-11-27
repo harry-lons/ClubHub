@@ -287,6 +287,29 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
             </Button>
         );
     }
+
+    const eventTypes = [
+        { value: 'social', label: 'Social Event' },
+        { value: 'workshop', label: 'Workshop' },
+        { value: 'networking', label: 'Networking Event' },
+        { value: 'fundraiser', label: 'Fundraiser' },
+        { value: 'competition', label: 'Competition' },
+        { value: 'seminar', label: 'Educational Seminar' },
+        { value: 'communityService', label: 'Community Service' },
+        { value: 'cultural', label: 'Cultural Event' },
+        { value: 'recreational', label: 'Recreational Outing' },
+        { value: 'generalMeeting', label: 'General Meeting' },
+        { value: 'academic', label: 'Academic' },
+        { value: 'orientation', label: 'Orientation/Welcome Event' },
+        { value: 'careerDevelopment', label: 'Career Development' },
+        { value: 'volunteering', label: 'Volunteering' },
+        { value: 'panel', label: 'Panel Discussion' },
+        { value: 'celebration', label: 'Celebration/Festival' },
+        { value: 'sports', label: 'Sports Event' },
+        { value: 'arts', label: 'Arts & Performance' },
+        { value: 'training', label: 'Training Session' },
+        { value: 'research', label: 'Research Presentation' }
+    ];
     
     return (
         <div id="event-detail-container">
@@ -319,7 +342,13 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                 </div>
                 <div className="event-detail-type">
                     <h3>Type</h3>
-                    <p>{event.type}</p >
+                    <p>{event.type
+                        .map(typeValue => {
+                            const matchingType = eventTypes.find(type => type.value === typeValue);
+                            return matchingType?.label;
+                        })
+                        .filter(Boolean)
+                        .join(', ')}</p >
                 </div>
                 <div className="event-detail-location">
                     <h3>Location</h3>
