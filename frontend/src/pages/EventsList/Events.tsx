@@ -101,8 +101,14 @@ const Events: React.FC = () => {
             acc[dateKey].sort((a,b) => {
                 return a[1].begin_time.getTime() - b[1].begin_time.getTime();
             });
-
-            return acc;
+            const sortedAcc = Object.entries(acc).sort((a, b) => {
+                const dateA = new Date(a[0]);
+                const dateB = new Date(b[0]);
+                
+                return dateA.getTime() - dateB.getTime();
+            });
+            const accFinal = Object.fromEntries(sortedAcc);
+            return accFinal;
         }, Promise.resolve({} as Record<string, [string, Event, boolean][]>));
         
         return result;
