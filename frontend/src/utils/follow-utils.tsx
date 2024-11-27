@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "../constants/constants"
-import { Follow ,User, Club} from "../types/types"
+import { Follow ,User,Club} from "../types/types"
 // Function to create an expense in the backend. Method: POST
 export const createFollow = async (token: string,follow: Follow): Promise<boolean> => {
 	console.log(`${API_BASE_URL}/Follow`)
