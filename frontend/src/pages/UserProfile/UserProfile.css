@@ -20,7 +20,8 @@
     position: fixed;
     top: 0;
     z-index: 1000;
-    background-color: #4A3F8C; /* Matches NavBar color */
+    background-color: #4A3F8C;
+    /* Matches NavBar color */
     height: 4rem;
 }
 
@@ -28,7 +29,7 @@
     flex: 1;
     background: linear-gradient(135deg, #3E29BC, #783698);
     width: 100%;
-    padding-top: 4rem;
+    padding-top: 0.5rem;
     display: flex;
     flex-direction: row;
     gap: 2rem;
@@ -55,7 +56,7 @@
     padding-right: 2rem;
 }
 
-.textContainer{
+.textContainer {
     color: white;
     text-align: center;
     height: 10%;
@@ -67,67 +68,70 @@
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
- /* Event details styling */
- .event-details-column {
+/* Event details styling */
+.event-details-column {
     display: flex;
     flex-direction: column;
     margin-left: 5%;
- }
- 
- 
- /* Individual event card styling */
- .past-event-info {
-    background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent white */
+}
+
+
+/* Individual event card styling */
+.past-event-info {
+    background-color: rgba(255, 255, 255, 0.1);
+    /* Semi-transparent white */
     border-radius: 10px;
     padding: 15px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    /* Shadow for depth */
     width: 85%;
     display: flex;
     align-items: center;
     color: #fff;
     margin-bottom: 25px;
- }
- 
- 
- /* Date and time styling */
- .past-event-time {
+}
+
+
+/* Date and time styling */
+.past-event-time {
     font-weight: bold;
     margin-right: 15px;
-    color: #ffcb47; /* Optional: highlight time */
+    color: #ffcb47;
+    /* Optional: highlight time */
     flex-shrink: 0;
     width: 10%;
     text-align: right;
- }
+}
 
 
- .past-event-details {
+.past-event-details {
     text-align: center;
     width: 80%;
- }
- 
- 
- /* Event title styling */
- .past-event-title {
+}
+
+
+/* Event title styling */
+.past-event-title {
     font-weight: bold;
     font-size: 20px;
     margin-bottom: 5px;
     color: #fff;
- }
- 
- 
- /* Club and location styling */
- .past-event-club-location {
+}
+
+
+/* Club and location styling */
+.past-event-club-location {
     color: #e1e1e1;
     font-size: 15px;
- }
+}
 
 
-p.past-event-title{
+p.past-event-title {
     text-decoration: none;
     cursor: pointer;
     margin: 0;
 }
-p.past-event-title:hover{
-   text-decoration: underline;
-}
 
+p.past-event-title:hover {
+    text-decoration: underline;
+}
