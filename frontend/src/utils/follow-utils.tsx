@@ -66,7 +66,7 @@ export const fetchFollowStatus = async (token:string, club_id: string): Promise<
 
 };
 
-// fetch all RSVP by a certain user
+// fetch all users following a certain club
 export const fetchFollowers = async (token:string): Promise<User[]> => { 
 	const response = await fetch(`${API_BASE_URL}/club/followers`, { //NOTICE CHANGE
         method: "GET",

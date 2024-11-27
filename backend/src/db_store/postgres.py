@@ -165,7 +165,7 @@ class PostgresDatabase(IAuth, IEvents):
         
     def add_rsvp_user(self, user_id: str, event_id: int) -> bool:
         '''
-        Adds a user-event pair into the UserRSVP database 
+        Adds a user-event pair into the UserRSVP table 
         '''
         ## perform a check (previously RSVP'd or event does not exist)
         if not self.session.query(Events).filter_by(id=event_id).first() \
@@ -185,7 +185,7 @@ class PostgresDatabase(IAuth, IEvents):
     
     def remove_rsvp_user(self, user_id: str, event_id: int)-> bool:
         '''
-        Removes a user-event pair from the UserRSVP database 
+        Removes a user-event pair from the UserRSVP table 
         It first checks for existence of the user-event pair
         '''
         try:
@@ -219,6 +219,69 @@ class PostgresDatabase(IAuth, IEvents):
         if len(users) == 0:
             raise ValueError(f"Event is not an RSVP'd event")
         return users
+     
+     
+     
+    def follow_club (self, user_id: str, club_id: str) -> bool:
+        '''
+        Adds a user-club pair to the UserFollows table
+        '''   
+        ## perform a check (previously followed or the club does not exist)
+        if not self.session(ClubAccounts).filter(id=club_id).first() \
+            or self.session.query(UserFollows).filter_by(user_id=user_id, club_id=club_id).first():
+                return False
+        try:
+            user_club = UserFollows(user_id=user_id, club_id=club_id)
+            self.session.add(user_club)
+            self.session.commit()
+            
+            return True
+        
+        except IntegrityError:
+            # If anything goes wrong, rollback the transaction
+            self.session.rollback()
+            raise ValueError(f"Server Error while following club")
+        
+    def unfollow_club (self,  user_id: str, club_id: str) -> bool:
+        '''
+        Removes a user-club pair from the UserFollow table
+        It firsts check for the existence of the user-club pair
+        '''
+        try:
+            self.session.query(UserFollows).filter_by(user_id=user_id, club_id=club_id).delete()
+            self.session.commit()
+        
+            return True
+        except SQLAlchemyError as e:
+            # If anything goes wrong, rollback the transaction
+            self.session.rollback()
+            raise ValueError(f"Error unfollowing club: {e}")
+     
+    def fetch_user_follows(self, user_id: str)-> bool:
+        '''
+        Returns all the followed
+        '''
+        return True 
+       
+    def fetch_follow_status(self, user_id:str, club_id: str )-> bool:
+        '''
+        Checks if a user has followed a certain club   
+        '''
+        status = self.session.query(UserFollows).filter_by(user_id=user_id, club_id=club_id).first()
+        if status == None:
+            return False
+        else:
+            return True
+        
+    def fetch_club_followers(self, club_id: str)-> bool:
+        '''
+        Fetches all the users who have followed a club
+        '''
+        users = self.session.query(UserFollows.user_id).filter_by(club_id=club_id).all()
+        if len(users) == 0:
+            raise ValueError(f"Club has no followers!")
+        return users
+        
         
     def _get_by(self, model: Type[M], **filters) -> M:
         """Fetch an object by arbitrary filters. Returns an object of type `model`.
