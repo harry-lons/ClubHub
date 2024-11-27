@@ -15,6 +15,21 @@ export const exampleEvent = {
 	type: ["social", "workshop"] as EventType[],
     capacity: 50
 }
+export const emptyEvent = {
+	id: "",
+  title: "",
+	club_id : "",
+	location: "",
+	begin_time: new Date(2024, 11, 1, 10, 0, 0),
+  end_time: new Date(2024, 11, 1, 11, 0, 0),
+  recurrence: false,
+  recurrence_type: null,
+  stop_date: null,
+	summary: "",
+	pictures: [],
+	type: [] as EventType[],
+  capacity: null
+}
 export const emptyUser: User[] = [
 
 ];
