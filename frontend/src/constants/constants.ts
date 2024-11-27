@@ -30,8 +30,7 @@ export const emptyEvent = {
 	type: [] as EventType[],
   capacity: null
 }
-export const emptyUser: User[] = [
-
+export const emptyUsers: User[] = [
 ];
 export const exampleUsers: User[] = [
     {
@@ -247,6 +246,15 @@ export const exampleEventList: Event[] = [
 
 
 ];
+
+export const emptyeUser = {
+	id : "",
+	username: "",
+	first_name: "",
+	last_name: "",
+	followed_clubs: []
+};
+
 export const exampleUser = {
 	id : "001",
 	username: "abababa",
