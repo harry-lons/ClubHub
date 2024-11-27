@@ -72,7 +72,7 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
                 <div className="background" />
                 <Grid container rowSpacing={4} className="events-list-container">
                     <div className="navbar-container">
-                        <NavBar />
+                        <ClubNavBar />
                     </div>
                     <div className="events-created-header-container">
                         <h1 className="header-title">Events Created</h1>
@@ -132,7 +132,7 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
             <div className="background" />
             <Grid container rowSpacing={4} className="events-list-container">
                 <div className="navbar-container">
-                    <NavBar />
+                    <ClubNavBar />
                 </div>
                 <div className="events-created-header-container">
                     <h1 className="header-title">Events Created</h1>
