@@ -17,6 +17,7 @@ import { HomePage } from './pages/HomePage/HomePage';
 import {TestPage} from './pages/TestPage';
 import {TempClubEventListPage} from './pages/TempClubEventListPage';
 import ClubEventList from './pages/ClubEventList/ClubEventList';
+import ClubProfile from './pages/ClubProfile/ClubProfile';
 
 function App() {
   return (
