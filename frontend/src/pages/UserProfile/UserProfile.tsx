@@ -3,7 +3,7 @@ import { ProfileCard} from "./ProfileCard";
 import { EventCard } from "./EventCard";
 import { NavBar } from "../NavBar/NavBar";
 import { User,Event} from "../../types/types";
-import { exampleUser,exampleEventList } from "../../constants/constants";
+import { emptyeUser,exampleEventList } from "../../constants/constants";
 import React, { useContext, useState,useEffect } from "react"
 import "./UserProfile.css"
 import { fetchPastEvents, fetchRSVPEvents } from "../../utils/event-utils";
@@ -11,7 +11,7 @@ import { Backdrop, CircularProgress, Button,Typography } from "@mui/material";
 import { AuthContext } from "../../context/AuthContext";
 import { fetchUser } from "../../utils/user-utils";
 export const UserProfile = () => {
-    const [user,setUser] = useState<User>(exampleUser);
+    const [user,setUser] = useState<User>(emptyeUser);
     const [events, setEvents] = useState<Event[]>([]);
     const context = useContext(AuthContext);
     useEffect(() => {
