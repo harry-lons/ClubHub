@@ -180,3 +180,16 @@ export const updateEvent = async (token: string,event: Event): Promise<Event> =>
 	}
 	return response.json();
 };
+
+export const deleteEvent = async (token: string,event_id: Number): Promise<Event> => {
+	const response = await fetch(`${API_BASE_URL}/club/event/${event_id}`, { // url need to be changed 
+    	method: "DELETE",
+		headers:{
+			"Authorization" : `Bearer ${token}`
+		}
+	});
+	if (!response.ok) {
+    	throw new Error("Failed to delete event");
+	}
+	return response.json();
+};
