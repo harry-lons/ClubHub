@@ -1,14 +1,15 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+
 import App from '../../App';
 import LoginSignup from './LoginSignup';
 
 describe('Login', () => {
     test('Test login page render', () => {
         render(
-            <MemoryRouter>
-                <LoginSignup which="LOG IN" />
+            <MemoryRouter initialEntries={['/login']}>
+                <App />
             </MemoryRouter>
         );
 
@@ -30,8 +31,8 @@ describe('Login', () => {
 
     test('Simulate successful login', async () => {
         render(
-            <MemoryRouter>
-                <LoginSignup which="LOG IN" />
+            <MemoryRouter initialEntries={['/login']}>
+                <App />
             </MemoryRouter>
         );
 
