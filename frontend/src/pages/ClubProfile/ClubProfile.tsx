@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ClubNavBar } from "../NavBar/ClubNavBar";
+import { NavBar } from "../NavBar/NavBar";
 import { exampleClub, exampleClubEventList } from "../../constants/constants";
 import { AuthContext } from "../../context/AuthContext";
 import { Event } from "../../types/types";
@@ -50,7 +50,7 @@ export const ClubProfile: React.FC<ClubProfileProps> = ({ which }) => {
         <div style={{ width: "100%" }}>
              <div className="background"> </div>
             <div className="clubProfilePageContainer">
-                <div className="navbarContainer"> <ClubNavBar />  </div>
+                <div className="navbarContainer"> <NavBar />  </div>
 
                 {/*Club Profile Card Side*/}
                 <div className="clubProfileCardContainer">
