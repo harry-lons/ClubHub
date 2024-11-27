@@ -4,7 +4,7 @@ import { Event, Club, RSVP, User} from "../../types/types";
 import {exampleClub, exampleUsers, exampleEventList, emptyClub, emptyEventList } from "../../constants/constants";
 import {AuthContext} from "../../context/AuthContext"
 import { fetchClubEvents} from "../../utils/event-utils";
-import { createFollow, deleteFollow } from "../../utils/follow-utils";
+import { createFollow, deleteFollow, fetchFollowers, fetchFollowStatus } from "../../utils/follow-utils";
 import { fetchClubById } from "../../utils/club-utils";
 import { Follow } from "../../types/types";
 import {Alert, Box,List,ListItem,ListItemText,AccordionDetails,Accordion,AccordionSummary} from '@mui/material';
@@ -19,12 +19,14 @@ interface ClubDetailProps {
 const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
     const { id } = useParams<{ id: string }>(); //should be club id
     const navigate = useNavigate();
-    const {token} = useContext(AuthContext);
-    // const { userId } = useContext(AuthContext);
+    const context = useContext(AuthContext);
+    useEffect(() => {
+        console.log(context.token, context.accountType, context.id);
+    }, []);
+    const userId = context.id;
+    const token = context.token;
     const [club, setClub] = useState<Club> (emptyClub);
-    const [rsvp, setRsvp] = useState(false);
-    const userId = "001";
-    const [attendees, setAttendees] = useState<User[]>(exampleUsers);
+    const [follower, setFollowers] = useState<User[]>(exampleUsers);
     const [pastEvents,setPastEvents] = useState<Event[]>(emptyEventList);
     const [nextEvents,setNextEvents] = useState<Event[]>(emptyEventList);
     const [follow, setFollow] = useState(false);
@@ -34,6 +36,8 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
         if (!id) return;
         loadEvent();
         loadClub();
+        if(which === "USER") loadFollowStatus();
+        if(which === "CLUB") loadFollowerList();
     }, [id]);
 
     const loadEvent = async () => {
@@ -69,6 +73,24 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
             setLoading(false); // Set loading state to false once done
         }
     };
+    const loadFollowStatus = async () => {
+        try {
+            // ! bug RSVPList is undefined
+            // ! bug RSVPList is undefined
+            const status = await fetchFollowStatus(token,id as string); // Convert id to a number
+            setFollow(status);
+        } catch (err: any) {
+            console.error("Error loading Follow Status:", err.message);
+        }
+    };
+    const loadFollowerList = async()=>{
+        try{
+            const followers_ = await fetchFollowers(token);
+            setFollowers(followers_)
+        }catch(err: any){
+            console.error("Error in loading Follower List",err.message)
+        }
+    }
     const BackButton: React.FC = () => {
         const handleBack = () => {
             navigate(-1); // Navigates to the previous page
@@ -86,7 +108,7 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
             severity: null,
         });
         const toggleFollow = async () => {
-            setFollow(!rsvp);
+            setFollow(!follow);
             if (!follow) {
                 const newFollow: Follow = {
                     user_id: userId,
@@ -139,7 +161,7 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
                 </Alert>
             )}
             <Button className="follow-button" variant="contained" onClick={toggleFollow}>
-                {rsvp? 'unFOLLOW' : 'FOLLOW' }
+                {follow? 'unFOLLOW' : 'FOLLOW' }
             </Button>
             </>
         );
