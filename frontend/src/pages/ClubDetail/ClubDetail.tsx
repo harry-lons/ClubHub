@@ -26,12 +26,12 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
     const userId = context.id;
     const token = context.token;
     const [club, setClub] = useState<Club> (emptyClub);
-    const [follower, setFollowers] = useState<User[]>(exampleUsers);
+    const [follower, setFollower] = useState<User[]>(exampleUsers);
     const [pastEvents,setPastEvents] = useState<Event[]>(emptyEventList);
     const [nextEvents,setNextEvents] = useState<Event[]>(emptyEventList);
     const [follow, setFollow] = useState(false);
     const [loading, setLoading] = useState(true); // New loading state
-
+    const [numFollowers,setNumFollowers] = useState(0);
     useEffect(() => {
         if (!id) return;
         loadEvent();
@@ -86,7 +86,8 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
     const loadFollowerList = async()=>{
         try{
             const followers_ = await fetchFollowers(token);
-            setFollowers(followers_)
+            setFollower(followers_);
+            setNumFollowers(follower.length)
         }catch(err: any){
             console.error("Error in loading Follower List",err.message)
         }
