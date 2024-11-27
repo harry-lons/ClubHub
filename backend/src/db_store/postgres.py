@@ -1,4 +1,5 @@
 import uuid
+import logging
 from typing import Any, Dict, List, Optional, Tuple, Type, TypeVar
 
 from sqlalchemy.exc import (
@@ -15,6 +16,8 @@ from .db_interface import IAuth, IDatabase, IEvents
 from .models import *
 
 M = TypeVar("M")
+# logging.basicConfig(level=logging.INFO)
+# logger = logging.getLogger(__name__)
 
 
 class PostgresDatabase(IAuth, IEvents):
@@ -93,6 +96,10 @@ class PostgresDatabase(IAuth, IEvents):
     def get_all_clubs(self) -> List[ClubAccounts]:
         entries = self.session.query(ClubAccounts).all()
         return entries
+    
+    def get_all_events(self) -> List[FrontendEvent]:
+        entries = self.session.query(Events).all()
+        return entries
 
     def get_f_event(self, event_id: int) -> FrontendEvent:
         event = self._get_by(Events, id=event_id)
@@ -155,7 +162,64 @@ class PostgresDatabase(IAuth, IEvents):
         new_tag = EventTags(tag_name=tag)
 
         self.session.add(new_tag)
+        
+    def add_rsvp_user(self, user_id: str, event_id: int) -> bool:
+        '''
+        Adds a user-event pair into the UserRSVP database 
+        '''
+        ## perform a check (previously RSVP'd or event does not exist)
+        if not self.session.query(Events).filter_by(id=event_id).first() \
+            or self.session.query(UserRSVPs).filter_by(user_id=user_id,event_id=event_id).all():
+                return False
+        try:
+            rsvp_user = UserRSVPs(user_id=user_id, event_id=event_id)
+            self.session.add(rsvp_user)
+            self.session.commit()
+            
+            return True
+        
+        except IntegrityError:
+            # If anything goes wrong, rollback the transaction
+            self.session.rollback()
+            raise ValueError(f"Server Error while creating RSVP")   
+    
+    def remove_rsvp_user(self, user_id: str, event_id: int)-> bool:
+        '''
+        Removes a user-event pair from the UserRSVP database 
+        It first checks for existence of the user-event pair
+        '''
+        try:
+            self.session.query(UserRSVPs).filter_by(user_id=user_id, event_id=event_id).delete()
+            self.session.commit()
+        
+            return True
+        except SQLAlchemyError as e:
+            # If anything goes wrong, rollback the transaction
+            self.session.rollback()
+            raise ValueError(f"Error deleting RSVP: {e}")
+        
+    def fetch_rsvp(self, user_id: str)-> List[UserRSVPs]:
+        '''
+        Fetches all the rsvps that a specific user 
+        '''
+        # user = self._get_by(UserAccounts, id=user_id) ## fetch the user
+        rsvps = self.session.query(UserRSVPs).filter_by(user_id=user_id).all()
+        if len(rsvps) == 0:
+            raise ValueError(f"User {user_id} has not RSVP'd for any events")
+        return rsvps
 
+    
+    def fetch_rsvp_attendees(self, event_id: int)-> List[str]:
+        '''
+        Fetches all the users who have RSVP'd for a
+        specified event
+        '''
+        #event = self._get_by(Events, id=event_id) ## fetch the event
+        users = self.session.query(UserRSVPs.user_id).filter_by(event_id=event_id).all()
+        if len(users) == 0:
+            raise ValueError(f"Event is not an RSVP'd event")
+        return users
+        
     def _get_by(self, model: Type[M], **filters) -> M:
         """Fetch an object by arbitrary filters. Returns an object of type `model`.
 

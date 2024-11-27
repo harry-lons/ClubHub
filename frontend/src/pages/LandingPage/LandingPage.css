@@ -1,0 +1,168 @@
+.body {
+    /* background-color: purple; /* Purple background for the body */
+    background: linear-gradient(170deg, black, rgba(128, 0, 128, 0.85));
+    display: flex;
+    /* Stack sections vertically */
+    flex-direction: column;
+
+    justify-content: center;
+    margin: 0;
+    /* Center content horizontally */
+    align-items: center;
+
+    /* height: 100vh; */
+    width: 100%;
+
+    /* There is a weird bug where there is a line on the RHS of the screen */
+    overflow-x: hidden;
+}
+
+.center {
+    width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.main {
+    color: white;
+
+    text-align: center;
+    /* Center text */
+    /* padding: 40px 0;  */
+    /* margin-top: 20px; */
+    /* margin-bottom: 20px; */
+    flex-shrink: 0;
+    height: 55vh;
+}
+
+.main h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    font-family: 'Inter', sans-serif;
+}
+
+.main-content {
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    margin-top: 20vh;
+}
+
+.below {
+    width: 100%;
+    /* Make the below section take full width */
+    background-color: white;
+    /* White background for the below section */
+    padding: 40px 0;
+    flex-grow: 1;
+}
+
+/* .container inside .below */
+.container {
+    display: flex;
+    gap: 48px;
+    padding: 0 1.5rem;
+    box-sizing: border-box;
+}
+
+/* Column inside the container */
+.column {
+    flex: 1;
+    /* Make columns take up equal space */
+}
+
+
+.column h3 {
+    font-size: 1.5rem;
+    color: purple;
+}
+
+.column p {
+    font-size: 1rem;
+    color: #333;
+}
+
+.button {
+    /* Purple background */
+    background-color: #6a0dad;
+
+    border-radius: 10px;
+    margin: 1.5rem;
+    padding: 0.5rem 1.5rem;
+    color: white;
+    transition: background 0.3s ease;
+}
+
+.button>.arrow {
+    width: 6px;
+    height: 6px;
+    border-right: 2px solid white;
+    border-bottom: 2px solid white;
+    position: relative;
+    transform: rotate(-45deg);
+    margin: 0 6px;
+    /* transition: all .3s ease; */
+}
+
+/* .button>.arrow::before {
+    display: block;
+    background-color: currentColor;
+    width: 3px;
+    transform-origin: bottom right;
+    height: 2px;
+    position: absolute;
+    opacity: 0;
+    bottom: calc(-2px / 2);
+    transform: rotate(45deg);
+    transition: all .3s ease;
+    content: "";
+    right: 0;
+}
+
+.button:hover>.arrow::before {
+    opacity: 1;
+    width: 8px;
+} */
+
+
+.button:hover {
+    background-color: #4b0082;
+    /* Darker purple on hover */
+}
+
+.header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+
+    /* Ensure it's above other content */
+    z-index: 100;
+}
+
+
+/* Edit the button styling in the actual file */
+/* Button Styling */
+.login-signup-btn {
+    font-weight: bold;
+    border-radius: 15px;
+    background-color: #6a0dad;
+    margin-right: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.login-signup-btn:hover {
+    background-color: #4b0082;
+}
+
+.icon {
+    /* put them side by side in icon */
+
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    /* space to the left border */
+    margin-left: 1rem;
+}

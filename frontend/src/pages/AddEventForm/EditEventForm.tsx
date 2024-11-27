@@ -25,6 +25,7 @@ export const EditEventForm = ()=>{
     useEffect(() => {
         console.log(context.token, context.accountType, context.id);
     }, []);
+    const club_id = context.id;
     const token = context.token;
     const navigate = useNavigate();
     const [attendees,setAttendees] = useState<User[]>(exampleUsers);
@@ -42,7 +43,7 @@ export const EditEventForm = ()=>{
         summary: "",
         type: [] as EventType[],
         recur: false,
-        frequency: -1,
+        frequency: -1 as (Number | null),
         stop_date: new Date() as (Date | null),
         capacity:null as Number | null
 	    // pictures: { [key: string]: string };
@@ -57,9 +58,9 @@ export const EditEventForm = ()=>{
                 end_time: event_.end_time,
                 summary: event_.summary,
                 type: event_.type,
-                recur: event_.recurrence[0],
-                frequency: event_.recurrence[1],
-                stop_date: event_.recurrence[2],
+                recur: event_.recurrence,
+                frequency: event_.recurrence_type,
+                stop_date: event_.stop_date,
                 capacity:event_.capacity??null
                 // pictures: { [key: string]: string };
             });
@@ -101,7 +102,7 @@ export const EditEventForm = ()=>{
             {
                 id: `${id}`,
                 title: formData.title,
-                club_id : "CLUB ID PLACE HOLDER",
+                club_id : club_id,
                 location: formData.location,
                 begin_time: formData.begin_time,
                 end_time: formData.end_time,
@@ -113,8 +114,8 @@ export const EditEventForm = ()=>{
                 type: formData.type,
                 capacity: formData.capacity||null
             };
-            const eventID = updateEvent(token, newEvent);
-            navigate(`/club/events/${eventID}`);
+            updateEvent(token, newEvent);
+            navigate(`/club/events/${id}`);
         }
     
         const newFormData = {

@@ -1,8 +1,7 @@
 import React, { useContext, useState,useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom";
 import { Event, Club, RSVP, User} from "../../types/types";
-import {exampleClub, exampleUsers, exampleEventList } from "../../constants/constants";
-import { TextField, Button, MenuItem, Typography } from '@mui/material';
+import {exampleClub, exampleUsers, exampleEventList, emptyClub, emptyEventList } from "../../constants/constants";
 import {AuthContext} from "../../context/AuthContext"
 import { fetchClubEvents} from "../../utils/event-utils";
 import { createFollow, deleteFollow } from "../../utils/follow-utils";
@@ -11,6 +10,7 @@ import { Follow } from "../../types/types";
 import {Alert, Box,List,ListItem,ListItemText,AccordionDetails,Accordion,AccordionSummary} from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Backdrop, CircularProgress, Button,Typography } from "@mui/material";
 import "./ClubDetail.css";
 
 interface ClubDetailProps {
@@ -21,13 +21,15 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
     const navigate = useNavigate();
     const {token} = useContext(AuthContext);
     // const { userId } = useContext(AuthContext);
-    const [club, setClub] = useState<Club> (exampleClub);
+    const [club, setClub] = useState<Club> (emptyClub);
     const [rsvp, setRsvp] = useState(false);
     const userId = "001";
     const [attendees, setAttendees] = useState<User[]>(exampleUsers);
-    const [pastEvents,setPastEvents] = useState<Event[]>(exampleEventList);
-    const [nextEvents,setNextEvents] = useState<Event[]>(exampleEventList);
+    const [pastEvents,setPastEvents] = useState<Event[]>(emptyEventList);
+    const [nextEvents,setNextEvents] = useState<Event[]>(emptyEventList);
     const [follow, setFollow] = useState(false);
+    const [loading, setLoading] = useState(true); // New loading state
+
     useEffect(() => {
         if (!id) return;
         loadEvent();
@@ -36,7 +38,7 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
 
     const loadEvent = async () => {
         try {
-            const event_ = await fetchClubEvents(Number(id)); // Convert id to a number
+            const event_ = await fetchClubEvents(id as String); // Convert id to a number
             const past: Event[] = [];
             const next: Event[] = [];
             const now = new Date();
@@ -56,7 +58,6 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
             console.error("Error loading event:", err.message);
         }
     };
-    
 
     const loadClub = async () => {
         try {
@@ -64,6 +65,8 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
             setClub(club_);
         } catch (err: any) {
             console.error("Error loading club:", err.message);
+        }finally {
+            setLoading(false); // Set loading state to false once done
         }
     };
     const BackButton: React.FC = () => {
@@ -78,36 +81,67 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
         );
     };
     const FollowButton : React.FC = () => {
+        const [alert, setAlert] = useState<{ message: string; severity: 'success' | 'error' | null }>({
+            message: '',
+            severity: null,
+        });
         const toggleFollow = async () => {
             setFollow(!rsvp);
             if (!follow) {
                 const newFollow: Follow = {
                     user_id: userId,
-                    club_id: id as string
+                    club_id: id as string,
                 };
-                const successful = await createFollow(token,newFollow);
-                if(successful){
-                    <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
-                        You have successfully Followed this club! We're very happy to have you here!
-                    </Alert>
-                }else{
-                    <Alert severity="error">Follow Action unsuccessful please contact webpage administrator</Alert>
+    
+                const successful = await createFollow(token, newFollow);
+    
+                if (successful) {
+                    setAlert({
+                        message: "You have successfully followed this club! We're very happy to have you here!",
+                        severity: 'success',
+                    });
+                } else {
+                    setAlert({
+                        message: 'Follow action unsuccessful. Please contact the webpage administrator.',
+                        severity: 'error',
+                    });
                 }
             } else {
-                const successful = await deleteFollow(token,id as string);
-                if(successful){
-                    <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
-                        You have successfully canceled RSVP to this event!
-                    </Alert>
-                }else{
-                    <Alert severity="error">Cancel RSVP unsuccessful please contact webpage administrator</Alert>
+                const successful = await deleteFollow(token, id as string);
+    
+                if (successful) {
+                    setAlert({
+                        message: 'You have successfully unfollowed this club!',
+                        severity: 'success',
+                    });
+                } else {
+                    setAlert({
+                        message: 'Unfollow action unsuccessful. Please contact the webpage administrator.',
+                        severity: 'error',
+                    });
                 }
             }
+            // Automatically hide the alert after 3 seconds
+            setTimeout(() => {
+                setAlert({ message: '', severity: null });
+            }, 3000); // 3000ms = 3 seconds
         }
+        
         return (
+            <>
+            {alert.severity && (
+                <Alert
+                    icon={<CheckIcon fontSize="inherit" />}
+                    severity={alert.severity}
+                    onClose={() => setAlert({ message: '', severity: null })} // Allow closing the alert
+                >
+                    {alert.message}
+                </Alert>
+            )}
             <Button className="follow-button" variant="contained" onClick={toggleFollow}>
                 {rsvp? 'unFOLLOW' : 'FOLLOW' }
             </Button>
+            </>
         );
     };
     const goToDetailPage = (event_id: string) =>{
@@ -115,6 +149,15 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
     }
     return (
         <div id="club-detail-container">
+            
+            {/* Backdrop for loading */}
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={loading} // Backdrop visible when loading is true
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
+
             <div className="club-detail-header">
                 <BackButton />
             </div>
@@ -136,13 +179,24 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
                     <h3>Board Members</h3>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <List style={{ height: '300px', overflowY: 'auto' }}>
-                        {club.board_members.map((member) => (
-                            <ListItem key={member}>
+                {club.board_members.length === 0 ? (
+                <Typography style={{ textAlign: 'center', margin: '16px 0' }}>
+                    No Board Members Listed
+                </Typography>
+            ) : (
+                <List
+                    style={{
+                        height: club.board_members.length < 10 ? 'auto' : '300px', // Adjust height dynamically
+                        overflowY: club.board_members.length < 10 ? 'visible' : 'auto', // Avoid scrollbars for short lists
+                    }}
+                >
+                    {club.board_members.map((member) => (
+                        <ListItem key={member}>
                             <ListItemText primary={<Typography>{member}</Typography>} />
-                            </ListItem>
+                        </ListItem>
                     ))}
-                    </List>
+                </List>
+            )}
                 </AccordionDetails>
                 </Accordion>
             </div>
@@ -163,7 +217,11 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
                         <h3>Upcoming Events</h3>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <List style={{ height: '400px', overflowY: 'auto' }}>
+                        <List style={{ 
+                             height: nextEvents.length < 4 ? 'auto' : '400px', // Adjust height based on list length
+                             overflowY: nextEvents.length < 4 ? 'visible' : 'auto', // Disable scrolling if not needed
+
+                        }}>
                             {nextEvents.map(event => (
                                 <ListItem key={event.id} style={{backgroundColor: '#f3e5f5', margin: '8px 0', borderRadius: '8px', padding: '16px',}}>
                                     <ListItemText primary={
@@ -182,7 +240,9 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
                         <h3>Past Events</h3>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <List style={{ height: '400px', overflowY: 'auto' }}>
+                        <List style={{ height: nextEvents.length < 3 ? 'auto' : '400px', // Adjust height based on list length
+                             overflowY: nextEvents.length < 3 ? 'visible' : 'auto', // Disable scrolling if not needed
+                            }}>
                             {pastEvents.map(event => (
                                 <ListItem
                                     key={event.id}
