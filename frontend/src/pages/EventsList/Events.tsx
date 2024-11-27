@@ -170,31 +170,32 @@ const Events: React.FC = () => {
                 <div style={{width: "100%"}}>
                     <div className="background"/>
                     <Grid container rowSpacing={4} className="events-list-container">
-                        <div className="navbar-container">
+                        <Grid container rowSpacing={2} className="navbar-container">
                             <NavBar />
-                        </div>
-                        <Grid item xs={9.5} sx={{display: 'flex', justifyContent: 'flex-end'}}>
-                            <FormGroup>
-                                <FormControlLabel 
-                                    control={
-                                        <Checkbox checked={RSVP} onChange={handleCheck} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="RSVP"/>
-                                    } 
-                                    label="RSVP Events" 
-                                    sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
-                                } />
-                            </FormGroup>
-                        </Grid>
-                        <Grid item xs={.2}/>
-                        <Grid item xs={2.3}>
-                            <FormGroup>
-                                <FormControlLabel 
-                                    control={
-                                        <Checkbox checked={Followed} onChange={handleCheck} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="Followed"/>
-                                    } 
-                                    label="Followed Clubs" 
-                                    sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
-                                } />
-                            </FormGroup>
+                            <Grid item xs={9.5} sx={{display: 'flex', justifyContent: 'flex-end'}}>
+                                <FormGroup>
+                                    <FormControlLabel 
+                                        control={
+                                            <Checkbox checked={RSVP} onChange={handleCheck} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="RSVP"/>
+                                        } 
+                                        label="RSVP Events" 
+                                        sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
+                                    } />
+                                </FormGroup>
+                            </Grid>
+                            <Grid item xs={.2}/>
+                            <Grid item xs={2.3}>
+                                <FormGroup>
+                                    <FormControlLabel 
+                                        control={
+                                            <Checkbox checked={Followed} onChange={handleCheck} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="Followed"/>
+                                        } 
+                                        label="Followed Clubs" 
+                                        sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
+                                    } />
+                                </FormGroup>
+                            </Grid>
+                            <Grid item xs={12}/>
                         </Grid>
                         <Grid item xs={12}>
                             <Grid container rowSpacing={4} className="events-list">
