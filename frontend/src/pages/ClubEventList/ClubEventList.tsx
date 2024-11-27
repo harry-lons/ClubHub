@@ -57,11 +57,11 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
     };
     
     const goToDetailPage = (event_id: string) => {
-        navigate(`/events/${event_id}`);
+        navigate(`/club/events/${event_id}`);
     }
     
     const handleDelete = (eventId: string) => console.log("Delete event:", eventId);
-    const handleEdit = (eventId: string) => console.log("Edit event:", eventId);
+    const handleEdit = (eventId: string) => navigate(`/club/editEvent/${eventId}`);
 
     const scrollRow = (rowId: string, direction: "left" | "right") => {
         const row = document.getElementById(rowId);
@@ -96,7 +96,7 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
                                         </button>
                                         <div id={`${month}-row`} className="event-cards-row">
                                             {(events as [string, Event][]).map(([clubName, event]) => (
-                                                <Card key={event.id} className="event-card">
+                                                <Card key={event.id} className="event-card" onClick={()=>goToDetailPage(event.id)}>
                                                     <CardContent>
                                                         <h3>{event.title}</h3>
                                                         <p>{event.location}</p>
@@ -141,7 +141,7 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
                 </div>
                 <div className="events-created-header-container">
                     <h1 className="header-title">Events Created</h1>
-                    <Button className="add-event-button" variant="contained" onClick={() => navigate(`/clubs/${club_id}/add-event`)}>+ Add Event</Button>
+                    <Button className="add-event-button" variant="contained" onClick={() => navigate(`/clubs/add-event`)}>+ Add Event</Button>
                 </div>
                 <Grid item xs={12}>
                     <Grid container rowSpacing={4} className="events-list">
@@ -152,7 +152,7 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
                                     <button className="arrow-button left" onClick={() => scrollRow(`${month}-row`, "left")}>&#8249;</button>
                                     <div id={`${month}-row`} className="event-cards-row">
                                         {(events as [string, Event][]).map(([clubName, event]) => (
-                                            <Card key={event.id} className="event-card">
+                                            <Card key={event.id} className="event-card" onClick={()=>goToDetailPage(event.id)}>
                                                 <CardContent>
                                                     <h3>{event.title}</h3>
                                                     <p>{event.location}</p>
