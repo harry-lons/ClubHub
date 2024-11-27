@@ -1,10 +1,9 @@
-
 import { Event } from "../../types/types";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import { exampleClubEventList, exampleRSVPList } from "../../constants/constants";
 import { Grid, Button, Card, CardContent } from '@mui/material';
-import { NavBar } from "../NavBar/NavBar";
+import { ClubNavBar } from "../NavBar/ClubNavBar";
 import { fetchRSVPEvents } from "../../utils/event-utils";
 import { AuthContext } from "../../context/AuthContext";
 import "./ClubEventList.css";
@@ -77,7 +76,7 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
                 <div className="background" />
                 <Grid container rowSpacing={4} className="events-list-container">
                     <div className="navbar-container">
-                        <NavBar />
+                        <ClubNavBar />
                     </div>
                     <div className="events-created-header-container">
                         <h1 className="header-title">Events Created</h1>
@@ -137,7 +136,7 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
             <div className="background" />
             <Grid container rowSpacing={4} className="events-list-container">
                 <div className="navbar-container">
-                    <NavBar />
+                    <ClubNavBar />
                 </div>
                 <div className="events-created-header-container">
                     <h1 className="header-title">Events Created</h1>

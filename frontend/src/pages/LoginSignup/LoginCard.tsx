@@ -91,12 +91,8 @@ const LoginCard: React.FC<LoginCardProps> = ({ typeAccount }) => {
             const id = await whoami(endpoint, token);
             // Put the id in context
             setId(id);
-        }
-        if (accountType === "CLUB") {
-            navigate('/club/tempEventList');
-        }
-        else {
-            navigate('/events');     // Redirect to /events page
+            if (accountType === "CLUB") navigate(`/clubEventList/${id}`);
+            else navigate('/events');
         }
 
     };
