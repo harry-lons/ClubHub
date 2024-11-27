@@ -38,6 +38,8 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
         loadClub();
         if(which === "USER") loadFollowStatus();
         if(which === "CLUB") loadFollowerList();
+        if(which === "USER") loadFollowStatus();
+        if(which === "CLUB") loadFollowerList();
     }, [id]);
 
     const loadEvent = async () => {
