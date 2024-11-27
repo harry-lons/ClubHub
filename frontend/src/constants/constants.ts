@@ -141,7 +141,6 @@ export const exampleRSVPList: Record<string, number> = {
   "011": 20, // Event ID "001" has 50 RSVPs
   "012": 35, // Event ID "002" has 80 RSVPs
 };
-export const emptyEventList: Event[] = [];
 
 export const exampleEventList: Event[] = [
 	{
