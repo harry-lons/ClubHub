@@ -5,7 +5,7 @@ import { useState, useEffect, useContext } from "react";
 import { exampleClubEventList, exampleRSVPList } from "../../constants/constants";
 import { Grid, Button, Card, CardContent } from '@mui/material';
 import { NavBar } from "../NavBar/NavBar";
-import { fetchRSVPEvents } from "../../utils/event-utils";
+import { deleteEvent, fetchClubEvents } from "../../utils/event-utils";
 import { AuthContext } from "../../context/AuthContext";
 import "./ClubEventList.css";
 
@@ -16,19 +16,15 @@ interface ClubEventListProps {
 const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
     const navigate = useNavigate();
     const [eventList, setEventList] = useState<Record<string, [string, Event][]>>();
-    const { id: club_id } = useParams<{ id: string }>(); // Get the club's ID from the route
-    const { token } = useContext(AuthContext); // Retrieve the token from AuthContext
+    const { token, id } = useContext(AuthContext); // Retrieve the token from AuthContext
 
     useEffect(() => {
         const loadEvents = async () => {
             try {
-                const eList = await fetchRSVPEvents(token).catch(() => exampleClubEventList); // Pass token here
-
-                // Filter events to only include those created by the current club
-                const filteredEvents = eList.filter(event => event.club_id === club_id);
+                const eList = await fetchClubEvents(id).catch(() => exampleClubEventList); // Pass token here
 
                 // Group events by date and set the state
-                const groupedEvents = groupEventsByDate(filteredEvents);
+                const groupedEvents = groupEventsByDate(eList);
                 setEventList(groupedEvents);
             } catch (error) {
                 console.error("Error loading events:", error);
@@ -36,7 +32,7 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
         };
 
         loadEvents();
-    }, [club_id, token]);
+    }, []);
  
     const groupEventsByDate = (events: Event[]): Record<string, [string, Event][]> => {
         return events.reduce((acc, event) => {
@@ -60,7 +56,7 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
         navigate(`/club/events/${event_id}`);
     }
     
-    const handleDelete = (eventId: string) => console.log("Delete event:", eventId);
+    const handleDelete = (eventId: string) => deleteEvent(token, Number(eventId));
     const handleEdit = (eventId: string) => navigate(`/club/editEvent/${eventId}`);
 
     const scrollRow = (rowId: string, direction: "left" | "right") => {
@@ -96,9 +92,9 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
                                         </button>
                                         <div id={`${month}-row`} className="event-cards-row">
                                             {(events as [string, Event][]).map(([clubName, event]) => (
-                                                <Card key={event.id} className="event-card" onClick={()=>goToDetailPage(event.id)}>
+                                                <Card key={event.id} className="event-card">
                                                     <CardContent>
-                                                        <h3>{event.title}</h3>
+                                                        <h3 onClick={()=>goToDetailPage(event.id)}>{event.title}</h3>
                                                         <p>{event.location}</p>
                                                         <p>{event.begin_time.toLocaleDateString()}</p>
                                                         <p>{event.begin_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
@@ -141,7 +137,7 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
                 </div>
                 <div className="events-created-header-container">
                     <h1 className="header-title">Events Created</h1>
-                    <Button className="add-event-button" variant="contained" onClick={() => navigate(`/clubs/add-event`)}>+ Add Event</Button>
+                    <Button className="add-event-button" variant="contained" onClick={() => navigate(`/club/addEvent`)}>+ Add Event</Button>
                 </div>
                 <Grid item xs={12}>
                     <Grid container rowSpacing={4} className="events-list">
@@ -152,9 +148,9 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
                                     <button className="arrow-button left" onClick={() => scrollRow(`${month}-row`, "left")}>&#8249;</button>
                                     <div id={`${month}-row`} className="event-cards-row">
                                         {(events as [string, Event][]).map(([clubName, event]) => (
-                                            <Card key={event.id} className="event-card" onClick={()=>goToDetailPage(event.id)}>
+                                            <Card key={event.id} className="event-card">
                                                 <CardContent>
-                                                    <h3>{event.title}</h3>
+                                                    <h3 onClick={()=>goToDetailPage(event.id)}>{event.title}</h3>
                                                     <p>{event.location}</p>
                                                     <p>{`${event.begin_time.toLocaleDateString()} at ${event.begin_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}</p>
                                                     <p>{exampleRSVPList[event.id] || 0} RSVPed</p>
