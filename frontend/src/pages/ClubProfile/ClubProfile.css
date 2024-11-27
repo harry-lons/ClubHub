@@ -1,0 +1,181 @@
+
+.background {
+    background: url('../../../public/gradientBackground.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: repeat-y;
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    z-index: -1;
+ }
+
+ .navbar-container {
+    width: 100%;
+    position: sticky;
+    top: 0px;
+    z-index: 1000;
+ }
+
+/*PROFILE CARD STYLE*/
+
+ .clubProfileCardContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.profileCard {
+  background: rgba(255, 255, 255, 0.1); 
+  padding: 30px; 
+  border-radius: 10px; 
+  text-align: center;
+  color: white;
+  width: 20%; 
+  height: auto; /* Ensures the height adjusts dynamically based on content */
+  min-height: 40%; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); 
+  line-height: 1.75; 
+  transform: translate(-135%, 25%); 
+}
+
+.clubLogo {
+  margin: 0 auto 20px; /* Centers the logo and adds spacing */
+  width: auto; /* Allows dynamic scaling based on height */
+  height: auto; /* Ensures the aspect ratio remains intact */
+  max-width: 190px; /* Limits the width for larger screens */
+  max-height: 190px; /* Limits the height for larger screens */
+  aspect-ratio: 1; /* Ensures the logo remains a perfect square */
+  border-radius: 50%; /* Keeps the logo circular */
+  object-fit: contain; /* Ensures the logo fits without distortion */
+}
+
+.clubName {
+  font-size: 26px; 
+  margin-bottom: 15px; 
+}
+
+.followerCount {
+  font-size: 18px; 
+  margin-bottom: 10px;
+}
+
+hr {
+  width: 80%;
+  margin: 15px auto; /* Adds spacing around the divider */
+  border: none;
+  border-top: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.contactInfo {
+  font-size: 16px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.contactLabel {
+  font-weight: bold; 
+  margin: 0; 
+}
+
+.contactEmail {
+  font-weight: normal;
+  margin: 0;
+  word-wrap: break-word; 
+}
+
+/*BOARD MEMBER SECTION STYLE*/
+
+.boardMembersSection {
+  width: 60%;
+  margin-left: 35%;
+  transform: translateY(-420px);
+  position: relative;
+}
+
+/* Title Styling */
+.sectionTitle {
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+/* Box containing the board members */
+.boardMembersContainer {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Individual Board Member Styling */
+.boardMember {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Role Styling */
+.boardMemberRole {
+  color: white;
+  display: flex;
+  gap: 5px;
+}
+
+.roleLabel {
+  font-weight: bold; 
+}
+
+.memberName {
+  font-weight: normal; 
+  color: rgba(255, 255, 255, 0.9); 
+}
+
+/* Email Styling */
+.boardMemberEmail {
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+
+
+/*CLUB DESCRIPTION STYLING*/
+.aboutUsSection {
+  width: 60%;
+  margin-left: 35%;
+  transform: translateY(-400px); /* Adjust to align with the Board Members section */
+  position: relative;
+}
+
+/* Title Styling (shared with Board Members) */
+.sectionTitle {
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+/* About Us Container Styling */
+.aboutUsContainer {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: white;
+  font-size: 16px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.8);
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  min-height: 100px;
+  outline: none; /* Prevents default outline when focused */
+  text-align: left;
+}
