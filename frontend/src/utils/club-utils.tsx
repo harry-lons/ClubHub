@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "../constants/constants"
-import { Club} from "../types/types"
+import {Club} from "../types/types"
 
 
 // Function to get the club information from the backend. Method: GET
