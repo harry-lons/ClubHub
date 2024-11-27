@@ -1,6 +1,8 @@
 import { API_BASE_URL } from "../constants/constants"
 import { RSVP,User, RSVPInt } from "../types/types"
+import { RSVP,User, RSVPInt } from "../types/types"
 // Function to create an expense in the backend. Method: POST
+export const createRSVP = async (token: string,rsvp: RSVPInt): Promise<boolean> => {
 export const createRSVP = async (token: string,rsvp: RSVPInt): Promise<boolean> => {
 	const response = await fetch(`${API_BASE_URL}/RSVP`, {
     	method: "POST",
@@ -32,8 +34,11 @@ export const deleteRSVP = async (token:string,event_id: string): Promise<boolean
 };
 export const fetchRSVP = async (token: string): Promise<RSVP[]> => {
     const response = await fetch(`${API_BASE_URL}/RSVP/rsvps`, {
+export const fetchRSVP = async (token: string): Promise<RSVP[]> => {
+    const response = await fetch(`${API_BASE_URL}/RSVP/rsvps`, {
         method: "GET",
         headers: {
+            "Authorization": `Bearer ${token}`
             "Authorization": `Bearer ${token}`
         }
     });
@@ -66,6 +71,8 @@ export const fetchRSVP = async (token: string): Promise<RSVP[]> => {
     // If response is still unexpected, throw an error
     throw new Error("Unexpected response structure: RSVP list is not an array.");
 };
+
+
 
 
 // fetch all attendees to a certain event

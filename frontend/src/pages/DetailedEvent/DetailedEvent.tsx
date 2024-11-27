@@ -32,6 +32,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
     const userId = context.id;
     const [event, setEvent] = useState<Event> (exampleEvent);
     const [club, setClub] = useState<Club> (emptyClub);
+    const [club, setClub] = useState<Club> (emptyClub);
     const [rsvp, setRsvp] = useState(false);
     const [attendees, setAttendees] = useState<User[]>(exampleUsers);
 
@@ -69,6 +70,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
     //load all the RSVP of the user 
     const loadRSVP = async () => {
         try {
+            // ! bug RSVPList is undefined
             // ! bug RSVPList is undefined
             const RSVPList = await fetchRSVP(token); // Convert id to a number
             console.log("Detail Page RSVP list",RSVPList);
@@ -197,7 +199,9 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
     
             if (!rsvp) {
                 const newRSVP: RSVPInt = {
+                const newRSVP: RSVPInt = {
                     user_id: userId,
+                    event_id: Number(event.id),
                     event_id: Number(event.id),
                 };
     
