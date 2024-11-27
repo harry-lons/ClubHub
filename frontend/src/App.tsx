@@ -46,7 +46,7 @@ function App() {
             <Route path = "/homepage" element = {<HomePage/>}/>
             {/* <Route path = "/testpage" element = {<TestPage/>}/> */}
             <Route path = "/club/tempEventList" element = {<TempClubEventListPage/>}/>
-            <Route path="/clubEventList/:id" element={<ClubEventList which="CLUB"/>} />
+            <Route path="/clubEventList/001" element={<ClubEventList which="CLUB"/>} />
           </Routes>
         </div>
       </LocalizationProvider>
