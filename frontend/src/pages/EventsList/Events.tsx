@@ -30,44 +30,46 @@ const Events: React.FC = () => {
     }, []);
 
     const loadEvents = async () => {
-        // Load RSVP Events List
-        try {
-            console.log("RSVP");
-            const clubList = await fetchClubList();
-            const rsvpList = await fetchRSVPEvents(context.token);
-            const result = await processEvents(rsvpList, rsvpList, clubList);
-            setRsvpEventsList(result);
-            // Load All other lists and compare with RSVP
-            // Load Total Events List
+        if (context.token) {
+            // Load RSVP Events List
             try {
-                console.log("Events");
-                const eventsList = await fetchEvents();
-                const result = await processEvents(eventsList, rsvpList, clubList);
-                setEventsList(result);
-            } catch (err: any) {
-                console.error("Error loading event list:", err.message);
-            }
-            // Load Followed Events List
-            try {
-                console.log("Followed");
-                const followedList = (await fetchEvents()).slice(2,7);
-                const result = await processEvents(followedList, rsvpList, clubList);
-                setFollowedEventsList(result);
-                setRenderedEvents(result);
-                // Load RSVP and Followed Events List
+                console.log("RSVP");
+                const clubList = await fetchClubList();
+                const rsvpList = await fetchRSVPEvents(context.token);
+                const result = await processEvents(rsvpList, rsvpList, clubList);
+                setRsvpEventsList(result);
+                // Load All other lists and compare with RSVP
+                // Load Total Events List
                 try {
-                    console.log("RSVP/Followed");
-                    const combinedList = Array.from(new Map(rsvpList.concat(followedList).map(event => [event.id, event])).values());
-                    const result = await processEvents(combinedList, rsvpList, clubList);
-                    setCombinedEventsList(result);
+                    console.log("Events");
+                    const eventsList = await fetchEvents();
+                    const result = await processEvents(eventsList, rsvpList, clubList);
+                    setEventsList(result);
                 } catch (err: any) {
-                    console.error("Error loading RSVP/Followed event list:", err.message);
+                    console.error("Error loading event list:", err.message);
+                }
+                // Load Followed Events List
+                try {
+                    console.log("Followed");
+                    const followedList = (await fetchEvents()).slice(2,7);
+                    const result = await processEvents(followedList, rsvpList, clubList);
+                    setFollowedEventsList(result);
+                    setRenderedEvents(result);
+                    // Load RSVP and Followed Events List
+                    try {
+                        console.log("RSVP/Followed");
+                        const combinedList = Array.from(new Map(rsvpList.concat(followedList).map(event => [event.id, event])).values());
+                        const result = await processEvents(combinedList, rsvpList, clubList);
+                        setCombinedEventsList(result);
+                    } catch (err: any) {
+                        console.error("Error loading RSVP/Followed event list:", err.message);
+                    }
+                } catch (err: any) {
+                    console.error("Error loading Followed event list:", err.message);
                 }
             } catch (err: any) {
-                console.error("Error loading Followed event list:", err.message);
+                console.error("Error loading RSVP event list:", err.message);
             }
-        } catch (err: any) {
-            console.error("Error loading RSVP event list:", err.message);
         }
     }
 
@@ -111,7 +113,7 @@ const Events: React.FC = () => {
     }
 
     const handleLoadLogIn = () => {
-        navigate('/');
+        navigate('/login');
     }; 
 
     const handleCheck = (check: any) => {
