@@ -45,6 +45,12 @@ export type RSVP =
 	user_id: string;
 	event_id: string;
 };
+
+export type RSVPInt = {
+		user_id: string;
+		event_id: Number;
+};
+
 export type Follow = {
 	user_id: string;
 	club_id: string;

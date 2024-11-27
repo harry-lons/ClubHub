@@ -42,6 +42,7 @@ export const UserProfile = () => {
     const loadUser = async () =>{
         try{
             const user_ = await fetchUser(token);
+            setUser(user_)
         }catch (err:any){
             console.error("Error loading user:", err.message);
         }

@@ -169,7 +169,7 @@ class PostgresDatabase(IAuth, IEvents):
         '''
         ## perform a check (previously RSVP'd or event does not exist)
         if not self.session.query(Events).filter_by(id=event_id).first() \
-            or self.session.query(UserRSVPs).filter_by(user_id=user_id,event_id=event_id):
+            or self.session.query(UserRSVPs).filter_by(user_id=user_id,event_id=event_id).all():
                 return False
         try:
             rsvp_user = UserRSVPs(user_id=user_id, event_id=event_id)
