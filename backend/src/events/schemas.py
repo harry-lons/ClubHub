@@ -19,21 +19,24 @@ class Event(EventID):
     location: str = Field(default="")
     begin_time: datetime
     end_time: datetime
-    recurrence: Tuple[bool, Optional[int], Optional[datetime]]
+    recurrence: bool
+    recurrence_type: Optional[int]
+    stop_date: Optional[datetime]
     capacity: Optional[int]
     summary: str = Field(default="")
     pictures: List[str] = Field(default=[])
     type: List[str]
 
 
-class EventCalendarData(BaseModel):
+class ListOfEvents(BaseModel):
     events: List[Event]
 
-
 class RSVP(BaseModel):
-    user_id: int
+    user_id: str
     event_id: int
 
+class RSVPList(BaseModel):
+    rsvps: List[RSVP]
 
 class EventIDList(BaseModel):
     events: List[int]

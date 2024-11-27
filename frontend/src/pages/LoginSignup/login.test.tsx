@@ -61,7 +61,7 @@ describe('Login', () => {
             expect(screen.getByText('RSVP Events')).toBeInTheDocument();
 
             // Check for the existence of Followed Events checkbox filter
-            expect(screen.getByText('Followed Events')).toBeInTheDocument();
+            expect(screen.getByText('Followed Clubs')).toBeInTheDocument();
         });
     });
 })

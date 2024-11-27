@@ -16,6 +16,8 @@ import { EditEventForm } from './pages/AddEventForm/EditEventForm';
 import ClubDetail from './pages/ClubDetail/ClubDetail';
 import { HomePage } from './pages/HomePage/HomePage';
 import { LandingPage } from './pages/LandingPage/LandingPage'
+import {TestPage} from './pages/TestPage';
+import {TempClubEventListPage} from './pages/TempClubEventListPage';
 
 function App() {
   return (
@@ -25,20 +27,24 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginSignup which="LOG IN" />} />
+            <Route path="/user/login" element={<LoginSignup which="LOG IN"/>} />
             <Route path="/signup" element={<LoginSignup which="SIGN UP" />} />
             <Route path="/club/signup" element={<LoginSignup which="CLUB SIGN UP" />} />
             <Route path="/club/login" element={<LoginSignup which="CLUB LOG IN" />} />
             <Route path="/events" element={<Events />} />
-            <Route path="/events/:id" element={<DetailedEvent which="USER" />} />
-            <Route path="/club/addEvent" element={<AddEventForm />} />
-            <Route path="/club/editEvent/:id" element={<EditEventForm />} />
-            <Route path="/club/events/:id" element={<DetailedEvent which="CLUB" />} />
-            <Route path="/navbar" element={<NavBar />} />
-            <Route path="/profile" element={<UserProfile />} /> {/* Test Route */}
-            <Route path="/clubs" element={<Clubs />} />
-            <Route path="/clubDetail/:id" element={<ClubDetail which="USER" />} />
-            <Route path="/club/clubDetail/:id" element={<ClubDetail which="CLUB" />} />
-            <Route path="/homepage" element={<HomePage />} />
+            <Route path="/events/:id" element={<DetailedEvent which="USER"/>} />
+            <Route path="/club/addEvent" element={<AddEventForm/>} />
+            <Route path="/club/editEvent/:id" element={<EditEventForm/>} />
+            <Route path="/club/events/:id" element={<DetailedEvent which="CLUB"/>} />
+            <Route path="/navbar" element={<NavBar/>} />
+            <Route path="/profile" element={<UserProfile/>} /> {/* Test Route */}
+            <Route path="/clubs" element={<Clubs/>} />
+            <Route path = "/clubDetail/:id" element = {<ClubDetail which="USER"/>}/>
+            <Route path = "/club/clubDetail/:id" element = {<ClubDetail which="CLUB"/>}/>
+            <Route path = "/club/profile" element = {<ClubDetail which = "CLUB"/>}/>
+            <Route path = "/homepage" element = {<HomePage/>}/>
+            {/* <Route path = "/testpage" element = {<TestPage/>}/> */}
+            <Route path = "/club/tempEventList" element = {<TempClubEventListPage/>}/>
           </Routes>
         </div>
       </LocalizationProvider>
