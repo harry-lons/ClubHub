@@ -120,11 +120,6 @@
    box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.3); /* Deeper shadow */
 }
 
- .MuiCardContent-root {
-    padding-top: 5px !important; /* Reduce top padding */
-    padding-bottom: 5px !important; /* Adjust bottom padding if needed */
-    flex-grow: 1; /* Allow content to take more space if needed */
- }
  
  /* Event card details */
  
@@ -149,28 +144,8 @@
     gap: 15px; /* Add consistent spacing between buttons */
     margin-top: 10px;
  }
- 
 
-/* Buttons styling */
-button {
-   font-size: 10px; 
-   border-radius: 5px;
-   cursor: pointer;
-   padding: 8px 12px; /* Uniform padding */
-   transition: all 0.3s ease; /* Smooth hover effects */
-   height: 5%; /* Ensure consistent height */
-   text-align: center; /* Center text */
-   line-height: 1.5; /* Adjust line height for vertical alignment */
-   white-space: nowrap; /* Prevent wrapping of text */
-   margin: 0 5px; /* Reset individual margins */
-}
-
-button:hover {
-   opacity: 0.9;
-   transform: scale(1.05); /* Add hover scale */
-}
-
-button.edit-button {
+button.edit-club-button {
    background-color: #21aba1 !important;
    color: white;
    font-size: 10px !important;
@@ -178,7 +153,7 @@ button.edit-button {
    width: 25% !important; /* Set fixed width */
 }
 
-button.delete-button {
+button.delete-club-button {
    background-color:#eb4646;
    color: white;
    font-size: 10px !important;
