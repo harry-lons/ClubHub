@@ -100,10 +100,10 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
                                                         <p>{event.begin_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                                                         <p>{exampleRSVPList[event.id] || 0} RSVPs</p>
                                                         <div className="event-buttons">
-                                                            <Button className="edit-button" variant="contained" onClick={() => handleEdit(event.id)}>
+                                                            <Button className="edit-club-button" variant="contained" onClick={() => handleEdit(event.id)}>
                                                                 Edit
                                                             </Button>
-                                                            <Button className="delete-button" variant="contained" onClick={() => handleDelete(event.id)}>
+                                                            <Button className="delete-club-button" variant="contained" onClick={() => handleDelete(event.id)}>
                                                                 Delete
                                                             </Button>
                                                         </div>

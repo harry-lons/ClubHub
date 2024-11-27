@@ -19,6 +19,7 @@ import { LandingPage } from './pages/LandingPage/LandingPage'
 import {TestPage} from './pages/TestPage';
 import {TempClubEventListPage} from './pages/TempClubEventListPage';
 import ClubEventList from './pages/ClubEventList/ClubEventList';
+import ClubProfile from './pages/ClubProfile/ClubProfile';
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
             <Route path = "/homepage" element = {<HomePage/>}/>
             {/* <Route path = "/testpage" element = {<TestPage/>}/> */}
             <Route path="/club/events" element={<ClubEventList which="CLUB"/>} />
+            <Route path="/clubProfile/:id" element={<ClubProfile which="CLUB"/>} />
           </Routes>
         </div>
       </LocalizationProvider>
