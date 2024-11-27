@@ -2,7 +2,7 @@ import React, { useContext, useState,useEffect } from "react"
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import { useParams, useNavigate } from "react-router-dom";
 import { Event, Club, RSVP, User, RSVPInt} from "../../types/types";
-import { exampleEvent, exampleClub, exampleUsers, emptyClub } from "../../constants/constants";
+import { exampleEvent, exampleUsers, emptyClub } from "../../constants/constants";
 import { TextField, Button, MenuItem } from '@mui/material';
 import "./DetailedEvent.css"
 import {AuthContext} from "../../context/AuthContext"
@@ -21,6 +21,7 @@ interface DetailedEventProps {
 
 const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
     const { id } = useParams<{ id: string }>();
+    console.log("Web Page Event ID",id);
     const navigate = useNavigate();
     const context = useContext(AuthContext);
     useEffect(() => {
@@ -39,8 +40,8 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
         if (!id) return;
         loadEvent();
         loadClub();
-        loadRSVP();
-        loadAttendees();
+        if(which === "USER") loadRSVP();
+        if(which==="CLUB") loadAttendees();
     }, [id]);
 
     const loadEvent = async () => {
@@ -56,7 +57,6 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
             console.error("Error loading event:", err.message);
         }
     };
-    
 
     const loadClub = async () => {
         try {
@@ -71,7 +71,8 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
         try {
             // ! bug RSVPList is undefined
             const RSVPList = await fetchRSVP(token); // Convert id to a number
-            RSVPList.forEach((rl)=> {if(rl.event_id === event.id){setRsvp(true);}});
+            console.log("Detail Page RSVP list",RSVPList);
+            RSVPList.forEach((rl)=> {if(rl.event_id === id){setRsvp(true);}});
         } catch (err: any) {
             console.error("Error loading RSVP:", err.message);
         }
@@ -181,15 +182,19 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
         );
     };
 
-    const RSVPButton : React.FC = () => {
+    const RSVPButton: React.FC = () => {
         const [alert, setAlert] = useState<{ message: string; severity: 'success' | 'error' | null }>({
             message: '',
             severity: null,
         });
-        console.info("RSVP status:",rsvp);
+    
+        const [isRSVPing, setIsRSVPing] = useState(false); // Prevent race conditions
+        console.info("RSVP status:", rsvp);
+    
         const toggleRSVP = async () => {
-            setRsvp(!rsvp);
-            
+            if (isRSVPing) return; // Prevent multiple toggles at once
+            setIsRSVPing(true);
+    
             if (!rsvp) {
                 const newRSVP: RSVPInt = {
                     user_id: userId,
@@ -199,6 +204,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                 const successful = await createRSVP(token, newRSVP);
     
                 if (successful) {
+                    setRsvp(true); // Update RSVP state
                     setAlert({
                         message: "You have successfully RSVPed to this event! Looking forward to seeing you there!",
                         severity: 'success',
@@ -213,6 +219,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                 const successful = await deleteRSVP(token, event.id);
     
                 if (successful) {
+                    setRsvp(false); // Update RSVP state
                     setAlert({
                         message: "You have successfully canceled your RSVP to this event!",
                         severity: 'success',
@@ -225,30 +232,34 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                 }
             }
     
+            setIsRSVPing(false); // Allow toggling again
+    
             // Automatically hide the alert after 3 seconds
             setTimeout(() => {
                 setAlert({ message: '', severity: null });
-            }, 3000); // 3000ms = 3 seconds
+            }, 3000);
         };
+    
         return (
             <>
-            {alert.severity && (
-                <Alert
-                    icon={<CheckIcon fontSize="inherit" />}
-                    severity={alert.severity}
-                    onClose={() => setAlert({ message: '', severity: null })} // Allow manual dismissal
-                    style={{ marginBottom: '16px' }}
-                >
-                    {alert.message}
-                </Alert>
-            )}
-            
-            <Button className="rsvp-button" variant="contained" onClick={toggleRSVP}>
-                {rsvp? 'Cancel RSVP' : 'RSVP' }
-            </Button>
+                {alert.severity && (
+                    <Alert
+                        icon={<CheckIcon fontSize="inherit" />}
+                        severity={alert.severity}
+                        onClose={() => setAlert({ message: '', severity: null })} // Allow manual dismissal
+                        style={{ marginBottom: '16px' }}
+                    >
+                        {alert.message}
+                    </Alert>
+                )}
+    
+                <Button className="rsvp-button" variant="contained" onClick={toggleRSVP}>
+                    {rsvp ? 'Cancel RSVP' : 'RSVP'}
+                </Button>
             </>
         );
     };
+    
 
     const EditButton : React.FC = () => {
         const handleEdit = () => {
@@ -282,7 +293,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                 </div>
                 <div className="event-detail-club" style={{ display: 'flex', alignItems: 'center' }}>
                     <p style={{ display: 'inline-block',marginRight: '5px' }}>From  </p>
-                    <p className="event-detail-club-name-text">{club.name}</p>
+                    <p className="event-detail-club-name-text" onClick = {()=>navigate(`/clubDetail/${club.id}`)}>{club.name}</p>
                 </div>
                 
             </div>

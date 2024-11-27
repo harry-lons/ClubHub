@@ -42,14 +42,14 @@ export const fetchRSVP = async (token: string): Promise<RSVP[]> => {
         throw new Error(`Failed to fetch RSVP. Status: ${response.status}, Message: ${await response.text()}`);
     }
 
-    const jsonResponse = await response.json();
+    const jsonResponse = (await response.json()).rsvps;
 
     // Log the raw API response
     console.log("Raw API response:", jsonResponse);
 
     // Handle nested 'data' field if present
-    if (jsonResponse.rsvp && Array.isArray(jsonResponse.rsvp)) {
-        const new_responses = jsonResponse.rsvp.map((rsvp: any) => ({
+    if (jsonResponse && Array.isArray(jsonResponse)) {
+        const new_responses = jsonResponse.map((rsvp: any) => ({
             event_id: String(rsvp.event_id),
             user_id: rsvp.user_id,
         }));

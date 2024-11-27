@@ -78,12 +78,11 @@ export const fetchFollowers = async (token:string): Promise<User[]> => {
     	throw new Error('Failed to fetch RSVP');
 	}
 
-	const jsonResponse = await response.json();
-
+	const followers: User[] = (await response.json()).users;
     // Log and return the `data` property safely
-    console.log("data in fetchFollowers", jsonResponse);
+    console.log("data in fetchFollowers", followers);
 
     // Ensure `jsonResponse.data` is an array or return an empty array
-    return Array.isArray(jsonResponse.data) ? jsonResponse.data : [];
+    return followers;
 
 };
