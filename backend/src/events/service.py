@@ -13,7 +13,7 @@ from .constants import fake_event_1, mock_events
 from .rsvp import rsvp_user_create, rsvp_user_delete, rsvp_user_get
 
 # from ..app import app
-from .schemas import Event, EventInfo, ListOfEvents, EventID, EventIDList, RSVP, RSVPList
+from .schemas import Event, EventListInfo, ListOfEvents, EventID, EventIDList, RSVP, RSVPList
 from ..identities.schemas import UserIDList
 
 
@@ -27,7 +27,7 @@ async def get_events() -> ListOfEvents:
     return ListOfEvents(events=all_events_api)
 
 
-@app.get("/eventlistinfo", response_model=EventInfo)
+@app.get("/eventlistinfo", response_model=EventListInfo)
 async def get_events(
     current_user: Annotated[User, Depends(auth_service.get_current_user)]
 ) -> EventInfo:

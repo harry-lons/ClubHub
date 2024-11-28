@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "../constants/constants"
-import { Event, EventInfo, EventType } from "../types/types"
+import { Event, EventListInfo, EventType } from "../types/types"
 
 const validEventTypes: Set<EventType> = new Set<EventType>([
     "social",
@@ -75,7 +75,7 @@ export const fetchEvents = async (): Promise<Event[]> => {
 };
 
 // All events, clubs, rsvp of a user, followed clubs of a user
-export const fetchEventListInfo = async (token: string): Promise<EventInfo> => {
+export const fetchEventListInfo = async (token: string): Promise<EventListInfo> => {
 
     const response = await fetch(`${API_BASE_URL}/eventlistinfo`, {
         method: "GET",
@@ -88,7 +88,7 @@ export const fetchEventListInfo = async (token: string): Promise<EventInfo> => {
         throw new Error("Failed to fetch event list")
     }    
 
-    const eventInfo: EventInfo = await response.json();
+    const eventInfo: EventListInfo = await response.json();
     
     eventInfo.events.forEach((event)=>{
         if (event.begin_time) {event.begin_time = new Date(event.begin_time); }

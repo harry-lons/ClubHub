@@ -17,7 +17,7 @@ export type Event =
 	capacity: Number | null;
 };
 
-export type EventInfo =
+export type EventListInfo =
 {
 	events: Event[]
 	clubs: Club[]

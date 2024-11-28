@@ -33,7 +33,7 @@ class Event(EventID):
 class ListOfEvents(BaseModel):
     events: List[Event]
 
-class EventInfo(BaseModel):
+class EventListInfo(BaseModel):
     events: List[Event]
     clubs: List[ClubWithBoardMembers]
     rsvp: List[Event]
