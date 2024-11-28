@@ -3,6 +3,8 @@ from typing import Dict, List, Optional, Tuple, Type
 
 from pydantic import BaseModel, Field
 
+from ..identities.schemas import ClubWithBoardMembers
+
 
 class EventID(BaseModel):
     id: int
@@ -30,6 +32,12 @@ class Event(EventID):
 
 class ListOfEvents(BaseModel):
     events: List[Event]
+
+class EventInfo(BaseModel):
+    events: List[Event]
+    clubs: List[ClubWithBoardMembers]
+    rsvp: List[Event]
+    follow_id: List[str]
 
 class RSVP(BaseModel):
     user_id: str

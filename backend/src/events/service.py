@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from ..authentication import service as auth_service
 from ..authentication.schemas import User
 from ..database import DB
-from ..db_store.conversion import b_event_to_f_event
+from ..db_store.conversion import b_club_to_f_club_full, b_event_to_f_event
 from ..db_store.models import Events, UserRSVPs
 from ..identities.schemas import Club
 from .constants import fake_event_1, mock_events
@@ -13,7 +13,7 @@ from .constants import fake_event_1, mock_events
 from .rsvp import rsvp_user_create, rsvp_user_delete, rsvp_user_get
 
 # from ..app import app
-from .schemas import Event, ListOfEvents, EventID, EventIDList, RSVP, RSVPList
+from .schemas import Event, EventInfo, ListOfEvents, EventID, EventIDList, RSVP, RSVPList
 from ..identities.schemas import UserIDList
 
 
@@ -25,6 +25,25 @@ async def get_events() -> ListOfEvents:
     all_events = DB.db.get_all_events()
     all_events_api = [b_event_to_f_event(e) for e in all_events]
     return ListOfEvents(events=all_events_api)
+
+
+@app.get("/eventlistinfo", response_model=EventInfo)
+async def get_events(
+    current_user: Annotated[User, Depends(auth_service.get_current_user)]
+) -> EventInfo:
+    # Get all events
+    all_events = DB.db.get_all_events()
+    all_events_api = [b_event_to_f_event(e) for e in all_events]
+    # Get all clubs
+    all_clubs = DB.db.get_all_clubs()
+    all_clubs_api = [b_club_to_f_club_full(e) for e in all_clubs]
+    # Get rsvp events of user
+    user = DB.db.get_user_from_id(current_user.id)
+    rsvp_events: List[Events] = user.events
+    rsvp_events_api = [b_event_to_f_event(e) for e in rsvp_events]
+    # Get followed club ids of user
+    follow_id = ["d1187ef4-3d91-4143-ac72-5b41d8f96c37"]
+    return EventInfo(events=all_events_api, clubs=all_clubs_api, rsvp=rsvp_events_api, follow_id=follow_id)
 
 
 @app.get("/event/{id}", response_model=Event)

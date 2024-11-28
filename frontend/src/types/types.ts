@@ -17,6 +17,14 @@ export type Event =
 	capacity: Number | null;
 };
 
+export type EventInfo =
+{
+	events: Event[]
+	clubs: Club[]
+    rsvp: Event[]
+    follow_id: string[]
+}
+
 export type EventType = 
     | "social"
     | "workshop"

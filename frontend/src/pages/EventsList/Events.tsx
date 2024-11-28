@@ -5,7 +5,7 @@ import { useState, useEffect, useContext } from "react";
 import "./Events.css";
 import { Grid, FormGroup, FormControlLabel, Checkbox, Button } from '@mui/material';
 import { NavBar } from "../NavBar/NavBar";
-import { fetchEvents, fetchEventById, fetchRSVPEvents } from "../../utils/event-utils";
+import { fetchEvents, fetchEventById, fetchRSVPEvents, fetchEventListInfo } from "../../utils/event-utils";
 import { fetchClubById, fetchClubList } from "../../utils/club-utils";
 import { fetchRSVP } from "../../utils/RSVP-utils";
 import { AuthContext } from "../../context/AuthContext";
@@ -34,38 +34,41 @@ const Events: React.FC = () => {
             // Load RSVP Events List
             try {
                 console.log("RSVP");
-                const clubList = await fetchClubList();
-                const rsvpList = await fetchRSVPEvents(context.token);
+                const eventInfo = await fetchEventListInfo(context.token);
+                const clubList = eventInfo.clubs;
+                const rsvpList = eventInfo.rsvp;
+                console.log(rsvpList);
                 const result = await processEvents(rsvpList, rsvpList, clubList);
                 setRsvpEventsList(result);
                 // Load All other lists and compare with RSVP
                 // Load Total Events List
                 try {
                     console.log("Events");
-                    const eventsList = await fetchEvents();
+                    const eventsList = eventInfo.events;
                     const result = await processEvents(eventsList, rsvpList, clubList);
                     setEventsList(result);
-                } catch (err: any) {
-                    console.error("Error loading event list:", err.message);
-                }
-                // Load Followed Events List
-                try {
-                    console.log("Followed");
-                    const followedList = (await fetchEvents()).slice(2,7);
-                    const result = await processEvents(followedList, rsvpList, clubList);
-                    setFollowedEventsList(result);
-                    setRenderedEvents(result);
-                    // Load RSVP and Followed Events List
+                    // Load Followed Events List
                     try {
-                        console.log("RSVP/Followed");
-                        const combinedList = Array.from(new Map(rsvpList.concat(followedList).map(event => [event.id, event])).values());
-                        const result = await processEvents(combinedList, rsvpList, clubList);
-                        setCombinedEventsList(result);
+                        console.log("Followed");
+                        const followedClubs = eventInfo.follow_id;
+                        const followedList = eventsList.filter(event => followedClubs.find(id => id === event.club_id));
+                        const result = await processEvents(followedList, rsvpList, clubList);
+                        setFollowedEventsList(result);
+                        setRenderedEvents(result);
+                        // Load RSVP and Followed Events List
+                        try {
+                            console.log("RSVP/Followed");
+                            const combinedList = Array.from(new Map(rsvpList.concat(followedList).map(event => [event.id, event])).values());
+                            const result = await processEvents(combinedList, rsvpList, clubList);
+                            setCombinedEventsList(result);
+                        } catch (err: any) {
+                            console.error("Error loading RSVP/Followed event list:", err.message);
+                        }
                     } catch (err: any) {
-                        console.error("Error loading RSVP/Followed event list:", err.message);
+                        console.error("Error loading Followed event list:", err.message);
                     }
                 } catch (err: any) {
-                    console.error("Error loading Followed event list:", err.message);
+                    console.error("Error loading event list:", err.message);
                 }
             } catch (err: any) {
                 console.error("Error loading RSVP event list:", err.message);
