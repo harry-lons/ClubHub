@@ -2,7 +2,7 @@ import React, { useContext, useState,useEffect } from "react"
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import { useParams, useNavigate } from "react-router-dom";
 import { Event, Club, RSVP, User, RSVPInt} from "../../types/types";
-import { exampleEvent, exampleUsers, emptyClub } from "../../constants/constants";
+import { emptyEvent, exampleUsers, emptyClub } from "../../constants/constants";
 import { TextField, Button, MenuItem } from '@mui/material';
 import "./DetailedEvent.css"
 import {AuthContext} from "../../context/AuthContext"
@@ -30,7 +30,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
     const club_id = context.id;
     const token = context.token;
     const userId = context.id;
-    const [event, setEvent] = useState<Event> (exampleEvent);
+    const [event, setEvent] = useState<Event> (emptyEvent);
     const [club, setClub] = useState<Club> (emptyClub);
     const [rsvp, setRsvp] = useState(false);
     const [attendees, setAttendees] = useState<User[]>(exampleUsers);
@@ -38,10 +38,23 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
 
     useEffect(() => {
         if (!id) return;
-        loadEvent();
-        loadClub();
-        if(which === "USER") loadRSVP();
-        if(which==="CLUB") loadAttendees();
+        const loadData = async () => {
+            try {
+                const event_clubId_ = await loadEvent();
+                if (event_clubId_) {
+                    await loadClub(event_clubId_);
+                }
+                if (which === "USER") {
+                    loadRSVP();
+                }
+                if (which === "CLUB") {
+                    loadAttendees();
+                }
+            } catch (err) {
+                console.error("Error loading data:", err);
+            }
+        };
+        loadData();
     }, [id]);
 
     const loadEvent = async () => {
@@ -50,6 +63,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                 const event_ = await fetchEventById(Number(id)); // `id` is already a string, so no conversion is needed
                 console.log("Fetched event:", event_);
                 setEvent(event_);
+                return event_.club_id;
             } else {
                 console.error("ID is undefined. Cannot fetch event.");
             }
@@ -58,9 +72,9 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
         }
     };
 
-    const loadClub = async () => {
+    const loadClub = async (clubId: string) => {
         try {
-            const club_ = await fetchClubById(event.club_id); 
+            const club_ = await fetchClubById(clubId); 
             setClub(club_);
         } catch (err: any) {
             console.error("Error loading club:", err.message);
@@ -121,8 +135,8 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
         }
     }
     const handleRecur = (event: Event)=>{
-        if(event.recurrence){
-            return(<p>Yes. Recur {recurrenceDescription(event.recurrence_type as number)}. End Date {event.stop_date?.getFullYear()}-{event.stop_date?.getMonth()}-{event.stop_date?.getDate()}</p >);
+        if(event.recurrence && event.stop_date){
+            return(<p>Yes. Recur {recurrenceDescription(event.recurrence_type as number)}. End date: {event.stop_date.getFullYear()}-{event.stop_date.getMonth()+1}-{event.stop_date.getDate()}.</p >);
         }else{
             return (<p>Not a recurring event.</p >);
         }
@@ -273,6 +287,29 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
             </Button>
         );
     }
+
+    const eventTypes = [
+        { value: 'social', label: 'Social Event' },
+        { value: 'workshop', label: 'Workshop' },
+        { value: 'networking', label: 'Networking Event' },
+        { value: 'fundraiser', label: 'Fundraiser' },
+        { value: 'competition', label: 'Competition' },
+        { value: 'seminar', label: 'Educational Seminar' },
+        { value: 'communityService', label: 'Community Service' },
+        { value: 'cultural', label: 'Cultural Event' },
+        { value: 'recreational', label: 'Recreational Outing' },
+        { value: 'generalMeeting', label: 'General Meeting' },
+        { value: 'academic', label: 'Academic' },
+        { value: 'orientation', label: 'Orientation/Welcome Event' },
+        { value: 'careerDevelopment', label: 'Career Development' },
+        { value: 'volunteering', label: 'Volunteering' },
+        { value: 'panel', label: 'Panel Discussion' },
+        { value: 'celebration', label: 'Celebration/Festival' },
+        { value: 'sports', label: 'Sports Event' },
+        { value: 'arts', label: 'Arts & Performance' },
+        { value: 'training', label: 'Training Session' },
+        { value: 'research', label: 'Research Presentation' }
+    ];
     
     return (
         <div id="event-detail-container">
@@ -305,7 +342,13 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                 </div>
                 <div className="event-detail-type">
                     <h3>Type</h3>
-                    <p>{event.type}</p >
+                    <p>{event.type
+                        .map(typeValue => {
+                            const matchingType = eventTypes.find(type => type.value === typeValue);
+                            return matchingType?.label;
+                        })
+                        .filter(Boolean)
+                        .join(', ')}</p >
                 </div>
                 <div className="event-detail-location">
                     <h3>Location</h3>

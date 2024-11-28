@@ -43,6 +43,8 @@ export const fetchEventById = async (eventId: number): Promise<Event> => {
         event.end_time = new Date(event.end_time);  // Convert to Date object
     }
 
+    if (event.stop_date) event.stop_date = new Date(event.stop_date);
+
     if (Array.isArray(event.type)) {
         event.type = event.type.filter((type): type is EventType =>
           validEventTypes.has(type as EventType)
@@ -69,6 +71,7 @@ export const fetchEvents = async (): Promise<Event[]> => {
     events.forEach((event)=>{
         if (event.begin_time) {event.begin_time = new Date(event.begin_time); }
         if (event.end_time) {event.end_time = new Date(event.end_time);}
+        if (event.stop_date) event.stop_date = new Date(event.stop_date);
     })
 
     return events;
@@ -93,6 +96,7 @@ export const fetchRSVPEvents = async (token: string): Promise<Event[]> => {
     events.forEach((event)=>{
         if (event.begin_time) {event.begin_time = new Date(event.begin_time); }
         if (event.end_time) {event.end_time = new Date(event.end_time);}
+        if (event.stop_date) event.stop_date = new Date(event.stop_date);
     })
 
     return events;
@@ -114,6 +118,7 @@ export const fetchClubEvents = async (club_id: String): Promise<Event[]>=>{
     events.forEach((event)=>{
         if (event.begin_time) {event.begin_time = new Date(event.begin_time); }
         if (event.end_time) {event.end_time = new Date(event.end_time);}
+        if (event.stop_date) event.stop_date = new Date(event.stop_date);
     })
     return events;
 
@@ -137,6 +142,7 @@ export const fetchPastEvents = async (token: string, type:string): Promise<Event
     events.forEach((event)=>{
         if (event.begin_time) {event.begin_time = new Date(event.begin_time); }
         if (event.end_time) {event.end_time = new Date(event.end_time);}
+        if (event.stop_date) event.stop_date = new Date(event.stop_date);
     })
 
     return events;
@@ -171,6 +177,19 @@ export const updateEvent = async (token: string,event: Event): Promise<Event> =>
 	});
 	if (!response.ok) {
     	throw new Error("Failed to update event");
+	}
+	return response.json();
+};
+
+export const deleteEvent = async (token: string,event_id: Number): Promise<Event> => {
+	const response = await fetch(`${API_BASE_URL}/club/event/${event_id}`, { // url need to be changed 
+    	method: "DELETE",
+		headers:{
+			"Authorization" : `Bearer ${token}`
+		}
+	});
+	if (!response.ok) {
+    	throw new Error("Failed to delete event");
 	}
 	return response.json();
 };

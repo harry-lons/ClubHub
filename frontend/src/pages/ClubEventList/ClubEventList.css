@@ -1,0 +1,196 @@
+/* Container for the entire events list */
+.background {
+    background: url('../../../public/gradientBackground.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: repeat-y;
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    z-index: -1;
+ }
+ 
+ /* Container for the entire page */
+ .events-list-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 20px; /* Adds some space at the top */
+ }
+ 
+ .navbar-container {
+    width: 100%;
+    position: sticky;
+    top: 0px;
+    z-index: 1000;
+ }
+ 
+ .events-created-header-container{
+    background: url('../../../public/gradientBackground.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: repeat-y;
+    color:white;
+    width:100%;
+    position: sticky;
+    z-index: 10;
+    padding-left: 50px;
+    padding-top: 30px;
+    text-align: left;
+    font-size: small;
+    color:white;
+    background-color: transparent;
+    top: 60px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding-right: 30px;
+ }
+ 
+ .add-event-button {
+    margin-right: 15px;
+    font-size: 16px;
+    background-color: rgb(9, 166, 9) !important;
+ }
+ 
+ .events-list{
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content horizontally */
+    gap: 20px; /* Add space between months */
+    width: 100%;
+    padding: 35px;
+    padding-right: 100px;
+ }
+ 
+ .month-row {
+    display: flex;
+    align-items: flex-start;
+    text-align: center;
+    padding-top: 0px !important;
+    padding-left: 35px;
+ }
+ 
+ .month-row h2 {
+    font-size: 24px;
+    color: white;
+    width: 20%;
+    height: 20%;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+ }
+ 
+ .event-cards-container {
+   position: relative;
+   display: flex;
+   align-items: center; /* Center arrows with row */
+   justify-content: center; /* Center cards and arrows together */
+   width: 100%;
+}
+
+.event-cards-row {
+   display: flex;
+   flex-wrap: nowrap;
+   overflow-x: auto;
+   scroll-behavior: smooth;
+   gap: 20px;
+   padding: 10px 0;
+   width: calc(100% - 80px); /* Account for arrow button width */
+   margin: 0 auto;
+}
+ 
+.event-card {
+   flex: 0 0 250px; /* Fixed width for each card */
+   background-color: rgba(255, 255, 255, 0.15)!important; /* Semi-transparent white */
+   color: white !important;
+   border-radius: 10px;
+   text-align: center;
+   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+   padding: 20px;
+   transition: transform 0.3s, box-shadow 0.3s; /* Smooth hover effect */
+}
+ 
+/* Hover effect for cards */
+.event-card:hover {
+   transform: scale(1.05); /* Scale up slightly */
+   box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.3); /* Deeper shadow */
+}
+ 
+ /* Event card details */
+ 
+ .event-title h3{
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-align: center;
+    line-height: 1.5;
+ }
+ 
+ .event-card p {
+    margin: 5px 0; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    white-space: nowrap; 
+ }
+ 
+ .event-buttons {
+    display: flex; /* Ensure flexbox layout */
+    justify-content: center; /* Center-align buttons */
+    gap: 15px; /* Add consistent spacing between buttons */
+    margin-top: 10px;
+ }
+
+button.edit-club-button {
+   background-color: #21aba1 !important;
+   color: white;
+   font-size: 10px !important;
+   padding: 3px !important;
+   width: 25% !important; /* Set fixed width */
+}
+
+button.delete-club-button {
+   background-color:#eb4646;
+   color: white;
+   font-size: 10px !important;
+   padding: 3px !important;
+   width: 25% !important; /* Set fixed width */
+}
+
+
+/* ARROW SCROLL FEATURE */
+/* Arrows Styling */
+.arrow-button {
+   position: absolute;
+   top: 50%; /* Center vertically within the container */
+   transform: translateY(-50%); /* Adjust for proper centering */
+   background-color: rgba(75, 70, 70, 0.5); /* Semi-transparent background */
+   border: none;
+   color: white;
+   font-size: 20px;
+   padding: 10px;
+   cursor: pointer;
+   z-index: 2; /* Ensure arrows are above all content */
+   border-radius: 80%; /* Rounded arrows */
+   box-shadow: 0px 4px 6px rgba(73, 73, 73, 0.2); /* Shadow for depth */
+   width: 40px; /* Ensure consistent size */
+   height: 40px; /* Ensure consistent size */
+   display: flex; /* Center arrow content */
+   align-items: center; /* Center arrow content */
+   justify-content: center; /* Center arrow content */
+}
+
+/* Left Arrow */
+.arrow-button.left {
+   left: -20px; /* Adjust for better alignment */
+}
+
+/* Right Arrow */
+.arrow-button.right {
+   right: -20px; /* Adjust for better alignment */
+}
+
+ 
