@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "../constants/constants"
-import { Follow ,User} from "../types/types"
+import { Follow ,User, Club} from "../types/types"
 // Function to create an expense in the backend. Method: POST
 export const createFollow = async (token: string,follow: Follow): Promise<boolean> => {
 	const response = await fetch(`${API_BASE_URL}/Follow`, {
@@ -8,7 +8,7 @@ export const createFollow = async (token: string,follow: Follow): Promise<boolea
         	"Content-Type": "application/json",
 			"Authorization" : `Bearer ${token}`
     	},
-    	body: JSON.stringify(follow),
+    	body: JSON.stringify(follow.club_id),
 	});
 	if (!response.ok) {
     	throw new Error("Failed to create Follow");
@@ -19,7 +19,7 @@ export const createFollow = async (token: string,follow: Follow): Promise<boolea
 
 // Function to delete a follow event in the backend. Method: DELETE
 export const deleteFollow = async (token:string,club_id: string): Promise<boolean> => { //id should be event-id
-	const response = await fetch(`${API_BASE_URL}/RSVP/${club_id}`, { // url need to be changed 
+	const response = await fetch(`${API_BASE_URL}/unfollow/${club_id}`, { // url need to be changed 
     	method: "DELETE",
 		headers:{
 			"Authorization" : `Bearer ${token}`
@@ -32,7 +32,7 @@ export const deleteFollow = async (token:string,club_id: string): Promise<boolea
 };
 
 // Function to load a user's followed clubs from the backend. Method: GET
-export const getFollowed = async (token:string): Promise<boolean> => { 
+export const getFollowed = async (token:string): Promise<Club[]> => { 
 	const response = await fetch(`${API_BASE_URL}/user/followed`, { 
     	method: "GET",
 		headers:{
@@ -42,7 +42,8 @@ export const getFollowed = async (token:string): Promise<boolean> => {
 	if (!response.ok) {
     	throw new Error("Failed to get followed clubs");
 	}
-	return response.json();
+	const clubs: Club[] = (await response.json()).clubs;
+	return clubs;
 };
 
 

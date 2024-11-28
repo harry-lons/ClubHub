@@ -261,7 +261,8 @@ class PostgresDatabase(IAuth, IEvents):
         '''
         Returns all the followed
         '''
-        return True 
+        follows = self.session()
+        return  
        
     def fetch_follow_status(self, user_id:str, club_id: str )-> bool:
         '''

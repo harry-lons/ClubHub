@@ -79,6 +79,49 @@ async def rsvp_event(
     attendees.users = users_rsvp
     return attendees
 
+@app.get("/Follow", tags=["user"])
+async def follow_club (
+    current_user: Annotated[User, Depends(auth_service.get_current_user)], club_id: str
+)-> bool:
+    '''
+    follows a certain club
+    '''
+    res = DB.db.follow_club(user_id=current_user.id, club_id=club_id)
+    return res
+
+@app.get("/unfollow/{club_id}", tags=["users"])
+async def unfollow_club (
+    current_user: Annotated[User, Depends(auth_service.get_current_user)], club_id: str
+)-> bool:
+    '''
+    unfollows a certain club
+    '''
+    res = DB.db.unfollow_club(user_id=current_user.id, club_id=club_id)
+    return res
+
+## @app.get("/user/followed", tag=["users"])
+
+
+@app.get("/follow/{club_id}", tags=["users"])
+async def follow_status(
+    current_user: Annotated[User, Depends(auth_service.get_current_user)], club_id: str
+)->bool:
+    '''
+    check if user follows a certain club
+    '''
+    res = DB.db.fetch_follow_status(user_id=current_user.id, club_id=club_id)
+    return res
+
+@app.get("/club/followers", tags=["club"])
+async def fetch_followers(
+    current_club: Annotated[Club, Depends(auth_service.get_current_logged_in_club)]
+)->UserIDList:
+    followers = UserIDList(users=[])
+    event_followers = DB.db.fetch_club_followers(club_id=current_club.id)
+    followers.users = event_followers
+    return followers
+    
+
 @app.post("/club/event", tags=["club", "event"])
 async def add_event(
     current_club: Annotated[Club, Depends(auth_service.get_current_logged_in_club)],
