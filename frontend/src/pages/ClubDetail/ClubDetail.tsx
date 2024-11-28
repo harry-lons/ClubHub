@@ -93,7 +93,7 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
                     club_id: id as string,
                 };
     
-                const successful = await createFollow(token, newFollow);
+                const successful = await createFollow(token, newFollow.club_id);
     
                 if (successful) {
                     setAlert({

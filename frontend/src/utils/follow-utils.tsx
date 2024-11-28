@@ -1,14 +1,15 @@
 import { API_BASE_URL } from "../constants/constants"
 import { Follow ,User, Club} from "../types/types"
 // Function to create an expense in the backend. Method: POST
-export const createFollow = async (token: string,follow: Follow): Promise<boolean> => {
-	const response = await fetch(`${API_BASE_URL}/Follow`, {
+export const createFollow = async (token: string,club_id: string): Promise<boolean> => {
+	console.log(`${API_BASE_URL}/follow`)
+	const response = await fetch(`${API_BASE_URL}/follow`, {
     	method: "POST",
     	headers: {
         	"Content-Type": "application/json",
 			"Authorization" : `Bearer ${token}`
     	},
-    	body: JSON.stringify(follow.club_id),
+    	body: JSON.stringify(club_id),
 	});
 	if (!response.ok) {
     	throw new Error("Failed to create Follow");
@@ -49,7 +50,7 @@ export const getFollowed = async (token:string): Promise<Club[]> => {
 
 // fetch if a user has followed this club
 export const fetchFollowStatus = async (token:string, club_id: string): Promise<Boolean> => { 
-	const response = await fetch(`${API_BASE_URL}/follow/${club_id}`, { //NOTICE CHANGE
+	const response = await fetch(`${API_BASE_URL}/followed/${club_id}`, { //NOTICE CHANGE
         method: "GET",
         headers: {
             "Authorization" : `Bearer ${token}`

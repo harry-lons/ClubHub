@@ -79,7 +79,7 @@ async def rsvp_event(
     attendees.users = users_rsvp
     return attendees
 
-@app.get("/Follow", tags=["user"])
+@app.post("/follow", tags=["user"])
 async def follow_club (
     current_user: Annotated[User, Depends(auth_service.get_current_user)], club_id: str
 )-> bool:
@@ -89,7 +89,7 @@ async def follow_club (
     res = DB.db.follow_club(user_id=current_user.id, club_id=club_id)
     return res
 
-@app.get("/unfollow/{club_id}", tags=["users"])
+@app.delete("/unfollow/{club_id}", tags=["users"])
 async def unfollow_club (
     current_user: Annotated[User, Depends(auth_service.get_current_user)], club_id: str
 )-> bool:
@@ -102,7 +102,7 @@ async def unfollow_club (
 ## @app.get("/user/followed", tag=["users"])
 
 
-@app.get("/follow/{club_id}", tags=["users"])
+@app.get("/followed/{club_id}", tags=["users"])
 async def follow_status(
     current_user: Annotated[User, Depends(auth_service.get_current_user)], club_id: str
 )->bool:
