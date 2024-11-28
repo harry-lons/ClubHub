@@ -5,7 +5,7 @@ import { useState, useEffect, useContext } from "react";
 import "./Events.css";
 import { Grid, FormGroup, FormControlLabel, Checkbox, Button } from '@mui/material';
 import { NavBar } from "../NavBar/NavBar";
-import { fetchEvents, fetchEventById, fetchRSVPEvents } from "../../utils/event-utils";
+import { fetchEvents, fetchEventById, fetchRSVPEvents, fetchEventListInfo } from "../../utils/event-utils";
 import { fetchClubById, fetchClubList } from "../../utils/club-utils";
 import { fetchRSVP } from "../../utils/RSVP-utils";
 import { AuthContext } from "../../context/AuthContext";
@@ -30,44 +30,49 @@ const Events: React.FC = () => {
     }, []);
 
     const loadEvents = async () => {
-        // Load RSVP Events List
-        try {
-            console.log("RSVP");
-            const clubList = await fetchClubList();
-            const rsvpList = await fetchRSVPEvents(context.token);
-            const result = await processEvents(rsvpList, rsvpList, clubList);
-            setRsvpEventsList(result);
-            // Load All other lists and compare with RSVP
-            // Load Total Events List
+        if (context.token) {
+            // Load RSVP Events List
             try {
-                console.log("Events");
-                const eventsList = await fetchEvents();
-                const result = await processEvents(eventsList, rsvpList, clubList);
-                setEventsList(result);
-            } catch (err: any) {
-                console.error("Error loading event list:", err.message);
-            }
-            // Load Followed Events List
-            try {
-                console.log("Followed");
-                const followedList = (await fetchEvents()).slice(2,7);
-                const result = await processEvents(followedList, rsvpList, clubList);
-                setFollowedEventsList(result);
-                setRenderedEvents(result);
-                // Load RSVP and Followed Events List
+                console.log("RSVP");
+                const eventInfo = await fetchEventListInfo(context.token);
+                const clubList = eventInfo.clubs;
+                const rsvpList = eventInfo.rsvp;
+                console.log(rsvpList);
+                const result = await processEvents(rsvpList, rsvpList, clubList);
+                setRsvpEventsList(result);
+                // Load All other lists and compare with RSVP
+                // Load Total Events List
                 try {
-                    console.log("RSVP/Followed");
-                    const combinedList = Array.from(new Map(rsvpList.concat(followedList).map(event => [event.id, event])).values());
-                    const result = await processEvents(combinedList, rsvpList, clubList);
-                    setCombinedEventsList(result);
+                    console.log("Events");
+                    const eventsList = eventInfo.events;
+                    const result = await processEvents(eventsList, rsvpList, clubList);
+                    setEventsList(result);
+                    // Load Followed Events List
+                    try {
+                        console.log("Followed");
+                        const followedClubs = eventInfo.follow_id;
+                        const followedList = eventsList.filter(event => followedClubs.find(id => id === event.club_id));
+                        const result = await processEvents(followedList, rsvpList, clubList);
+                        setFollowedEventsList(result);
+                        setRenderedEvents(result);
+                        // Load RSVP and Followed Events List
+                        try {
+                            console.log("RSVP/Followed");
+                            const combinedList = Array.from(new Map(rsvpList.concat(followedList).map(event => [event.id, event])).values());
+                            const result = await processEvents(combinedList, rsvpList, clubList);
+                            setCombinedEventsList(result);
+                        } catch (err: any) {
+                            console.error("Error loading RSVP/Followed event list:", err.message);
+                        }
+                    } catch (err: any) {
+                        console.error("Error loading Followed event list:", err.message);
+                    }
                 } catch (err: any) {
-                    console.error("Error loading RSVP/Followed event list:", err.message);
+                    console.error("Error loading event list:", err.message);
                 }
             } catch (err: any) {
-                console.error("Error loading Followed event list:", err.message);
+                console.error("Error loading RSVP event list:", err.message);
             }
-        } catch (err: any) {
-            console.error("Error loading RSVP event list:", err.message);
         }
     }
 
@@ -99,8 +104,14 @@ const Events: React.FC = () => {
             acc[dateKey].sort((a,b) => {
                 return a[1].begin_time.getTime() - b[1].begin_time.getTime();
             });
-
-            return acc;
+            const sortedAcc = Object.entries(acc).sort((a, b) => {
+                const dateA = new Date(a[0]);
+                const dateB = new Date(b[0]);
+                
+                return dateA.getTime() - dateB.getTime();
+            });
+            const accFinal = Object.fromEntries(sortedAcc);
+            return accFinal;
         }, Promise.resolve({} as Record<string, [string, Event, boolean][]>));
         
         return result;
@@ -111,7 +122,7 @@ const Events: React.FC = () => {
     }
 
     const handleLoadLogIn = () => {
-        navigate('/');
+        navigate('/login');
     }; 
 
     const handleCheck = (check: any) => {
@@ -170,31 +181,32 @@ const Events: React.FC = () => {
                 <div style={{width: "100%"}}>
                     <div className="background"/>
                     <Grid container rowSpacing={4} className="events-list-container">
-                        <div className="navbar-container">
+                        <Grid container rowSpacing={2} className="navbar-container">
                             <NavBar />
-                        </div>
-                        <Grid item xs={9.5} sx={{display: 'flex', justifyContent: 'flex-end'}}>
-                            <FormGroup>
-                                <FormControlLabel 
-                                    control={
-                                        <Checkbox checked={RSVP} onChange={handleCheck} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="RSVP"/>
-                                    } 
-                                    label="RSVP Events" 
-                                    sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
-                                } />
-                            </FormGroup>
-                        </Grid>
-                        <Grid item xs={.2}/>
-                        <Grid item xs={2.3}>
-                            <FormGroup>
-                                <FormControlLabel 
-                                    control={
-                                        <Checkbox checked={Followed} onChange={handleCheck} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="Followed"/>
-                                    } 
-                                    label="Followed Clubs" 
-                                    sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
-                                } />
-                            </FormGroup>
+                            <Grid item xs={9.5} sx={{display: 'flex', justifyContent: 'flex-end'}}>
+                                <FormGroup>
+                                    <FormControlLabel 
+                                        control={
+                                            <Checkbox checked={RSVP} onChange={handleCheck} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="RSVP"/>
+                                        } 
+                                        label="RSVP Events" 
+                                        sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
+                                    } />
+                                </FormGroup>
+                            </Grid>
+                            <Grid item xs={.2}/>
+                            <Grid item xs={2.3}>
+                                <FormGroup>
+                                    <FormControlLabel 
+                                        control={
+                                            <Checkbox checked={Followed} onChange={handleCheck} sx={{color: 'white', '&.Mui-checked': {color: 'white',},}} name="Followed"/>
+                                        } 
+                                        label="Followed Clubs" 
+                                        sx={{color: 'white', '& .MuiFormControlLabel-label': {color: 'white'}}
+                                    } />
+                                </FormGroup>
+                            </Grid>
+                            <Grid item xs={12}/>
                         </Grid>
                         <Grid item xs={12}>
                             <Grid container rowSpacing={4} className="events-list">
