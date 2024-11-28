@@ -30,7 +30,7 @@ async def get_events() -> ListOfEvents:
 @app.get("/eventlistinfo", response_model=EventListInfo)
 async def get_events(
     current_user: Annotated[User, Depends(auth_service.get_current_user)]
-) -> EventInfo:
+) -> EventListInfo:
     # Get all events
     all_events = DB.db.get_all_events()
     all_events_api = [b_event_to_f_event(e) for e in all_events]
@@ -43,7 +43,7 @@ async def get_events(
     rsvp_events_api = [b_event_to_f_event(e) for e in rsvp_events]
     # Get followed club ids of user
     follow_id = ["d1187ef4-3d91-4143-ac72-5b41d8f96c37"]
-    return EventInfo(events=all_events_api, clubs=all_clubs_api, rsvp=rsvp_events_api, follow_id=follow_id)
+    return EventListInfo(events=all_events_api, clubs=all_clubs_api, rsvp=rsvp_events_api, follow_id=follow_id)
 
 
 @app.get("/event/{id}", response_model=Event)
