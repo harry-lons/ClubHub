@@ -240,11 +240,7 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
                         <h3>Upcoming Events</h3>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <List style={{ 
-                             height: nextEvents.length < 4 ? 'auto' : '400px', // Adjust height based on list length
-                             overflowY: nextEvents.length < 4 ? 'visible' : 'auto', // Disable scrolling if not needed
-
-                        }}>
+                        <List style = {{maxHeight:'400px', overflowY: 'auto'}}>
                             {nextEvents.map(event => (
                                 <ListItem key={event.id} style={{backgroundColor: '#f3e5f5', margin: '8px 0', borderRadius: '8px', padding: '16px',}}>
                                     <ListItemText primary={
@@ -263,9 +259,7 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
                         <h3>Past Events</h3>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <List style={{ height: nextEvents.length < 3 ? 'auto' : '400px', // Adjust height based on list length
-                             overflowY: nextEvents.length < 3 ? 'visible' : 'auto', // Disable scrolling if not needed
-                            }}>
+                        <List style = {{maxHeight:'400px', overflowY: 'auto'}}>
                             {pastEvents.map(event => (
                                 <ListItem
                                     key={event.id}
