@@ -14,7 +14,7 @@ from .rsvp import rsvp_user_create, rsvp_user_delete, rsvp_user_get
 
 # from ..app import app
 
-from .schemas import Event, ListOfEvents, EventID, EventIDList, RSVP, RSVPList, Follow,EventListInfo
+from .schemas import Event, ListOfEvents, EventID, EventIDList, RSVP, RSVPList, Follow,EventListInfo,ClubIDList
 from ..identities.schemas import UserIDList
 
 
@@ -126,10 +126,10 @@ async def user_followers(
     '''
     obtains all the clubs followed by the user
     '''
-    followers = ListOfEvents(users=[])
+    clubs_followed = ClubIDList(clubs=[])
     follows = DB.db.fetch_user_follows(user_id=current_user.id)
-    followers.users = follows
-    return followers
+    clubs_followed.clubs = follows
+    return clubs_followed
 
 
 @app.get("/followed/{club_id}", tags=["user"])

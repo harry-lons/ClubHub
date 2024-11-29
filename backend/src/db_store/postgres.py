@@ -259,7 +259,7 @@ class PostgresDatabase(IAuth, IEvents):
             self.session.rollback()
             raise ValueError(f"Error unfollowing club: {e}")
      
-    def fetch_user_follows(self, user_id: str)-> bool:
+    def fetch_user_follows(self, user_id: str)-> List[str]:
         '''
         Returns all the followed
         '''

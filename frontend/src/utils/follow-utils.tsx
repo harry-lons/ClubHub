@@ -44,13 +44,13 @@ export const getFollowed = async (token:string): Promise<Club[]> => {
 	if (!response.ok) {
     	throw new Error("Failed to get followed clubs");
 	}
-	const clubs: Club[] = (await response.json()).clubs;
+	//const clubs: Club[] = (await response.json()).clubs;
 
 	// Parsing the response to get the data
-	// let clubs = response.json().then((jsonResponse) => {
-	// 	console.log("data in fetch attendees", jsonResponse);
-	// 	return jsonResponse.data;
-	// });
+	let clubs = response.json().then((jsonResponse) => {
+		console.log("data in fetch attendees", jsonResponse);
+		return jsonResponse.data;
+	});
 	console.log("data in fetchFollowers", clubs);
 	return clubs;
 };
@@ -88,15 +88,15 @@ export const fetchFollowers = async (token:string): Promise<User[]> => {
     	throw new Error('Failed to fetch RSVP');
 	}
 
-	const followers: User[] = (await response.json()).users;
+	//const followers: User[] = (await response.json()).users;
     // Log and return the `data` property safely
 
-	// Parsing the response to get the data
-	// let followers = response.json().then((jsonResponse) => {
-	// 	console.log("data in fetch attendees", jsonResponse);
-	// 	return jsonResponse.data;
-	// });
-    // console.log("data in fetchFollowers", followers);
+	//Parsing the response to get the data
+	let followers = response.json().then((jsonResponse) => {
+		console.log("data in fetch attendees", jsonResponse);
+		return jsonResponse.data;
+	});
+    console.log("data in fetchFollowers", followers);
 
     // Ensure `jsonResponse.data` is an array or return an empty array
     return followers;
