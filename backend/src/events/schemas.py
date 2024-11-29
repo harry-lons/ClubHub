@@ -34,6 +34,10 @@ class ListOfEvents(BaseModel):
 class RSVP(BaseModel):
     user_id: str
     event_id: int
+    
+class Follow(BaseModel):
+    user_id: str
+    club_id: str
 
 class RSVPList(BaseModel):
     rsvps: List[RSVP]

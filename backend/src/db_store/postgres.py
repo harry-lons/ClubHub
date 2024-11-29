@@ -227,8 +227,8 @@ class PostgresDatabase(IAuth, IEvents):
         Adds a user-club pair to the UserFollows table
         '''   
         ## perform a check (previously followed or the club does not exist)
-        if not self.session(ClubAccounts).filter(id=club_id).first() \
-            or self.session.query(UserFollows).filter_by(user_id=user_id, club_id=club_id).first():
+        if not self.session.query(ClubAccounts).filter_by(id=club_id).first() \
+            or self.session.query(UserFollows).filter_by(user_id=user_id, club_id=club_id).all():
                 return False
         try:
             user_club = UserFollows(user_id=user_id, club_id=club_id)
@@ -247,6 +247,8 @@ class PostgresDatabase(IAuth, IEvents):
         Removes a user-club pair from the UserFollow table
         It firsts check for the existence of the user-club pair
         '''
+        if not self.session.query(UserFollows).filter_by(user_id=user_id, club_id=club_id).first():
+            return False
         try:
             self.session.query(UserFollows).filter_by(user_id=user_id, club_id=club_id).delete()
             self.session.commit()

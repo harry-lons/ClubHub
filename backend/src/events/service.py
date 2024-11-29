@@ -13,7 +13,7 @@ from .constants import fake_event_1, mock_events
 from .rsvp import rsvp_user_create, rsvp_user_delete, rsvp_user_get
 
 # from ..app import app
-from .schemas import Event, ListOfEvents, EventID, EventIDList, RSVP, RSVPList
+from .schemas import Event, ListOfEvents, EventID, EventIDList, RSVP, RSVPList, Follow
 from ..identities.schemas import UserIDList
 
 
@@ -79,17 +79,17 @@ async def rsvp_event(
     attendees.users = users_rsvp
     return attendees
 
-@app.post("/follow", tags=["user"])
+@app.post("/Follow", tags=["user"])
 async def follow_club (
-    current_user: Annotated[User, Depends(auth_service.get_current_user)], club_id: str
+    current_user: Annotated[User, Depends(auth_service.get_current_user)], follow: Follow
 )-> bool:
     '''
     follows a certain club
     '''
-    res = DB.db.follow_club(user_id=current_user.id, club_id=club_id)
+    res = DB.db.follow_club(user_id=current_user.id, club_id=follow.club_id)
     return res
 
-@app.delete("/unfollow/{club_id}", tags=["users"])
+@app.delete("/unfollow/{club_id}", tags=["user"])
 async def unfollow_club (
     current_user: Annotated[User, Depends(auth_service.get_current_user)], club_id: str
 )-> bool:
@@ -102,7 +102,7 @@ async def unfollow_club (
 ## @app.get("/user/followed", tag=["users"])
 
 
-@app.get("/followed/{club_id}", tags=["users"])
+@app.get("/followed/{club_id}", tags=["user"])
 async def follow_status(
     current_user: Annotated[User, Depends(auth_service.get_current_user)], club_id: str
 )->bool:
@@ -112,7 +112,7 @@ async def follow_status(
     res = DB.db.fetch_follow_status(user_id=current_user.id, club_id=club_id)
     return res
 
-@app.get("/club/followers", tags=["club"])
+@app.get("/club/followers", response_model=UserIDList, tags=["club"])
 async def fetch_followers(
     current_club: Annotated[Club, Depends(auth_service.get_current_logged_in_club)]
 )->UserIDList:

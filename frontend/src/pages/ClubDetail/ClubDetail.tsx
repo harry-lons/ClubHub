@@ -86,15 +86,15 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
             severity: null,
         });
         const toggleFollow = async () => {
-            setFollow(!rsvp);
+            setFollow(!follow);
             if (!follow) {
                 const newFollow: Follow = {
                     user_id: userId,
                     club_id: id as string,
                 };
     
-                const successful = await createFollow(token, newFollow.club_id);
-    
+                const successful = await createFollow(token, newFollow);
+                console.log("followed: ", successful)
                 if (successful) {
                     setAlert({
                         message: "You have successfully followed this club! We're very happy to have you here!",
@@ -108,7 +108,7 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
                 }
             } else {
                 const successful = await deleteFollow(token, id as string);
-    
+                console.log("unfollowed: ", successful)
                 if (successful) {
                     setAlert({
                         message: 'You have successfully unfollowed this club!',
@@ -121,6 +121,7 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
                     });
                 }
             }
+            console.log(alert.message)
             // Automatically hide the alert after 3 seconds
             setTimeout(() => {
                 setAlert({ message: '', severity: null });
@@ -139,7 +140,7 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
                 </Alert>
             )}
             <Button className="follow-button" variant="contained" onClick={toggleFollow}>
-                {rsvp? 'unFOLLOW' : 'FOLLOW' }
+                {follow? 'unFOLLOW' : 'FOLLOW' }
             </Button>
             </>
         );
