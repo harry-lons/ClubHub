@@ -118,11 +118,13 @@ async def unfollow_club (
     res = DB.db.unfollow_club(user_id=current_user.id, club_id=club_id)
     return res
 
-@app.get("/user/followed", tag=["user"])
+@app.get("/user/followed", tags=["user"])
 async def user_followers(
     current_user: Annotated[User, Depends(auth_service.get_current_user)]
 )-> ListOfEvents:
-    
+    '''
+    obtains all the clubs followed by the user
+    '''
     followers = ListOfEvents(users=[])
     follows = DB.db.fetch_user_follows(user_id=current_user.id)
     followers.users = follows
