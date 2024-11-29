@@ -48,6 +48,7 @@ function App() {
             {/* <Route path = "/testpage" element = {<TestPage/>}/> */}
             <Route path="/club/events" element={<ClubEventList which="CLUB"/>} />
             <Route path="/clubProfile/:id" element={<ClubProfile which="CLUB"/>} />
+
           </Routes>
         </div>
       </LocalizationProvider>

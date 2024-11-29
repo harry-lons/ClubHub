@@ -1,4 +1,4 @@
-#event-detail-container {
+/* #event-detail-container {
     width: 100%;
 }
 
@@ -37,7 +37,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 5px; /* Add 5px padding on the left and right */
+    padding: 0 5px; Add 5px padding on the left and right
 }
 
 
@@ -85,4 +85,4 @@ p.event-detail-club-name-text{
   
 p.event-detail-club-name-text:hover{
     text-decoration: underline;
-}
+} */

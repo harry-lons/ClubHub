@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Event, Club, RSVP, User, RSVPInt} from "../../types/types";
 import { exampleEvent, exampleUsers, emptyClub } from "../../constants/constants";
 import { TextField, Button, MenuItem } from '@mui/material';
-import "./DetailedEvent.css"
+import "./DetailedEvent2.css"
 import {AuthContext} from "../../context/AuthContext"
 import { fetchEventById } from "../../utils/event-utils";
 import { fetchClubById } from "../../utils/club-utils";
@@ -13,6 +13,7 @@ import exampleFlyer from "../../constants/flyer.jpg";
 import {Alert, Box,ListItem,ListItemButton,ListItemText,AccordionDetails,Accordion,AccordionSummary} from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { NavBar } from "../NavBar/NavBar";
 
 
 interface DetailedEventProps {
@@ -43,6 +44,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
         if(which === "USER") loadRSVP();
         if(which==="CLUB") loadAttendees();
     }, [id]);
+    
 
     const loadEvent = async () => {
         try {
@@ -273,84 +275,17 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
             </Button>
         );
     }
-    
-    return (
-        <div id="event-detail-container">
-            <div className="event-detail-header">
-                <BackButton />
-            </div>
-            <div className="event-identity-container">
-                <div className="event-title-container">
-                        <div className="event-detail-title">
-                            <h2>{event.title}</h2>
-                        </div>
-                        {
-                            which == "CLUB" ?
-                            <EditButton /> :
-                            which == "USER" ?
-                            <RSVPButton /> :
-                            null
-                        }
-                </div>
-                <div className="event-detail-club" style={{ display: 'flex', alignItems: 'center' }}>
-                    <p style={{ display: 'inline-block',marginRight: '5px' }}>From  </p>
-                    <p className="event-detail-club-name-text" onClick = {()=>navigate(`/clubDetail/${club.id}`)}>{club.name}</p>
-                </div>
-                
-            </div>
-            <div className="event-info-container">
-                <div className="event-description">
-                    <h3>Description</h3>
-                    <p>{event.summary}</p >
-                </div>
-                <div className="event-detail-type">
-                    <h3>Type</h3>
-                    <p>{event.type}</p >
-                </div>
-                <div className="event-detail-location">
-                    <h3>Location</h3>
-                    <p>{event.location}</p >
-                </div>
-                <div className="event-detail-time">
-                    <h3>Date & Time</h3>
-                    {handleTime(event.begin_time, event.end_time)}
-                </div>
-                
-                <div className="event-detail-capacity">
-                    <h3>Capacity</h3>
-                    <p>{event.capacity ? event.capacity.toString() : "No Capacity"}</p >
-                </div>
-                <div className="event-recurring">
-                    <h3>Recurring</h3>
-                    {handleRecur(event)}
-                </div>
-                {(which === "CLUB") && 
-                <div className = "event-num-attendees">
-                    <h3>Attendees</h3>
-                    <p>Number of Current Attendees: {attendees.length}</p>
-                    <VirtualizedAccordion />
-                </div>}
-                <div className="event-detail-pictures">
-                    <h3>Pictures</h3>
-                    <img src={exampleFlyer} className="event-picture"/>
-                </div>
-                <div className = "event-detail-contact">
-                    <h3>Contact Information</h3>
-                    {Array.isArray(club.contact_email) ? (
-                        club.contact_email.map((email, index) => (
-                        <p key={index}>{email}</p>
-                        ))
-                    ) : (
-                    <p>{club.contact_email}</p>
-                    )}
-                </div>
-                <div className="event-detail-attendees"></div>
-                
-                <div></div>
-            </div>
-        </div>
+
+    return(
+        //  <div className="eventDetail-container">
+        //      <div className="background"> </div>
+           
+        // </div>
+            
+        
     );
-    };
+    
+};
 
 
 export default DetailedEvent;
