@@ -263,8 +263,10 @@ class PostgresDatabase(IAuth, IEvents):
         '''
         Returns all the followed
         '''
-        follows = self.session()
-        return  
+        follows = self.session().query(UserFollows.club_id).filter_by(user_id=user_id).all()
+        if len(follows) == 0:
+            raise ValueError(f"User follows no club!")
+        return follows
        
     def fetch_follow_status(self, user_id:str, club_id: str )-> bool:
         '''
@@ -276,7 +278,7 @@ class PostgresDatabase(IAuth, IEvents):
         else:
             return True
         
-    def fetch_club_followers(self, club_id: str)-> bool:
+    def fetch_club_followers(self, club_id: str)-> List[str]:
         '''
         Fetches all the users who have followed a club
         '''

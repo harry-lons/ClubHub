@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from ..authentication import service as auth_service
 from ..authentication.schemas import User
 from ..database import DB
-from ..db_store.conversion import b_event_to_f_event
+from ..db_store.conversion import b_club_to_f_club_full, b_event_to_f_event
 from ..db_store.models import Events, UserRSVPs
 from ..identities.schemas import Club
 from .constants import fake_event_1, mock_events
@@ -25,6 +25,25 @@ async def get_events() -> ListOfEvents:
     all_events = DB.db.get_all_events()
     all_events_api = [b_event_to_f_event(e) for e in all_events]
     return ListOfEvents(events=all_events_api)
+
+
+@app.get("/eventlistinfo", response_model=EventListInfo)
+async def get_events(
+    current_user: Annotated[User, Depends(auth_service.get_current_user)]
+) -> EventListInfo:
+    # Get all events
+    all_events = DB.db.get_all_events()
+    all_events_api = [b_event_to_f_event(e) for e in all_events]
+    # Get all clubs
+    all_clubs = DB.db.get_all_clubs()
+    all_clubs_api = [b_club_to_f_club_full(e) for e in all_clubs]
+    # Get rsvp events of user
+    user = DB.db.get_user_from_id(current_user.id)
+    rsvp_events: List[Events] = user.events
+    rsvp_events_api = [b_event_to_f_event(e) for e in rsvp_events]
+    # Get followed club ids of user
+    follow_id = ["d1187ef4-3d91-4143-ac72-5b41d8f96c37"]
+    return EventListInfo(events=all_events_api, clubs=all_clubs_api, rsvp=rsvp_events_api, follow_id=follow_id)
 
 
 @app.get("/event/{id}", response_model=Event)
@@ -99,7 +118,15 @@ async def unfollow_club (
     res = DB.db.unfollow_club(user_id=current_user.id, club_id=club_id)
     return res
 
-## @app.get("/user/followed", tag=["users"])
+@app.get("/user/followed", tag=["user"])
+async def user_followers(
+    current_user: Annotated[User, Depends(auth_service.get_current_user)]
+)-> ListOfEvents:
+    
+    followers = ListOfEvents(users=[])
+    follows = DB.db.fetch_user_follows(user_id=current_user.id)
+    followers.users = follows
+    return followers
 
 
 @app.get("/followed/{club_id}", tags=["user"])

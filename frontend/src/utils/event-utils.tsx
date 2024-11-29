@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "../constants/constants"
-import { Event, EventType } from "../types/types"
+import { Event, EventListInfo, EventType } from "../types/types"
 
 const validEventTypes: Set<EventType> = new Set<EventType>([
     "social",
@@ -72,6 +72,34 @@ export const fetchEvents = async (): Promise<Event[]> => {
     })
 
     return events;
+};
+
+// All events, clubs, rsvp of a user, followed clubs of a user
+export const fetchEventListInfo = async (token: string): Promise<EventListInfo> => {
+
+    const response = await fetch(`${API_BASE_URL}/eventlistinfo`, {
+        method: "GET",
+        headers: {
+            "Authorization" : `Bearer ${token}`
+        }
+    })
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch event list")
+    }    
+
+    const eventInfo: EventListInfo = await response.json();
+    
+    eventInfo.events.forEach((event)=>{
+        if (event.begin_time) {event.begin_time = new Date(event.begin_time); }
+        if (event.end_time) {event.end_time = new Date(event.end_time);}
+    })
+    eventInfo.rsvp.forEach((event)=>{
+        if (event.begin_time) {event.begin_time = new Date(event.begin_time); }
+        if (event.end_time) {event.end_time = new Date(event.end_time);}
+    })
+
+    return eventInfo;
 };
 
 // All events RSVPed by the user
