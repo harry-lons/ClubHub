@@ -32,6 +32,9 @@ class Event(EventID):
 
 class ListOfEvents(BaseModel):
     events: List[Event]
+    
+class ClubIDList(BaseModel):
+    clubs:List[str]
 
 class EventListInfo(BaseModel):
     events: List[Event]
@@ -42,9 +45,14 @@ class EventListInfo(BaseModel):
 class RSVP(BaseModel):
     user_id: str
     event_id: int
+    
+class Follow(BaseModel):
+    user_id: str
+    club_id: str
 
 class RSVPList(BaseModel):
     rsvps: List[RSVP]
 
 class EventIDList(BaseModel):
     events: List[int]
+    

@@ -13,7 +13,8 @@ from .constants import fake_event_1, mock_events
 from .rsvp import rsvp_user_create, rsvp_user_delete, rsvp_user_get
 
 # from ..app import app
-from .schemas import Event, EventListInfo, ListOfEvents, EventID, EventIDList, RSVP, RSVPList
+
+from .schemas import Event, ListOfEvents, EventID, EventIDList, RSVP, RSVPList, Follow,EventListInfo,ClubIDList
 from ..identities.schemas import UserIDList
 
 
@@ -97,6 +98,59 @@ async def rsvp_event(
     users_rsvp = DB.db.fetch_rsvp_attendees(event_id=event_id)
     attendees.users = users_rsvp
     return attendees
+
+@app.post("/Follow", tags=["user"])
+async def follow_club (
+    current_user: Annotated[User, Depends(auth_service.get_current_user)], follow: Follow
+)-> bool:
+    '''
+    follows a certain club
+    '''
+    res = DB.db.follow_club(user_id=current_user.id, club_id=follow.club_id)
+    return res
+
+@app.delete("/unfollow/{club_id}", tags=["user"])
+async def unfollow_club (
+    current_user: Annotated[User, Depends(auth_service.get_current_user)], club_id: str
+)-> bool:
+    '''
+    unfollows a certain club
+    '''
+    res = DB.db.unfollow_club(user_id=current_user.id, club_id=club_id)
+    return res
+
+@app.get("/user/followed", tags=["user"])
+async def user_followers(
+    current_user: Annotated[User, Depends(auth_service.get_current_user)]
+)-> ListOfEvents:
+    '''
+    obtains all the clubs followed by the user
+    '''
+    clubs_followed = ClubIDList(clubs=[])
+    follows = DB.db.fetch_user_follows(user_id=current_user.id)
+    clubs_followed.clubs = follows
+    return clubs_followed
+
+
+@app.get("/followed/{club_id}", tags=["user"])
+async def follow_status(
+    current_user: Annotated[User, Depends(auth_service.get_current_user)], club_id: str
+)->bool:
+    '''
+    check if user follows a certain club
+    '''
+    res = DB.db.fetch_follow_status(user_id=current_user.id, club_id=club_id)
+    return res
+
+@app.get("/club/followers", response_model=UserIDList, tags=["club"])
+async def fetch_followers(
+    current_club: Annotated[Club, Depends(auth_service.get_current_logged_in_club)]
+)->UserIDList:
+    followers = UserIDList(users=[])
+    event_followers = DB.db.fetch_club_followers(club_id=current_club.id)
+    followers.users = event_followers
+    return followers
+    
 
 @app.post("/club/event", tags=["club", "event"])
 async def add_event(
