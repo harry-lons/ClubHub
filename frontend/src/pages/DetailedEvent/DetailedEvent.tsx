@@ -20,6 +20,7 @@ interface DetailedEventProps {
 }
 
 const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
+    console.log("Which is:", which);
     const { id } = useParams<{ id: string }>();
     console.log("Web Page Event ID",id);
     const navigate = useNavigate();

@@ -17,6 +17,7 @@ interface ClubDetailProps {
     which: string; 
 }
 const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
+   
     const { id } = useParams<{ id: string }>(); //should be club id
     const navigate = useNavigate();
     const context = useContext(AuthContext);
@@ -25,6 +26,7 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
     }, []);
     const userId = context.id;
     const token = context.token;
+    console.log("Account Type: ", context.accountType);
     const [club, setClub] = useState<Club> (emptyClub);
     const [follower, setFollower] = useState<User[]>(exampleUsers);
     const [pastEvents,setPastEvents] = useState<Event[]>(emptyEventList);
@@ -36,10 +38,10 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
         if (!id) return;
         loadEvent();
         loadClub();
-        if(which === "USER") loadFollowStatus();
-        if(which === "CLUB") loadFollowerList();
-        if(which === "USER") loadFollowStatus();
-        if(which === "CLUB") loadFollowerList();
+        if(context.accountType === "user") loadFollowStatus();
+        if(context.accountType === "club") loadFollowerList();
+        if(context.accountType === "user") loadFollowStatus();
+        if(context.accountType === "club") loadFollowerList();
     }, [id]);
 
     const loadEvent = async () => {
@@ -191,7 +193,7 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
             <div className="club-identity-container">
                 <div className="club-name-container">
                     <h2>{club.name}</h2>
-                    {which == "USER" && <FollowButton/>}
+                    {context.accountType === "user" && <FollowButton/>}
                     
                 </div>
                 <div className = "club-description-container">
@@ -226,9 +228,9 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
                 </AccordionDetails>
                 </Accordion>
             </div>
-            {which === "CLUB" &&
+            {context.accountType === "club" &&
             <div className="club-follower">
-                <Accordion>
+                <Accordion sx={{ marginTop: 2}}>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <h3>Club Followers {numFollowers}</h3>
                 </AccordionSummary>
