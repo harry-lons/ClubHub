@@ -224,6 +224,35 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
                 </AccordionDetails>
                 </Accordion>
             </div>
+            {which === "CLUB" &&
+            <div className="club-follower">
+                <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <h3>Club Followers {numFollowers}</h3>
+                </AccordionSummary>
+                <AccordionDetails>
+                {numFollowers === 0 ? (
+                <Typography style={{ textAlign: 'center', margin: '16px 0' }}>
+                    No Followers
+                </Typography>
+            ) : (
+                <List
+                    style={{
+                        height: numFollowers < 10 ? 'auto' : '300px', // Adjust height dynamically
+                        overflowY: numFollowers < 10 ? 'visible' : 'auto', // Avoid scrollbars for short lists
+                    }}
+                >
+                    {follower.map((member) => (
+                        <ListItem key={member.id}>
+                            <ListItemText primary={<Typography>{member.first_name} {member.last_name}</Typography>} />
+                        </ListItem>
+                    ))}
+                </List>
+            )}
+                </AccordionDetails>
+                </Accordion>
+            </div>
+}
 
             <div className="club-contact">
                 <h3>Contact Information</h3>
