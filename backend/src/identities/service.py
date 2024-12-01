@@ -8,7 +8,7 @@ from fastapi.responses import FileResponse, Response
 from ..authentication import service as auth_service
 from ..authentication.schemas import User
 from ..database import DB
-from ..db_store.conversion import b_club_to_f_club, b_club_to_f_club_full
+from ..db_store.conversion import b_club_to_f_club_full
 from ..object_store import InMemoryFileStorage, IStorage
 from .constants import cat_club, cat_club_board_members
 from .schemas import AllClubs, Club, ClubWithBoardMembers, UserProfilePictureImgKey

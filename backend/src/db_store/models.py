@@ -38,6 +38,7 @@ class ClubAccounts(Base):
     hashed_password: Mapped[str] = mapped_column(String, nullable=False)
     profile_picture: Mapped[str] = mapped_column(String, nullable=False)
     name: Mapped[str] = mapped_column(String, nullable=False)
+    description: Mapped[str] = mapped_column(String, nullable=False)
 
     # Each ClubAccount has an Account
     # account = relationship("Accounts", back_populates="club_account")
@@ -101,13 +102,15 @@ class EventTags(Base):
 # *******************************************
 # Association Tables
 
+
 class UserFollows(Base):
     __tablename__ = "user_follows"
-    
+
     user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), primary_key=True)
     club_id: Mapped[str] = mapped_column(
         String, ForeignKey("club_accounts.id"), primary_key=True
     )
+
 
 class UserRSVPs(Base):
     __tablename__ = "user_rsvps"

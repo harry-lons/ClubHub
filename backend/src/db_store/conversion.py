@@ -81,5 +81,9 @@ def b_club_to_f_club(club: DBClubObject) -> FrontendClubObject:
 def b_club_to_f_club_full(club: DBClubObject) -> FrontendClubBoardMembers:
     board_members = [user.id for user in club.members]
     return FrontendClubBoardMembers(
-        id=club.id, name=club.name, contact_email=club.email, board_members=board_members
+        id=club.id,
+        name=club.name,
+        contact_email=club.email,
+        board_members=board_members,
+        description=club.description,
     )
