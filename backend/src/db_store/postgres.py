@@ -217,6 +217,7 @@ class PostgresDatabase(IAuth, IEvents):
         '''
         #event = self._get_by(Events, id=event_id) ## fetch the event
         users = self.session.query(UserRSVPs.user_id).filter_by(event_id=event_id).all()
+        users = [u[0] for u in users]
         if len(users) == 0:
             raise ValueError(f"Event is not an RSVP'd event")
         return users
@@ -264,7 +265,9 @@ class PostgresDatabase(IAuth, IEvents):
         '''
         Returns all the followed
         '''
-        follows = self.session().query(UserFollows.club_id).filter_by(user_id=user_id).all()
+        follows = self.session.query(UserFollows.club_id).filter_by(user_id=user_id).all()
+        follows = [f[0] for f in follows] #parsing the row objects
+        print(type(follows))
         if len(follows) == 0:
             raise ValueError(f"User follows no club!")
         return follows
@@ -284,6 +287,7 @@ class PostgresDatabase(IAuth, IEvents):
         Fetches all the users who have followed a club
         '''
         users = self.session.query(UserFollows.user_id).filter_by(club_id=club_id).all()
+        users = [u[0] for u in users] #parsing the row objects
         if len(users) == 0:
             raise ValueError(f"Club has no followers!")
         return users
