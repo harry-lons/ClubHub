@@ -101,6 +101,13 @@ class EventTags(Base):
 # *******************************************
 # Association Tables
 
+class UserFollows(Base):
+    __tablename__ = "user_follows"
+    
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), primary_key=True)
+    club_id: Mapped[str] = mapped_column(
+        String, ForeignKey("club_accounts.id"), primary_key=True
+    )
 
 class UserRSVPs(Base):
     __tablename__ = "user_rsvps"

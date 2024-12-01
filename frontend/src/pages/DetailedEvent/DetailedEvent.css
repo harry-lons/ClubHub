@@ -86,3 +86,6 @@ p.event-detail-club-name-text{
 p.event-detail-club-name-text:hover{
     text-decoration: underline;
 }
+h2.event-detail-title{
+    margin-left: 0;
+}

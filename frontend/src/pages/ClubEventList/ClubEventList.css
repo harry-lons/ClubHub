@@ -6,6 +6,7 @@
     background-attachment: fixed;
     background-repeat: repeat-y;
     width: 100%;
+
     height: 100vh;
     position: fixed;
     z-index: -1;
@@ -17,7 +18,8 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding-top: 20px; /* Adds some space at the top */
+    padding-top: 20px; 
+    max-width: 100vw;
  }
  
  .navbar-container {
@@ -185,12 +187,12 @@ button.delete-club-button {
 
 /* Left Arrow */
 .arrow-button.left {
-   left: -20px; /* Adjust for better alignment */
+   left: 12px; /* Adjust for better alignment */
 }
 
 /* Right Arrow */
 .arrow-button.right {
-   right: -20px; /* Adjust for better alignment */
+   right: 19px; /* Adjust for better alignment */
 }
 
  

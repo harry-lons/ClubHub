@@ -20,6 +20,11 @@
  
  
  .navbar-container {
+   background: url('../../../public/gradientBackground.png');
+   background-size: cover;
+   background-position: center;
+   background-attachment: fixed;
+   background-repeat: repeat-y;
    width: 100%;
    position: sticky;
    top: 0px;

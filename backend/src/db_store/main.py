@@ -15,6 +15,7 @@ from .models import (
     EventTags,
     UserAccounts,
     UserRSVPs,
+    UserFollows
 )
 from .postgres import PostgresDatabase
 
@@ -128,6 +129,9 @@ def init_test_data(db: PostgresDatabase):
     db.create_event(fake_event_1, test_club_1)  # should have id 1
 
     print(test_user_1)
+    user_3_follow_club = UserFollows(user_id=test_user_3, club_id=test_club_1)
+    db.session.add(user_3_follow_club)
+    
     user_4_rsvp_event_1 = UserRSVPs(user_id=test_user_1, event_id=1)
     db.session.add(user_4_rsvp_event_1)
 
