@@ -4,7 +4,7 @@ import { Event, Club, RSVP, User} from "../../types/types";
 import {exampleClub, exampleUsers, exampleEventList, emptyClub, emptyEventList } from "../../constants/constants";
 import {AuthContext} from "../../context/AuthContext"
 import { fetchClubEvents} from "../../utils/event-utils";
-import { createFollow, deleteFollow } from "../../utils/follow-utils";
+import { createFollow, deleteFollow, fetchFollowers, fetchFollowStatus } from "../../utils/follow-utils";
 import { fetchClubById } from "../../utils/club-utils";
 import { Follow } from "../../types/types";
 import {Alert, Box,List,ListItem,ListItemText,AccordionDetails,Accordion,AccordionSummary} from '@mui/material';
@@ -17,23 +17,31 @@ interface ClubDetailProps {
     which: string; 
 }
 const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
+   
     const { id } = useParams<{ id: string }>(); //should be club id
     const navigate = useNavigate();
-    const {token} = useContext(AuthContext);
-    // const { userId } = useContext(AuthContext);
+    const context = useContext(AuthContext);
+    useEffect(() => {
+        console.log(context.token, context.accountType, context.id);
+    }, []);
+    const userId = context.id;
+    const token = context.token;
+    console.log("Account Type: ", context.accountType);
     const [club, setClub] = useState<Club> (emptyClub);
-    const [rsvp, setRsvp] = useState(false);
-    const userId = "001";
-    const [attendees, setAttendees] = useState<User[]>(exampleUsers);
+    const [follower, setFollower] = useState<User[]>(exampleUsers);
     const [pastEvents,setPastEvents] = useState<Event[]>(emptyEventList);
     const [nextEvents,setNextEvents] = useState<Event[]>(emptyEventList);
     const [follow, setFollow] = useState(false);
     const [loading, setLoading] = useState(true); // New loading state
-
+    const [numFollowers,setNumFollowers] = useState(0);
     useEffect(() => {
         if (!id) return;
         loadEvent();
         loadClub();
+        if(context.accountType === "user") loadFollowStatus();
+        if(context.accountType === "club") loadFollowerList();
+        if(context.accountType === "user") loadFollowStatus();
+        if(context.accountType === "club") loadFollowerList();
     }, [id]);
 
     const loadEvent = async () => {
@@ -69,6 +77,25 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
             setLoading(false); // Set loading state to false once done
         }
     };
+    const loadFollowStatus = async () => {
+        try {
+            // ! bug RSVPList is undefined
+            // ! bug RSVPList is undefined
+            const status = await fetchFollowStatus(token,id as string); // Convert id to a number
+            setFollow(status as boolean);
+        } catch (err: any) {
+            console.error("Error loading Follow Status:", err.message);
+        }
+    };
+    const loadFollowerList = async()=>{
+        try{
+            const followers_ = await fetchFollowers(token);
+            setFollower(followers_);
+            setNumFollowers(follower.length)
+        }catch(err: any){
+            console.error("Error in loading Follower List",err.message)
+        }
+    }
     const BackButton: React.FC = () => {
         const handleBack = () => {
             navigate(-1); // Navigates to the previous page
@@ -166,7 +193,7 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
             <div className="club-identity-container">
                 <div className="club-name-container">
                     <h2>{club.name}</h2>
-                    {which == "USER" && <FollowButton/>}
+                    {context.accountType === "user" && <FollowButton/>}
                     
                 </div>
                 <div className = "club-description-container">
@@ -201,6 +228,35 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
                 </AccordionDetails>
                 </Accordion>
             </div>
+            {context.accountType === "club" &&
+            <div className="club-follower">
+                <Accordion sx={{ marginTop: 2}}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <h3>Club Followers {numFollowers}</h3>
+                </AccordionSummary>
+                <AccordionDetails>
+                {numFollowers === 0 ? (
+                <Typography style={{ textAlign: 'center', margin: '16px 0' }}>
+                    No Followers
+                </Typography>
+            ) : (
+                <List
+                    style={{
+                        height: numFollowers < 10 ? 'auto' : '300px', // Adjust height dynamically
+                        overflowY: numFollowers < 10 ? 'visible' : 'auto', // Avoid scrollbars for short lists
+                    }}
+                >
+                    {follower.map((member) => (
+                        <ListItem key={member.id}>
+                            <ListItemText primary={<Typography>{member.first_name} {member.last_name}</Typography>} />
+                        </ListItem>
+                    ))}
+                </List>
+            )}
+                </AccordionDetails>
+                </Accordion>
+            </div>
+}
 
             <div className="club-contact">
                 <h3>Contact Information</h3>
@@ -218,11 +274,7 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
                         <h3>Upcoming Events</h3>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <List style={{ 
-                             height: nextEvents.length < 4 ? 'auto' : '400px', // Adjust height based on list length
-                             overflowY: nextEvents.length < 4 ? 'visible' : 'auto', // Disable scrolling if not needed
-
-                        }}>
+                        <List style = {{maxHeight:'400px', overflowY: 'auto'}}>
                             {nextEvents.map(event => (
                                 <ListItem key={event.id} style={{backgroundColor: '#f3e5f5', margin: '8px 0', borderRadius: '8px', padding: '16px',}}>
                                     <ListItemText primary={
@@ -241,9 +293,7 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
                         <h3>Past Events</h3>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <List style={{ height: nextEvents.length < 3 ? 'auto' : '400px', // Adjust height based on list length
-                             overflowY: nextEvents.length < 3 ? 'visible' : 'auto', // Disable scrolling if not needed
-                            }}>
+                        <List style = {{maxHeight:'400px', overflowY: 'auto'}}>
                             {pastEvents.map(event => (
                                 <ListItem
                                     key={event.id}

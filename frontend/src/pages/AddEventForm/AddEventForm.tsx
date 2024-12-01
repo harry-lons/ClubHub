@@ -106,7 +106,7 @@ export const AddEventForm= ()=>{
     };
     
 
-      const eventTypes = [
+    const eventTypes = [
         { value: 'social', label: 'Social Event' },
         { value: 'workshop', label: 'Workshop' },
         { value: 'networking', label: 'Networking Event' },
