@@ -88,15 +88,13 @@ async def rsvp_user(
     return rsvp_events
 
 @app.get("/RSVP/Attendees/{event_id}", response_model=UserIDList, tags=["user"])
-async def rsvp_event(
-    current_club: Annotated[Club, Depends(auth_service.get_current_logged_in_club)], event_id: int
-) -> UserIDList:
+async def rsvp_event(event_id: int) -> UserIDList:
     '''
     Fetches all attendees given a certain event
     '''
     attendees = UserIDList(users=[])
     users_rsvp = DB.db.fetch_rsvp_attendees(event_id=event_id)
-    attendees.users = users_rsvp
+    attendees.users = [u[0] for u in users_rsvp]
     return attendees
 
 @app.post("/Follow", tags=["user"])
