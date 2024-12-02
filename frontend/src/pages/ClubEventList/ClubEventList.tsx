@@ -65,7 +65,15 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
         navigate(`/club/events/${event_id}`);
     }
 
-    const handleDelete = (eventId: string) => deleteEvent(token, Number(eventId));
+    const handleDelete = (eventId: string) => {
+        deleteEvent(token, Number(eventId));
+        let newList = eventList;
+        for (const key in newList) {
+            newList[key] = newList[key].filter(([event]) => event.id !== eventId);
+        }
+        setEventList(newList);
+        navigate(`/club/events`);
+    };
     const handleEdit = (eventId: string) => navigate(`/club/editEvent/${eventId}`);
 
     const scrollRow = (rowId: string, direction: "left" | "right") => {
