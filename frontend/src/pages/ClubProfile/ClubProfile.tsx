@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { NavBar } from "../NavBar/NavBar";
+import { NavBar } from "../common/NavBar";
 import { exampleClub, exampleClubEventList } from "../../constants/constants";
 import { AuthContext } from "../../context/AuthContext";
 import { Event } from "../../types/types";

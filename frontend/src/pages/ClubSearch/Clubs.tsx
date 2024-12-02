@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { NavBar } from "../NavBar/NavBar";
+import { NavBar } from "../common/NavBar";
 import { useNavigate } from "react-router-dom";
 import { fetchClubList } from "../../utils/club-utils"
 import { Club } from "../../types/types";
+import LoadingSpinner from "../common/LoadingSpinner";
 import "./Clubs.css";
 
 const Clubs: React.FC = () => {
@@ -19,6 +20,7 @@ const Clubs: React.FC = () => {
 
   // Fetch data whenever the search query changes
   useEffect(() => {
+    setLoading(true);
     const fetchData = async () => {
       try {
         const clubList = await fetchClubList();
@@ -26,8 +28,10 @@ const Clubs: React.FC = () => {
       } catch (error) {
         console.error("Error fetching clubs:", error);
       }
+      finally {
+        setLoading(false);
+      }
     };
-  
     fetchData();
   }, []);
 
@@ -49,47 +53,54 @@ const Clubs: React.FC = () => {
         <div className="navbar-container">
           <NavBar />
         </div>
+        {
+          !loading &&
+          <div className="search-bar">
+            <input
+              type="text"
+              placeholder="Search for Clubs and Organizations"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+        }
 
-        <div className="search-bar">
-          <input
-            type="text"
-            placeholder="Search for Clubs and Organizations"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
       </div>
-
-      <div className="clubs-list-container">
-        {loading && <p>Loading...</p>} {/* Show loading spinner */}
-        {error && <p className="error">{error}</p>} {/* Show error message */}
-        <div className="clubs-list">
-        {Array.isArray(filteredClubs) && filteredClubs.length > 0 && (filteredClubs.map((club, index) => (
-            <div key={index} className="club-card">
-              <div
-                className="club-logo"
-                style={{ backgroundColor: "#ccc" }}
-              ></div>
-              <div className="club-details">
-                <p className="club-name" onClick={() => goToClubProfile(club.id)}>
-                  {club.name}
-                </p>
-                <p className="club-description">
-                  {club.description?.length > 100
-                    ? `${club.description.slice(0, 100)}...`
-                    : club.description}
-                </p>
-              </div>
-              <button
-                className="follow-button"
-                onClick={() => toggleFollow(club.name)}
-              >
-                {following.includes(club.name) ? "Unfollow" : "Follow"}
-              </button>
+      {
+        loading ?
+          <LoadingSpinner />
+          :
+          <div className="clubs-list-container">
+            {error && <p className="error">{error}</p>} {/* Show error message */}
+            <div className="clubs-list">
+              {Array.isArray(filteredClubs) && filteredClubs.length > 0 && (filteredClubs.map((club, index) => (
+                <div key={index} className="club-card">
+                  <div
+                    className="club-logo"
+                    style={{ backgroundColor: "#ccc" }}
+                  ></div>
+                  <div className="club-details">
+                    <p className="club-name" onClick={() => goToClubProfile(club.id)}>
+                      {club.name}
+                    </p>
+                    <p className="club-description">
+                      {club.description?.length > 100
+                        ? `${club.description.slice(0, 100)}...`
+                        : club.description}
+                    </p>
+                  </div>
+                  <button
+                    className="follow-button"
+                    onClick={() => toggleFollow(club.name)}
+                  >
+                    {following.includes(club.name) ? "Unfollow" : "Follow"}
+                  </button>
+                </div>
+              )))}
             </div>
-          )))}
-        </div>
-      </div>
+          </div>
+      }
+
     </div>
   );
 };

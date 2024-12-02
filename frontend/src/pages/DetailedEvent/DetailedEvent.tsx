@@ -10,7 +10,7 @@ import { fetchEventById } from "../../utils/event-utils";
 import { fetchClubById } from "../../utils/club-utils";
 import { fetchRSVP, createRSVP, deleteRSVP, fetchCurrentAttendees } from "../../utils/RSVP-utils";
 import exampleFlyer from "../../constants/flyer.jpg";
-import {Alert, Box,ListItem,ListItemButton,ListItemText,AccordionDetails,Accordion,AccordionSummary} from '@mui/material';
+import {Alert, Box,ListItem,ListItemButton,ListItemText,AccordionDetails,Accordion,AccordionSummary, Backdrop, CircularProgress} from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
@@ -35,6 +35,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
     const [club, setClub] = useState<Club> (emptyClub);
     const [rsvp, setRsvp] = useState(false);
     const [attendees, setAttendees] = useState<User[]>(exampleUsers);
+    const [loading, setLoading] = useState(true); 
 
 
     useEffect(() => {
@@ -53,6 +54,9 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                 }
             } catch (err) {
                 console.error("Error loading data:", err);
+            }
+            finally {
+                setLoading(false);
             }
         };
         loadData();
@@ -314,6 +318,12 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
     
     return (
         <div id="event-detail-container">
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={loading} // Backdrop visible when loading is true
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <div className="event-detail-header">
                 <BackButton />
             </div>
