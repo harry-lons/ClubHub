@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import { exampleClubEventList, exampleRSVPList } from "../../constants/constants";
 import { Grid, Button, Card, CardContent } from '@mui/material';
-//import { ClubNavBar } from "../NavBar/ClubNavBar";
 import { deleteEvent, fetchClubEvents, fetchRSVPEvents } from "../../utils/event-utils";
 import { AuthContext } from "../../context/AuthContext";
 import "./ClubEventList.css";
