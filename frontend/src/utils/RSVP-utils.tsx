@@ -73,7 +73,7 @@ export const fetchRSVP = async (token: string): Promise<RSVP[]> => {
 
 // fetch all attendees to a certain event
 export const fetchCurrentAttendees = async(event_id:number): Promise<User[]> =>{
-	const response = await fetch(`${API_BASE_URL}/rsvp/Attendees/${event_id}`, { //NOTICE CHANGE
+	const response = await fetch(`${API_BASE_URL}/RSVP/Attendees/${event_id}`, { //NOTICE CHANGE
         method: "GET"
     })
 	if (!response.ok) {
@@ -83,7 +83,7 @@ export const fetchCurrentAttendees = async(event_id:number): Promise<User[]> =>{
 	// Parsing the response to get the data
 	let attendeeList = response.json().then((jsonResponse) => {
     	console.log("data in fetch attendees", jsonResponse);
-    	return jsonResponse.data;
+    	return jsonResponse.users;
 	});
 
 	console.log("response in fetchExpenses", attendeeList);

@@ -1,7 +1,7 @@
 import LoginSignup from "../LoginSignup/LoginSignup";
 import { ProfileCard} from "./ProfileCard";
 import { EventCard } from "./EventCard";
-import { NavBar } from "../NavBar/NavBar";
+import { NavBar } from "../common/NavBar";
 import { User,Event} from "../../types/types";
 import { emptyeUser,exampleEventList } from "../../constants/constants";
 import React, { useContext, useState,useEffect } from "react"
