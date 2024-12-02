@@ -47,7 +47,7 @@ export const ClubNavBar = () => {
         navigate('/club/events')
     }
     else if(page === 'Profile') {
-        navigate(`/clubProfile/${id}`)
+        navigate(`/club/profile`)
     }
   };
 
