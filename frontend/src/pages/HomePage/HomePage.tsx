@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { NavBar } from '../common/NavBar';
 import './HomePage.css';
+import { AuthContext } from '../../context/AuthContext';
 
 export const HomePage = () => {
     const navigate = useNavigate();
-
+    const context = useContext(AuthContext);
+    useEffect(() => {
+        console.log(context.token, context.accountType, context.id);
+    }, []);
     const [currentStep, setCurrentStep] = useState<number>(-1);
 
     const tourSteps = [
@@ -107,6 +111,7 @@ export const HomePage = () => {
                 </button>
             </div>
 
+            {context.accountType === "user"&& // if you dont have time remove this line
             <div className="tips-container">
                 <div
                     className={`tip ${isActiveStep("tour-step-create") ? "active-step" : ""}`}
@@ -133,6 +138,39 @@ export const HomePage = () => {
                     <p>Discover events and RSVP to stay in the loop with your favorite clubs.</p>
                 </div>
             </div>
+            }
+
+            {context.accountType === "club"&& // if you dont have time remove this line
+            <div className="tips-container">
+                <div
+                    className={`tip ${isActiveStep("tour-step-create") ? "active-step" : ""}`}
+                    id="tour-step-create"
+                >
+                    <img src="/profile.png" alt="Profile" />
+                    <h3>Create & Personalize</h3>
+                    <p>Check out your profile and personalize it to your liking!</p>
+                </div>
+                <div
+                    className={`tip ${isActiveStep("tour-step-explore") ? "active-step" : ""}`}
+                    id="tour-step-explore"
+                >
+                    <img src="/clubSearch.png" alt="Clubs" />
+                    <h3>Share Events!</h3>
+                    <p>Find clubs that match your interests and connect with peers.</p>
+                </div>
+                <div
+                    className={`tip ${isActiveStep("tour-step-rsvp") ? "active-step" : ""}`}
+                    id="tour-step-rsvp"
+                >
+                    <img src="/eventsList.png" alt="Events" />
+                    <h3>RSVP Now and Join the Fun</h3>
+                    <p>Discover events and RSVP to stay in the loop with your favorite clubs.</p>
+                </div>
+            </div>
+            }
+
+
+
         </div>
     );
 };
