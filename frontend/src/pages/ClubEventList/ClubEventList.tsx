@@ -28,7 +28,6 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
 
                 // Group events by date and set the state
                 const groupedEvents = await groupEventsByDate(eList);
-                const groupedEvents = await groupEventsByDate(eList);
                 setEventList(groupedEvents);
             } catch (error) {
                 console.error("Error loading events:", error);
@@ -43,9 +42,6 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
     const groupEventsByDate = async (events: Event[]): Promise<Record<string, [Event, number][]>> => {
         const result = await events.reduce(async (accPromise, event) => {
             const acc = await accPromise;
-    const groupEventsByDate = async (events: Event[]): Promise<Record<string, [Event, number][]>> => {
-        const result = await events.reduce(async (accPromise, event) => {
-            const acc = await accPromise;
             // Get the month name (e.g., "January")
             const month = event.begin_time.toLocaleString("default", { month: "long" });
 
@@ -54,21 +50,14 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
 
             // Get number of RSVPs to event
             const rsvps = await fetchCurrentAttendees(Number(event.id));
-
-            // Get number of RSVPs to event
-            const rsvps = await fetchCurrentAttendees(Number(event.id));
     
             // Add the event to the appropriate month group with a placeholder club name
-            acc[month].push([event, rsvps.length]);
             acc[month].push([event, rsvps.length]);
     
             // Sort events within the month by date and time
             acc[month].sort((a, b) => a[0].begin_time.getTime() - b[0].begin_time.getTime());
-            acc[month].sort((a, b) => a[0].begin_time.getTime() - b[0].begin_time.getTime());
     
             return acc;
-        }, Promise.resolve({} as Record<string, [Event, number][]>));
-        return result;
         }, Promise.resolve({} as Record<string, [Event, number][]>));
         return result;
     };
@@ -126,13 +115,11 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
                                     <button className="arrow-button left" onClick={() => scrollRow(`${month}-row`, "left")}>&#8249;</button>
                                     <div id={`${month}-row`} className="event-cards-row">
                                         {(events as [Event, number][]).map(([event, rsvp]) => (
-                                        {(events as [Event, number][]).map(([event, rsvp]) => (
                                             <Card key={event.id} className="event-card">
                                                 <CardContent>
                                                     <h3 onClick={() => goToDetailPage(event.id)}>{event.title}</h3>
                                                     <p>{event.location}</p>
                                                     <p>{`${event.begin_time.toLocaleDateString()} at ${event.begin_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}</p>
-                                                    <p>{rsvp} RSVPed</p>
                                                     <p>{rsvp} RSVPed</p>
                                                     <div className="event-buttons">
                                                         <Button className="edit-club-button" variant="contained" onClick={() => handleEdit(event.id)}>
