@@ -6,7 +6,7 @@ from ..authentication import service as auth_service
 from ..authentication.schemas import User
 from ..database import DB
 from ..db_store.conversion import b_club_to_f_club_full, b_event_to_f_event
-from ..db_store.models import Events, UserRSVPs
+from ..db_store.models import Events, UserRSVPs,UserIDList, UserInfo, UserList, ClubInfo, ClubList
 from ..identities.schemas import Club
 from .constants import fake_event_1, mock_events
 # from ..db_store.
@@ -15,7 +15,7 @@ from .rsvp import rsvp_user_create, rsvp_user_delete, rsvp_user_get
 # from ..app import app
 
 from .schemas import Event, ListOfEvents, EventID, EventIDList, RSVP, RSVPList, Follow,EventListInfo,ClubIDList
-from ..identities.schemas import UserIDList, UserInfo, UserList, ClubInfo, ClubList
+#from ..identities.schemas import UserIDList, UserInfo, UserList, ClubInfo, ClubList
 
 
 app = APIRouter()
