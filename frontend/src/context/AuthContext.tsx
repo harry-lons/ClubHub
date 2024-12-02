@@ -55,7 +55,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, []);
 
-  let COOKIE_EXP_DAYS = 7;
+  let COOKIE_EXP_DAYS = 1;
   const saveAuthenticationData = (
     jwt: string,
     accountType: string,
