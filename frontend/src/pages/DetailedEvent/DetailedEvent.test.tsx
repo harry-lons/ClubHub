@@ -1,23 +1,31 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter,useParams } from 'react-router-dom';
 import DetailedEvent from './DetailedEvent';
-import * as eventUtils from '../../utils/event-utils'; // Import the module to spy on
-import * as clubUtils from '../../utils/club-utils'
+import * as eventUtils from '../../utils/event-utils';
+import * as clubUtils from '../../utils/club-utils';
+import * as RSVPUtils from '../../utils/RSVP-utils';
 import { Event,Club,User,EventType } from "../../types/types";
+import { AuthContext } from '../../context/AuthContext';
 
-// Mock the utility module
+
 jest.mock('../../utils/event-utils');
-jest.mock('../../utils/event-utils');
-// Mock useParams
+jest.mock('../../utils/club-utils');
+jest.mock('../../utils/RSVP-utils', () => ({
+    createRSVP: jest.fn(),
+    deleteRSVP: jest.fn(),
+    fetchRSVP: jest.fn(),
+  }));
+
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useParams: jest.fn(),
   }));
 
-describe('DetailedEvent Component', () => {
+  
+describe('User-side DetailedEvent Component', () => {
     beforeEach(() => {
-      // Use jest.spyOn to mock the fetchEventById function
+        jest.clearAllMocks();
       jest.spyOn(eventUtils, 'fetchEventById').mockResolvedValue({
 		id: "1",
 		title: "Creative Writing Workshop: Unleash Your Imagination!",
@@ -32,11 +40,18 @@ describe('DetailedEvent Component', () => {
 		pictures: ["flyer.jpg"],
 		type: ["social", "workshop"] as EventType[],
         capacity: null
-	});
+	  });
+      jest.spyOn(clubUtils, 'fetchClubById').mockResolvedValue({
+		id : "001",
+	    name: "The Literary Society",
+	    board_members: ["Vivian Wang", "Shengqi Wu", "Harry", "Allen", "Peter", "George", "Ali", "Allison"],
+	    contact_email: ["contact@example.com"],
+        description: "The Literary Society is a vibrant community dedicated to the love of literature, fostering an environment where members can explore, discuss, and celebrate the written word. Led by a passionate team, including the dedicated board member Member 1, the club serves as a hub for book enthusiasts, writers, and creatives alike.For inquiries or more information, feel free to reach out to us at contact@example.com. Join us to connect with like-minded individuals, participate in engaging events, and deepen your appreciation for the world of literature!"
+	  });
     });
   
     afterEach(() => {
-      jest.clearAllMocks(); // Clear mocks after each test
+      jest.clearAllMocks();
     });
   
     test('calling fetchEventById', async () => {
@@ -46,7 +61,7 @@ describe('DetailedEvent Component', () => {
           <DetailedEvent which="USER" />
         </BrowserRouter>
       );
-      expect(eventUtils.fetchEventById).toHaveBeenCalled();
+      await waitFor(() => expect(eventUtils.fetchEventById).toHaveBeenCalled());
     });
 
     test('rendering the event title', async () => {
@@ -62,17 +77,157 @@ describe('DetailedEvent Component', () => {
       expect(titleElement).toBeInTheDocument();
     });
 
-    test('rendering the event title', async () => {
+    test('calling fetchClubById', async () => {
         (useParams as jest.Mock).mockReturnValue({ id: '1' });
       render(
         <BrowserRouter>
           <DetailedEvent which="USER" />
         </BrowserRouter>
       );
-      const titleElement = await screen.findByText(
-        'Creative Writing Workshop: Unleash Your Imagination!'
-      );
-      expect(titleElement).toBeInTheDocument();
+      await waitFor(() => expect(clubUtils.fetchClubById).toHaveBeenCalled());
     });
+
+    test('rendering the club name', async () => {
+        (useParams as jest.Mock).mockReturnValue({ id: '1' });
+      render(
+        <BrowserRouter>
+          <DetailedEvent which="USER" />
+        </BrowserRouter>
+      );
+      const clubNameElement = await screen.findByText(
+        'The Literary Society'
+      );
+      expect(clubNameElement).toBeInTheDocument();
+    });
+
+    test('initializing RSVP button for not RSVPed', async () => {
+        (useParams as jest.Mock).mockReturnValue({ id: '1' });
+
+        const mockAuthContext = {
+          token: 'fake-token',
+          id: '123',
+          accountType: 'USER',
+          saveToken: jest.fn(),
+          setAccountType: jest.fn(),
+          setId: jest.fn(),
+          removeToken: jest.fn(),
+        };
+
+        (RSVPUtils.fetchRSVP as jest.Mock).mockResolvedValue([]);
+
+        render(
+          <AuthContext.Provider value={mockAuthContext}>
+            <BrowserRouter>
+              <DetailedEvent which="USER" />
+            </BrowserRouter>
+          </AuthContext.Provider>
+        );
+    
+        const rsvpButton = await waitFor(() => screen.getByRole('button', { name: /RSVP/i }));
+        expect(rsvpButton).toBeInTheDocument();
+        expect(rsvpButton).toHaveTextContent('RSVP');
+    });
+
+    test('initializing RSVP button for RSVPed', async () => {
+        (useParams as jest.Mock).mockReturnValue({ id: '1' });
+
+        const mockAuthContext = {
+          token: 'fake-token',
+          id: '123',
+          accountType: 'USER',
+          saveToken: jest.fn(),
+          setAccountType: jest.fn(),
+          setId: jest.fn(),
+          removeToken: jest.fn(),
+        };
+
+        (RSVPUtils.fetchRSVP as jest.Mock).mockResolvedValue([
+            { user_id: '123', event_id: '1' },
+        ]);
+
+        render(
+          <AuthContext.Provider value={mockAuthContext}>
+            <BrowserRouter>
+              <DetailedEvent which="USER" />
+            </BrowserRouter>
+          </AuthContext.Provider>
+        );
+    
+        const rsvpButton = await waitFor(() => screen.getByRole('button', { name: /Cancel RSVP/i }));
+        expect(rsvpButton).toBeInTheDocument();
+        expect(rsvpButton).toHaveTextContent('Cancel RSVP');
+    });
+
+    test('clicking RSVP button', async () => {
+        (useParams as jest.Mock).mockReturnValue({ id: '1' });
+    
+        const mockAuthContext = {
+          token: 'fake-token',
+          id: '123',
+          accountType: 'USER',
+          saveToken: jest.fn(),
+          setAccountType: jest.fn(),
+          setId: jest.fn(),
+          removeToken: jest.fn(),
+        };
+
+        (RSVPUtils.fetchRSVP as jest.Mock).mockResolvedValue([]);
+        (RSVPUtils.createRSVP as jest.Mock).mockResolvedValue(true);
+    
+        render(
+          <AuthContext.Provider value={mockAuthContext}>
+            <BrowserRouter>
+              <DetailedEvent which="USER" />
+            </BrowserRouter>
+          </AuthContext.Provider>
+        );
+    
+        const rsvpButton = await waitFor(() => screen.getByRole('button', { name: /RSVP/i }));
+        expect(rsvpButton).toBeInTheDocument();
+        expect(rsvpButton).toHaveTextContent('RSVP');
+        
+        fireEvent.click(rsvpButton);
+
+        const updatedButton = await waitFor(() => screen.getByRole('button', { name: /Cancel RSVP/i }));
+        expect(updatedButton).toBeInTheDocument();
+        expect(updatedButton).toHaveTextContent('Cancel RSVP');
+    });
+
+    test('clicking cancel RSVP button', async () => {
+        (useParams as jest.Mock).mockReturnValue({ id: '1' });
+    
+        const mockAuthContext = {
+          token: 'fake-token',
+          id: '123',
+          accountType: 'USER',
+          saveToken: jest.fn(),
+          setAccountType: jest.fn(),
+          setId: jest.fn(),
+          removeToken: jest.fn(),
+        };
+        
+        (RSVPUtils.fetchRSVP as jest.Mock).mockResolvedValue([
+            { user_id: '123', event_id: '1' },
+        ]);
+        (RSVPUtils.deleteRSVP as jest.Mock).mockResolvedValue(true);
+    
+        render(
+          <AuthContext.Provider value={mockAuthContext}>
+            <BrowserRouter>
+              <DetailedEvent which="USER" />
+            </BrowserRouter>
+          </AuthContext.Provider>
+        );
+
+        const rsvpButton = await waitFor(() => screen.getByRole('button', { name: /Cancel RSVP/i }));
+        expect(rsvpButton).toBeInTheDocument();
+        expect(rsvpButton).toHaveTextContent('Cancel RSVP');
+    
+        fireEvent.click(rsvpButton);
+        
+        const updatedButton = await waitFor(() => screen.getByRole('button', { name: /RSVP/i }));
+        expect(updatedButton).toBeInTheDocument();
+        expect(updatedButton).toHaveTextContent('RSVP');
+      });
   });
   
