@@ -1,5 +1,7 @@
 import { createContext, useState, useEffect, ReactNode } from 'react';
 import { Event, Club, User, RSVP } from '../types/types';
+import Cookies from 'js-cookie';
+
 
 interface AuthContextType {
   token: string;
@@ -20,11 +22,11 @@ const defaultContextValue: AuthContextType = {
   token: '',
   id: '',
   accountType: '',
-  setToken: () => {},
-  setAccountType: () => {},
-  setId: () => {},
-  removeToken: () => {},
-  saveAuthenticationData: () => {},
+  setToken: () => { },
+  setAccountType: () => { },
+  setId: () => { },
+  removeToken: () => { },
+  saveAuthenticationData: () => { },
 };
 
 export const AuthContext = createContext<AuthContextType>(defaultContextValue);
