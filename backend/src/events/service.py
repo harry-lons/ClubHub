@@ -29,7 +29,7 @@ async def get_events() -> ListOfEvents:
 
 
 @app.get("/eventlistinfo", response_model=EventListInfo)
-async def get_events(
+async def get_events_full_info(
     current_user: Annotated[User, Depends(auth_service.get_current_user)]
 ) -> EventListInfo:
     # Get all events
@@ -87,7 +87,7 @@ async def rsvp_user(
     rsvp_events.rsvps = [RSVP(user_id=r.user_id,event_id=r.event_id) for r in rsvp]
     return rsvp_events
 
-@app.get("/RSVP/Attendees/{event_id}", response_model=UserIDList, tags=["user"])
+@app.get("/RSVP/Attendees/{event_id}", response_model=UserIDList, tags=["club"])
 async def rsvp_event(
     current_club: Annotated[Club, Depends(auth_service.get_current_logged_in_club)], event_id: int
 ) -> UserIDList:
