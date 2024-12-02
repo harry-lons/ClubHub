@@ -273,16 +273,24 @@ class PostgresDatabase(IAuth, IEvents):
             self.session.rollback()
             raise ValueError(f"Error unfollowing club: {e}")
 
-    def fetch_user_follows(self, user_id: str)-> List[str]:
+    def fetch_user_follows(self, user_id: str)-> List:
         '''
         Returns all the followed
         '''
         follows = self.session.query(UserFollows.club_id).filter_by(user_id=user_id).all()
         follows = [f[0] for f in follows] #parsing the row objects
-        print(type(follows))
-        if len(follows) == 0:
+        club_info = self.session.query(ClubAccounts.id, ClubAccounts.name, ClubAccounts.description, ClubAccounts.email)
+        board_members = []
+        for f in follows:
+            bm = self.session.query(ClubAccounts.members).filter_by(club_id=f).all()
+            if len(bm) > 0:
+                bm = [m.id for m in bm]
+            board_members.append(bm)
+        club_info = [list(ci)+[board_members[i]] for i,ci in enumerate(club_info)]
+        print(club_info)
+        if len(club_info) == 0:
             raise ValueError(f"User follows no club!")
-        return follows
+        return club_info
 
     def fetch_follow_status(self, user_id:str, club_id: str )-> bool:
         '''

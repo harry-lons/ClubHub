@@ -13,6 +13,15 @@ class Club(ClubID):
     name: str
     contact_email: str
 
+class ClubInfo(BaseModel):
+    id: str
+    name: str
+    description: str
+    board_members: List[str]
+    contact_email: str | List[str]
+    
+class ClubList(BaseModel):
+    clubs: List[ClubInfo]
 
 class UserID(BaseModel):
     id: str
@@ -22,7 +31,7 @@ class UserIDList(BaseModel):
     users: List[str]
 
 
-class User(BaseModel):
+class User(UserID):
     #id: int
     username: str
     first_name: str

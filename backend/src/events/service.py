@@ -15,7 +15,7 @@ from .rsvp import rsvp_user_create, rsvp_user_delete, rsvp_user_get
 # from ..app import app
 
 from .schemas import Event, ListOfEvents, EventID, EventIDList, RSVP, RSVPList, Follow,EventListInfo,ClubIDList
-from ..identities.schemas import UserIDList, UserInfo, UserList
+from ..identities.schemas import UserIDList, UserInfo, UserList, ClubInfo, ClubList
 
 
 app = APIRouter()
@@ -124,13 +124,15 @@ async def unfollow_club (
 @app.get("/user/followed", tags=["user"])
 async def user_followers(
     current_user: Annotated[User, Depends(auth_service.get_current_user)]
-)-> ClubIDList:
+)-> ClubList:
     '''
     obtains all the clubs followed by the user
     '''
-    clubs_followed = ClubIDList(clubs=[])
+    clubs_followed = ClubList(clubs=[])
     follows = DB.db.fetch_user_follows(user_id=current_user.id)
-    clubs_followed.clubs = follows
+    if len(follows) != 0:
+        follows = [ClubInfo()]
+        clubs_followed.clubs = follows
     return clubs_followed
 
 
@@ -221,7 +223,7 @@ async def user_follow_events(
     current_user: Annotated[User, Depends(auth_service.get_current_user)]
 ):
     """Returns the events that a user follows (is RSVP'd)"""
-    user = DB.db.get_user_from_id(current_user.id)
+    user = DB.db.get_user_from_id(id=current_user.id)
     events: List[Events] = user.events
     events_api = [b_event_to_f_event(e) for e in events]
     return ListOfEvents(events=events_api)
