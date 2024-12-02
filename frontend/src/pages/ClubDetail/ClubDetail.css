@@ -1,5 +1,138 @@
-#club-detail-container {
+/* #club-detail-container {
     width: 100%;
+} */
+
+.background {
+    background: url('../../../public/gradientBackground.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: repeat-y;
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    z-index: -1;
+}
+
+.clubDetail-container {
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    width: 100%; 
+    height: 100vh; 
+    margin: 0; 
+    padding: 0; 
+    flex-direction: column; 
+}
+
+.clubDetail-Card{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 80%; 
+    height: 80%;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); 
+    border: 1px solid rgba(0, 0, 0, 0.05); 
+    box-sizing: border-box; 
+    position: relative;
+}
+
+.club-identity-container{
+    position: absolute; 
+    top: 25px; 
+    left: 30px; 
+    display: flex; 
+    align-items: center;
+    gap: 15px; 
+}
+
+.club-name-container {
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    gap: 25px; 
+    width: 100%; 
+    position: relative; 
+    margin-bottom: 20px; 
+}
+
+h2 {
+    margin: 0; 
+    font-size: 2.3rem; 
+    color: black; 
+}
+
+.follow-button {
+    font-size: 16px !important;
+    color: white !important;
+    background-color: #43BD28 !important;
+    border: none !important;
+    border-radius: 8px !important;
+    width: 135px !important;
+    height: 30px !important;
+    margin: 0 !important;
+    margin-right: 5px;
+    align-items: center;
+    justify-content: center; 
+    display:flex;
+}
+
+/*********** Back Button *********/
+
+.backButton-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 2;
+}
+
+.backButton {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.backButtonImage {
+    width: 80px;
+    height: auto;
+    display: block;
+}
+
+.backButton:hover {
+    transform: scale(1.1);
+}
+
+
+.clubRow {
+    display: flex;
+    flex-direction: column; 
+    align-items: flex-start;
+    gap: 7px; 
+    position: absolute;
+    left: 25px;
+    top: 90px;
+    text-align: left;
+   
+}
+
+.club-description-container h3{
+    padding-left: 15px; 
+}
+
+
+
+
+
+
+/* #club-detail-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
 #club-detail-container h2, p {
@@ -70,3 +203,4 @@ p.club-event-clickable-title {
 p.club-event-clickable-title:hover {
     text-decoration: underline;
 }
+ */
