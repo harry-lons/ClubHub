@@ -43,7 +43,8 @@ async def get_events(
     rsvp_events: List[Events] = user.events
     rsvp_events_api = [b_event_to_f_event(e) for e in rsvp_events]
     # Get followed club ids of user
-    follow_id = ["d1187ef4-3d91-4143-ac72-5b41d8f96c37"]
+    follows = DB.db.fetch_user_follows(user_id=current_user.id)
+    follow_id = [e[0] for e in follows]
     return EventListInfo(events=all_events_api, clubs=all_clubs_api, rsvp=rsvp_events_api, follow_id=follow_id)
 
 
