@@ -207,6 +207,7 @@ export const AddEventForm= ()=>{
                             error={errors.title}
                             helperText={errors.title ? 'Event title is required' : ''}
                             sx={{ width: '100%' }} // Makes it responsive
+                            data-testid="event-name-input"
                         ></TextField>
                 </div>
 
@@ -251,6 +252,7 @@ export const AddEventForm= ()=>{
                             error={errors.location}
                             helperText={errors.location ? 'Event location is required' : ''}
                             sx={{ width: '24ch' }}
+                            data-testid="event-location-input"
                         ></TextField>
                     </div>
 
