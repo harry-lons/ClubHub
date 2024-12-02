@@ -34,7 +34,7 @@ export const deleteFollow = async (token:string,club_id: string): Promise<boolea
 };
 
 // Function to load a user's followed clubs from the backend. Method: GET
-export const getFollowed = async (token:string): Promise<Club[]> => { 
+export const getFollowed = async (token:string): Promise<string[]> => { 
 	const response = await fetch(`${API_BASE_URL}/user/followed`, { 
     	method: "GET",
 		headers:{
@@ -47,9 +47,9 @@ export const getFollowed = async (token:string): Promise<Club[]> => {
 	//const clubs: Club[] = (await response.json()).clubs;
 
 	// Parsing the response to get the data
-	let clubs = response.json().then((jsonResponse) => {
+	let clubs = await response.json().then((jsonResponse) => {
 		console.log("data in fetch attendees", jsonResponse);
-		return jsonResponse.data;
+		return jsonResponse.clubs;
 	});
 	console.log("data in fetchFollowers", clubs);
 	return clubs;
