@@ -46,7 +46,7 @@
     margin: 0 auto;
 }
 
-h2 {
+h2.header-and-button-container {
     font-size: 28px;
     font-weight: bold;
     margin-bottom: 20px;
@@ -54,6 +54,7 @@ h2 {
     color: white;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
 }
+
 
 .demo-button {
     background-color: #007bff; /* Blue background */
