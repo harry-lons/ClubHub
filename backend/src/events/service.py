@@ -15,7 +15,7 @@ from .rsvp import rsvp_user_create, rsvp_user_delete, rsvp_user_get
 # from ..app import app
 
 from .schemas import Event, ListOfEvents, EventID, EventIDList, RSVP, RSVPList, Follow,EventListInfo,ClubIDList
-from ..identities.schemas import UserIDList
+from ..identities.schemas import UserIDList, UserInfo, UserList
 
 
 app = APIRouter()
@@ -87,16 +87,18 @@ async def rsvp_user(
     rsvp_events.rsvps = [RSVP(user_id=r.user_id,event_id=r.event_id) for r in rsvp]
     return rsvp_events
 
-@app.get("/RSVP/Attendees/{event_id}", response_model=UserIDList, tags=["user"])
+@app.get("/RSVP/Attendees/{event_id}", response_model=UserList, tags=["user"])
 async def rsvp_event(
     current_club: Annotated[Club, Depends(auth_service.get_current_logged_in_club)], event_id: int
-) -> UserIDList:
+) -> UserList:
     '''
     Fetches all attendees given a certain event
     '''
-    attendees = UserIDList(users=[])
+    attendees = UserList(users=[])
     users_rsvp = DB.db.fetch_rsvp_attendees(event_id=event_id)
-    attendees.users = users_rsvp
+    if len(users_rsvp) != 0:
+        users_rsvp = [UserInfo(id=u[0], username=u[1], first_name=u[2], last_name=u[3], followed_clubs=u[4]) for u in users_rsvp]
+        attendees.users = users_rsvp
     return attendees
 
 @app.post("/Follow", tags=["user"])
@@ -142,13 +144,15 @@ async def follow_status(
     res = DB.db.fetch_follow_status(user_id=current_user.id, club_id=club_id)
     return res
 
-@app.get("/club/followers", response_model=UserIDList, tags=["club"])
+@app.get("/club/followers", response_model=UserList, tags=["club"])
 async def fetch_followers(
     current_club: Annotated[Club, Depends(auth_service.get_current_logged_in_club)]
-)->UserIDList:
-    followers = UserIDList(users=[])
+)->UserList:
+    followers = UserList(users=[])
     user_followers = DB.db.fetch_club_followers(club_id=current_club.id)
-    followers.users = user_followers
+    if len(user_followers) != 0:
+        user_followers = [UserInfo(id=user_followers[i][0], username=user_followers[i][1], first_name=user_followers[i][2], last_name=user_followers[i][3], followed_clubs=user_followers[i][4]) for i in range(len(user_followers))]
+        followers.users = user_followers
     return followers
     
 

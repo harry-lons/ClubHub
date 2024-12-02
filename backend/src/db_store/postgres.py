@@ -210,7 +210,7 @@ class PostgresDatabase(IAuth, IEvents):
         return rsvps
 
 
-    def fetch_rsvp_attendees(self, event_id: int)-> List[str]:
+    def fetch_rsvp_attendees(self, event_id: int)-> List:
         '''
         Fetches all the users who have RSVP'd for a
         specified event
@@ -218,9 +218,21 @@ class PostgresDatabase(IAuth, IEvents):
         #event = self._get_by(Events, id=event_id) ## fetch the event
         users = self.session.query(UserRSVPs.user_id).filter_by(event_id=event_id).all()
         users = [u[0] for u in users]
-        if len(users) == 0:
+        if len(users)==0:
+            return []
+        user_info = self.session.query(UserAccounts.id, UserAccounts.email, UserAccounts.first_name, UserAccounts.last_name).filter(UserAccounts.id.in_(users)).all()
+        user_follows = []
+        for u in users:
+            uf = self.session.query(UserFollows.club_id).filter_by(user_id=u).all()
+            if len(uf) > 0:
+                uf = [uf[i][0] for i in range(len(uf))]
+            user_follows.append(uf)
+        user_info = [list(ui)+[user_follows[i]] for i,ui in enumerate(user_info)]
+        ## To be continued
+        print(user_info)
+        if len(user_info) == 0:
             raise ValueError(f"Event is not an RSVP'd event")
-        return users
+        return user_info
 
 
 
@@ -282,15 +294,28 @@ class PostgresDatabase(IAuth, IEvents):
         else:
             return True
 
-    def fetch_club_followers(self, club_id: str)-> List[str]:
+    def fetch_club_followers(self, club_id: str)-> List:
         '''
         Fetches all the users who have followed a club
         '''
         users = self.session.query(UserFollows.user_id).filter_by(club_id=club_id).all()
-        users = [u[0] for u in users] #parsing the row objects
+        users = [u[0] for u in users]
+        if len(users)==0:
+            return []
+        user_info = self.session.query(UserAccounts.id, UserAccounts.email, UserAccounts.first_name, UserAccounts.last_name).filter(UserAccounts.id.in_(users)).all()
+        user_follows = []
+        for u in users:
+            uf = self.session.query(UserFollows.club_id).filter_by(user_id=u).all()
+            if len(uf) > 0:
+                uf = [uf[i][0] for i in range(len(uf))]
+            user_follows.append(uf)
+        # print(f"clubs followed by users: {user_follows}")
+        user_info = [list(ui)+[user_follows[i]] for i,ui in enumerate(user_info)]
+        ## To be continued
+        print(user_info)
         if len(users) == 0:
             raise ValueError(f"Club has no followers!")
-        return users
+        return user_info
 
 
     def _get_by(self, model: Type[M], **filters) -> M:

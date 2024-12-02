@@ -22,11 +22,21 @@ class UserIDList(BaseModel):
     users: List[str]
 
 
-class User(UserID):
-    # id: int
+class User(BaseModel):
+    #id: int
     username: str
     first_name: str
     last_name: str
+
+class UserInfo(BaseModel):
+    id: str
+    username: str
+    first_name: str
+    last_name: str
+    followed_clubs: List[str]
+    
+class UserList(BaseModel):
+    users: List[UserInfo]
 
 
 class UserAndClubs(User):
