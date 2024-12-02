@@ -7,7 +7,7 @@ import { TextField, Button, MenuItem } from '@mui/material';
 import "./DetailedEvent.css"
 import {AuthContext} from "../../context/AuthContext"
 import { fetchEventById } from "../../utils/event-utils";
-import { fetchClubById } from "../../utils/club-utils";
+import { fetchClubById, fetchClubWho } from "../../utils/club-utils";
 import { fetchRSVP, createRSVP, deleteRSVP, fetchCurrentAttendees } from "../../utils/RSVP-utils";
 import exampleFlyer from "../../constants/flyer.jpg";
 import {Alert, Box,ListItem,ListItemButton,ListItemText,AccordionDetails,Accordion,AccordionSummary, Backdrop, CircularProgress} from '@mui/material';
@@ -36,6 +36,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
     const [rsvp, setRsvp] = useState(false);
     const [attendees, setAttendees] = useState<User[]>(exampleUsers);
     const [loading, setLoading] = useState(true); 
+    const [owner,setOwner] = useState<Club>(emptyClub);
 
 
     useEffect(() => {
@@ -60,6 +61,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
             }
         };
         loadData();
+        if(context.accountType === "club") loadClubIdentity();
     }, [id]);
 
     const loadEvent = async () => {
@@ -104,6 +106,14 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
             setAttendees(AttendeeList);
         }catch(err:any){
             console.error("Error loading Attendee List:", err.message);
+        }
+    }
+    const loadClubIdentity = async () =>{
+        try{
+            const owner_ = await fetchClubWho(token);
+            setOwner(owner_);
+        }catch (err:any){
+            console.error("Error loading user:", err.message);
         }
     }
 
@@ -333,7 +343,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                             <h2>{event.title}</h2>
                         </div>
                         {
-                            which == "CLUB" ?
+                            (which == "CLUB")&&(owner.id===event.club_id) ?
                             <EditButton /> :
                             which == "USER" ?
                             <RSVPButton /> :

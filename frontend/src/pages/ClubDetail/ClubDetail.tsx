@@ -5,7 +5,7 @@ import {exampleClub, exampleUsers, exampleEventList, emptyClub, emptyEventList }
 import {AuthContext} from "../../context/AuthContext"
 import { fetchClubEvents} from "../../utils/event-utils";
 import { createFollow, deleteFollow, fetchFollowers, fetchFollowStatus } from "../../utils/follow-utils";
-import { fetchClubById } from "../../utils/club-utils";
+import { fetchClubById, fetchClubWho } from "../../utils/club-utils";
 import { Follow } from "../../types/types";
 import {Alert, Box,List,ListItem,ListItemText,AccordionDetails,Accordion,AccordionSummary} from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
@@ -34,14 +34,14 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
     const [follow, setFollow] = useState(false);
     const [loading, setLoading] = useState(true); // New loading state
     const [numFollowers,setNumFollowers] = useState(0);
+
     useEffect(() => {
         if (!id) return;
         loadEvent();
         loadClub();
         if(context.accountType === "user") loadFollowStatus();
         if(context.accountType === "club") loadFollowerList();
-        if(context.accountType === "user") loadFollowStatus();
-        if(context.accountType === "club") loadFollowerList();
+        
     }, [id]);
 
     const loadEvent = async () => {
@@ -66,6 +66,7 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
             console.error("Error loading event:", err.message);
         }
     };
+
 
     const loadClub = async () => {
         try {
