@@ -4,18 +4,28 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from ..authentication import service as auth_service
 from ..authentication.schemas import User
+from ..authentication.utils import useracc_to_user
 from ..database import DB
 from ..db_store.conversion import b_club_to_f_club_full, b_event_to_f_event
 from ..db_store.models import Events, UserRSVPs
-from ..identities.schemas import Club
+from ..identities.schemas import Club, UserIDList, UserList
 from .constants import fake_event_1, mock_events
+
 # from ..db_store.
 from .rsvp import rsvp_user_create, rsvp_user_delete, rsvp_user_get
+from .schemas import (
+    RSVP,
+    ClubIDList,
+    Event,
+    EventID,
+    EventIDList,
+    EventListInfo,
+    Follow,
+    ListOfEvents,
+    RSVPList,
+)
 
 # from ..app import app
-
-from .schemas import Event, ListOfEvents, EventID, EventIDList, RSVP, RSVPList, Follow,EventListInfo,ClubIDList
-from ..identities.schemas import UserIDList
 
 
 app = APIRouter()
@@ -29,7 +39,7 @@ async def get_events() -> ListOfEvents:
 
 
 @app.get("/eventlistinfo", response_model=EventListInfo)
-async def get_events(
+async def get_events_full_info(
     current_user: Annotated[User, Depends(auth_service.get_current_user)]
 ) -> EventListInfo:
     # Get all events
@@ -43,8 +53,14 @@ async def get_events(
     rsvp_events: List[Events] = user.events
     rsvp_events_api = [b_event_to_f_event(e) for e in rsvp_events]
     # Get followed club ids of user
-    follow_id = ["d1187ef4-3d91-4143-ac72-5b41d8f96c37"]
-    return EventListInfo(events=all_events_api, clubs=all_clubs_api, rsvp=rsvp_events_api, follow_id=follow_id)
+    follows = DB.db.fetch_user_follows(user_id=current_user.id)
+    follow_id = [e[0] for e in follows]
+    return EventListInfo(
+        events=all_events_api,
+        clubs=all_clubs_api,
+        rsvp=rsvp_events_api,
+        follow_id=follow_id,
+    )
 
 
 @app.get("/event/{id}", response_model=Event)
@@ -70,7 +86,7 @@ async def rsvp_delete(
 ) -> bool:
     """Removes a RSVP of the currently loged in user to event `event_id`. Returns a boolean
     determining whether the operation was successful."""
-    #res = await rsvp_user_delete(current_user.id, event_id)
+    # res = await rsvp_user_delete(current_user.id, event_id)
     res = DB.db.remove_rsvp_user(current_user.id, event_id)
     return res
 
@@ -79,78 +95,84 @@ async def rsvp_delete(
 async def rsvp_user(
     current_user: Annotated[User, Depends(auth_service.get_current_user)]
 ) -> RSVPList:
-    '''
-    Fetches all the events the user has RSVP'd to 
-    '''
+    """
+    Fetches all the events the user has RSVP'd to
+    """
     rsvp_events = RSVPList(rsvps=[])
     rsvp = DB.db.fetch_rsvp(user_id=current_user.id)
-    rsvp_events.rsvps = [RSVP(user_id=r.user_id,event_id=r.event_id) for r in rsvp]
+    rsvp_events.rsvps = [RSVP(user_id=r.user_id, event_id=r.event_id) for r in rsvp]
     return rsvp_events
 
-@app.get("/RSVP/Attendees/{event_id}", response_model=UserIDList, tags=["user"])
-async def rsvp_event(
-    current_club: Annotated[Club, Depends(auth_service.get_current_logged_in_club)], event_id: int
-) -> UserIDList:
-    '''
+
+@app.get("/RSVP/Attendees/{event_id}", response_model=UserList, tags=["user"])
+async def rsvp_event(event_id: int) -> UserList:
+    """
     Fetches all attendees given a certain event
-    '''
-    attendees = UserIDList(users=[])
+    """
+    attendees = UserList(users=[])
     users_rsvp = DB.db.fetch_rsvp_attendees(event_id=event_id)
-    attendees.users = users_rsvp
+    attendees.users = [
+        useracc_to_user(DB.db.get_user_from_id(u[0])) for u in users_rsvp
+    ]
     return attendees
 
+
 @app.post("/Follow", tags=["user"])
-async def follow_club (
-    current_user: Annotated[User, Depends(auth_service.get_current_user)], follow: Follow
-)-> bool:
-    '''
+async def follow_club(
+    current_user: Annotated[User, Depends(auth_service.get_current_user)],
+    follow: Follow,
+) -> bool:
+    """
     follows a certain club
-    '''
+    """
     res = DB.db.follow_club(user_id=current_user.id, club_id=follow.club_id)
     return res
 
+
 @app.delete("/unfollow/{club_id}", tags=["user"])
-async def unfollow_club (
+async def unfollow_club(
     current_user: Annotated[User, Depends(auth_service.get_current_user)], club_id: str
-)-> bool:
-    '''
+) -> bool:
+    """
     unfollows a certain club
-    '''
+    """
     res = DB.db.unfollow_club(user_id=current_user.id, club_id=club_id)
     return res
+
 
 @app.get("/user/followed", tags=["user"])
 async def user_followers(
     current_user: Annotated[User, Depends(auth_service.get_current_user)]
 )-> ClubIDList:
-    '''
+    """
     obtains all the clubs followed by the user
-    '''
+    """
     clubs_followed = ClubIDList(clubs=[])
     follows = DB.db.fetch_user_follows(user_id=current_user.id)
-    clubs_followed.clubs = follows
+    clubs_followed.clubs = [e[0] for e in follows]
     return clubs_followed
 
 
 @app.get("/followed/{club_id}", tags=["user"])
 async def follow_status(
     current_user: Annotated[User, Depends(auth_service.get_current_user)], club_id: str
-)->bool:
-    '''
+) -> bool:
+    """
     check if user follows a certain club
-    '''
+    """
     res = DB.db.fetch_follow_status(user_id=current_user.id, club_id=club_id)
     return res
+
 
 @app.get("/club/followers", response_model=UserIDList, tags=["club"])
 async def fetch_followers(
     current_club: Annotated[Club, Depends(auth_service.get_current_logged_in_club)]
-)->UserIDList:
+) -> UserIDList:
     followers = UserIDList(users=[])
     event_followers = DB.db.fetch_club_followers(club_id=current_club.id)
     followers.users = event_followers
     return followers
-    
+
 
 @app.post("/club/event", tags=["club", "event"])
 async def add_event(
@@ -162,14 +184,14 @@ async def add_event(
     Pass in an Event object. The `id` attribute and `club_id` attribute can be anything, they are
     ignored."""
     # TODO change return to EventID
-    # try:
-    event_id = DB.db.create_event(new_event, current_club.id)
-    return event_id
-    # except ValueError:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_400_BAD_REQUEST,
-    #         detail="Error",
-    #     )
+    try:
+        event_id = DB.db.create_event(new_event, current_club.id)
+        return event_id
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Error",
+        )
 
 
 @app.patch("/club/event", tags=["club", "event"])
@@ -183,11 +205,11 @@ async def update_event(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Updated event's club id does not match yours.",
         )
-    # try:
-    DB.db.edit_event(event)
-    return True
-    # except ValueError as exc:
-    #     return False
+    try:
+        DB.db.edit_event(event)
+        return True
+    except ValueError as exc:
+        return False
 
 
 @app.delete("/club/event/{event_id}", tags=["club", "event"])
@@ -205,11 +227,11 @@ async def delete_event(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Updated event's club id does not match yours.",
         )
-    # try:
-    DB.db.delete_event(event_id)
-    return True
-    # except ValueError as exc:
-    #     return False
+    try:
+        DB.db.delete_event(event_id)
+        return True
+    except ValueError as exc:
+        return False
 
 
 @app.get("/user/myevents", response_model=ListOfEvents, tags=["user", "event"])
@@ -230,6 +252,7 @@ async def get_club_events(club_id: str):
     events = ListOfEvents(events=[b_event_to_f_event(event) for event in club.events])
     return events
 
+
 # @app.get("/events/past", response_model=EventCalendarData, tags=["club", "event"])
 # async def user_past_events(
 #     current_club: Annotated[Club, Depends(auth_service.get_current_logged_in_club)],
@@ -237,11 +260,11 @@ async def get_club_events(club_id: str):
 #     """Returns the events that a user has attended in the past."""
 #     user = DB.db.get_user_from_id(current_user.id)
 #     now = datetime.now(timezone.utc)  # Current timestamp in UTC
-    
+
 #     # Filter the user's events to include only those with end_time < now
 #     past_events = [event for event in user.events if event.end_time < now]
-    
+
 #     # Convert the filtered events to the required API format
 #     events_api = [b_event_to_f_event(event) for event in past_events]
-    
+
 #     return EventCalendarData(events=events_api)

@@ -50,7 +50,7 @@ async def upload_profile_picture(
 @app.get(
     "/myself/profile_picture",
     responses={200: {"content": {"image/png": {}}}},
-    response_class=FileResponse,
+    response_class=Response,
 )
 async def get_profile_picture(
     current_user: Annotated[User, Depends(auth_service.get_current_user)],

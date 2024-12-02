@@ -7,7 +7,7 @@ import { TextField, Button, MenuItem } from '@mui/material';
 import "./DetailedEvent.css"
 import {AuthContext} from "../../context/AuthContext"
 import { fetchEventById } from "../../utils/event-utils";
-import { fetchClubById } from "../../utils/club-utils";
+import { fetchClubById, fetchClubWho } from "../../utils/club-utils";
 import { fetchRSVP, createRSVP, deleteRSVP, fetchCurrentAttendees } from "../../utils/RSVP-utils";
 import exampleFlyer from "../../constants/flyer.jpg";
 import {Alert, Box,ListItem,ListItemButton,ListItemText,AccordionDetails,Accordion,AccordionSummary, Backdrop, CircularProgress} from '@mui/material';
@@ -36,6 +36,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
     const [rsvp, setRsvp] = useState(false);
     const [attendees, setAttendees] = useState<User[]>(exampleUsers);
     const [loading, setLoading] = useState(true); 
+    const [owner,setOwner] = useState<Club>(emptyClub);
 
 
     useEffect(() => {
@@ -46,10 +47,10 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                 if (event_clubId_) {
                     await loadClub(event_clubId_);
                 }
-                if (which === "USER") {
+                if (context.accountType === "user") {
                     loadRSVP();
                 }
-                if (which === "CLUB") {
+                if (context.accountType === "club") {
                     loadAttendees();
                 }
             } catch (err) {
@@ -60,6 +61,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
             }
         };
         loadData();
+        if(context.accountType === "club") loadClubIdentity();
     }, [id]);
 
     const loadEvent = async () => {
@@ -100,10 +102,18 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
     //load all the RSVP for the event
     const loadAttendees = async ()=>{
         try{
-            const AttendeeList = await fetchCurrentAttendees(Number(event.id));
+            const AttendeeList = await fetchCurrentAttendees(Number(id));
             setAttendees(AttendeeList);
         }catch(err:any){
             console.error("Error loading Attendee List:", err.message);
+        }
+    }
+    const loadClubIdentity = async () =>{
+        try{
+            const owner_ = await fetchClubWho(token);
+            setOwner(owner_);
+        }catch (err:any){
+            console.error("Error loading user:", err.message);
         }
     }
 
@@ -333,9 +343,9 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                             <h2>{event.title}</h2>
                         </div>
                         {
-                            which == "CLUB" ?
+                            (context.accountType == "club")&&(owner.id===event.club_id) ?
                             <EditButton /> :
-                            which == "USER" ?
+                            context.accountType == "user" ?
                             <RSVPButton /> :
                             null
                         }
@@ -378,7 +388,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                     <h3>Recurring</h3>
                     {handleRecur(event)}
                 </div>
-                {(which === "CLUB") && 
+                {(context.accountType === "club") && 
                 <div className = "event-num-attendees">
                     <h3>Attendees</h3>
                     <p>Number of Current Attendees: {attendees.length}</p>

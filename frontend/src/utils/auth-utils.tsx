@@ -92,6 +92,7 @@ export const whoami = async (endpoint: string, token: string): Promise<string> =
     }
 };
 
+
 export const validateLoginInput = (enteredEmail: string, enteredPassword: string) => {
     let ret = {
         emailMessage: "",
