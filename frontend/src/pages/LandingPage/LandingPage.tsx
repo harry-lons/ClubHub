@@ -8,15 +8,18 @@ import createCache from '@emotion/cache';
 
 import './LandingPage.css';
 
-// Cache allows a .css file to overwrite MUI styles. Basically, we
-// will be able to use a css file to style MUI stuff
-// See https://github.com/mui/material-ui/issues/38142
-const cache = createCache({
-    key: 'css',
-    prepend: true,
-});
+
 
 export const LandingPage = () => {
+
+
+    // Cache allows a .css file to overwrite MUI styles. Basically, we
+    // will be able to use a css file to style MUI stuff
+    // See https://github.com/mui/material-ui/issues/38142
+    const cache = createCache({
+        key: 'css',
+        prepend: true,
+    });
 
     const navigate = useNavigate();
 
