@@ -1,33 +1,15 @@
-import FollowButton from "../ClubDetail/FollowButton";
-import React, { useEffect, useState, useContext } from "react";
+import React from "react";
 import { Club } from "../../types/types";
-import { fetchFollowStatus } from "../../utils/follow-utils";
-import { AuthContext } from "../../context/AuthContext";
+import FollowButton from "../ClubDetail/FollowButton";
 
 interface ClubCardProps {
   club: Club;
+  followStatus: boolean;
   goToClubProfile: (clubId: string) => void;
 }
 
-const ClubCard: React.FC<ClubCardProps> = ({ club, goToClubProfile }) => {
-  const [follow, setFollow] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
-  const { token } = useContext(AuthContext); // Assuming the token is stored in AuthContext
-
-  useEffect(() => {
-    const loadFollowStatus = async () => {
-      try {
-        const status = await fetchFollowStatus(token, club.id);
-        setFollow(status as boolean);
-      } catch (err: any) {
-        console.error("Error loading Follow Status:", err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadFollowStatus();
-  }, [club.id, token]);
+const ClubCard: React.FC<ClubCardProps> = ({ club, followStatus, goToClubProfile }) => {
+  const [follow, setFollow] = React.useState<boolean>(followStatus);
 
   return (
     <div className="club-card">
@@ -42,11 +24,12 @@ const ClubCard: React.FC<ClubCardProps> = ({ club, goToClubProfile }) => {
             : club.description}
         </p>
       </div>
-      {loading ? (
-        <p>Loading...</p> // Display a loading message or spinner while fetching the follow status
-      ) : (
-        <FollowButton follow={follow} setFollow={setFollow} club_id={club.id} showMessages={false} />
-      )}
+      <FollowButton
+        follow={follow}
+        setFollow={setFollow}
+        club_id={club.id}
+        showMessages={false} // Ensure showMessages is false
+      />
     </div>
   );
 };

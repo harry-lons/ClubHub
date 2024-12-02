@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { NavBar } from "../common/NavBar";
 import { useNavigate } from "react-router-dom";
 import { fetchClubList } from "../../utils/club-utils";
+import { getFollowed } from "../../utils/follow-utils";
 import { Club } from "../../types/types";
 import LoadingSpinner from "../common/LoadingSpinner";
-import ClubCard from "./ClubCard"; // Import the ClubCard component
+import ClubCard from "./ClubCard";
+import { AuthContext } from "../../context/AuthContext";
 import "./Clubs.css";
 
 const Clubs: React.FC = () => {
@@ -12,39 +14,36 @@ const Clubs: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [followedClubs, setFollowedClubs] = useState<Set<string>>(new Set());
   const navigate = useNavigate();
-  const [following, setFollowing] = useState<string[]>([]);
+  const { token } = useContext(AuthContext);
 
   const filteredClubs = clubs.filter((club) =>
     club.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   useEffect(() => {
-    setLoading(true);
     const fetchData = async () => {
+      setLoading(true);
       try {
         const clubList = await fetchClubList();
         setClubs(clubList);
+
+        const followedList = await getFollowed(token);
+        setFollowedClubs(new Set(followedList));
       } catch (error) {
-        console.error("Error fetching clubs:", error);
-        setError("Failed to fetch clubs.");
+        console.error("Error fetching data:", error);
+        setError("Failed to fetch data.");
       } finally {
         setLoading(false);
       }
     };
+
     fetchData();
-  }, []);
+  }, [token]);
 
   const goToClubProfile = (clubId: string) => {
     navigate(`/clubDetail/${clubId}`);
-  };
-
-  const toggleFollow = (clubName: string) => {
-    setFollowing((prev) =>
-      prev.includes(clubName)
-        ? prev.filter((name) => name !== clubName)
-        : [...prev, clubName]
-    );
   };
 
   return (
@@ -68,15 +67,14 @@ const Clubs: React.FC = () => {
         <div className="clubs-list-container">
           {error && <p className="error">{error}</p>}
           <div className="clubs-list">
-            {Array.isArray(filteredClubs) &&
-              filteredClubs.length > 0 &&
-              filteredClubs.map((club, index) => (
-                <ClubCard
-                  key={club.id}
-                  club={club}
-                  goToClubProfile={goToClubProfile}
-                />
-              ))}
+            {filteredClubs.map((club) => (
+              <ClubCard
+                key={club.id}
+                club={club}
+                followStatus={followedClubs.has(club.id)}
+                goToClubProfile={goToClubProfile}
+              />
+            ))}
           </div>
         </div>
       )}
