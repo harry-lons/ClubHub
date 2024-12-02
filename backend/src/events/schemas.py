@@ -3,6 +3,8 @@ from typing import Dict, List, Optional, Tuple, Type
 
 from pydantic import BaseModel, Field
 
+from ..identities.schemas import ClubWithBoardMembers
+
 
 class EventID(BaseModel):
     id: int
@@ -19,21 +21,38 @@ class Event(EventID):
     location: str = Field(default="")
     begin_time: datetime
     end_time: datetime
-    recurrence: Tuple[bool, Optional[int], Optional[datetime]]
+    recurrence: bool
+    recurrence_type: Optional[int]
+    stop_date: Optional[datetime]
     capacity: Optional[int]
     summary: str = Field(default="")
     pictures: List[str] = Field(default=[])
     type: List[str]
 
 
-class EventCalendarData(BaseModel):
+class ListOfEvents(BaseModel):
     events: List[Event]
+    
+class ClubIDList(BaseModel):
+    clubs:List[str]
 
+class EventListInfo(BaseModel):
+    events: List[Event]
+    clubs: List[ClubWithBoardMembers]
+    rsvp: List[Event]
+    follow_id: List[str]
 
 class RSVP(BaseModel):
-    user_id: int
+    user_id: str
     event_id: int
+    
+class Follow(BaseModel):
+    user_id: str
+    club_id: str
 
+class RSVPList(BaseModel):
+    rsvps: List[RSVP]
 
 class EventIDList(BaseModel):
     events: List[int]
+    

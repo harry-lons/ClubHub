@@ -1,0 +1,239 @@
+.background {
+    background: url('../../../public/gradientBackground.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: repeat-y;
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    z-index: -1;
+}
+
+.eventDetail-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh; /* Ensures the form centers vertically */
+}
+
+.eventDetail-Card {
+    display: flex;
+    flex-direction: row; 
+    justify-content: space-between; 
+    align-items: flex-start; 
+    gap: 20px; 
+    width: 80%;
+    height: 85%; 
+    max-width: 900px; 
+    padding: 15px; 
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    overflow: hidden; /* Prevent overflow */
+    margin: auto; /* Center the card */
+    position: relative; /* Enable positioning for the submit button */
+}
+
+.eventColumn1, .eventColumn2 {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Adjust spacing between form sections */
+    width: 48%; /* Ensure both columns take equal space */
+}
+
+.eventColumn1 {
+    align-items: flex-start; 
+}
+
+.eventColumn2 {
+    align-items: flex-start; 
+}
+
+.eventName h3,
+.eventType h3,
+.eventLocation h3,
+.eventTime h3,
+.eventCapacity h3,
+.eventRecurring h3 {
+    font-size: 16px; /* Adjust font size */
+    font-weight: bold; /* Make it bold */
+    color: #4A3F8C; /* Keep the purple color */
+    margin-bottom: 10px; /* Space below the header */
+    text-align: left; /* Align text to the left */
+    width: 100%; /* Ensure the header spans the full width */
+}
+
+/***************** BUTTONS *****************/
+
+.backButton-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 2;
+}
+
+.backButton {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.backButtonImage {
+    width: 60px;
+    height: auto;
+    display: block;
+}
+
+.backButton:hover {
+    transform: scale(1.1);
+}
+
+.submitButton {
+    position: absolute;
+    bottom: 20px; /* Adjust spacing from the bottom */
+    right: 20px; /* Adjust spacing from the right */
+}
+
+/***************** EVENT NAME *****************/
+.eventName, 
+.eventType, 
+.eventLocation, 
+.eventTime, 
+.eventCapacity, 
+.eventRecurring, 
+.eventDescription {
+    width: 100%;
+}
+
+.eventName .form-control,
+.eventType .MuiFormControl-root,
+.eventLocation .form-control,
+.eventCapacity .form-control,
+.eventDescription .form-control {
+
+    width: 100%;
+    max-width: 100%;
+    border-radius: 8px;
+    background-color: #EEE8F8; /* Light purple background */
+    padding: 12px;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #333;
+    border: none;
+}
+
+
+.eventName .form-control:focus,
+.eventLocation .form-control:focus,
+.eventCapacity .form-control:focus,
+.eventDescription .form-control:focus {
+    outline: none;
+    border-color: #4A3F8C; /* Focus border color */
+    box-shadow: 0 0 4px #4A3F8C; /* Add focus shadow */
+}
+
+/***************** EVENT TYPE *****************/
+.eventType .MuiFormControl-root {
+    width: 100%;
+    font-size: 14px;
+    border-radius: 8px;
+    background-color: #EEE8F8;
+}
+
+.eventType .MuiSelect-root {
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/***************** DATE & TIME *****************/
+.eventTime {
+    display: flex;
+    flex-direction: column; /* Stack vertically */
+    gap: 10px;
+}
+
+.eventTime .MuiFormControl-root {
+    width: 100%;
+    max-width: 100%;
+}
+
+.time-picker-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Tighten spacing between Begin and End Time */
+}
+
+.time-picker-container .MuiFormControl-root {
+    width: 100%; /* Stretch to fit the container */
+}
+
+/***************** CAPACITY *****************/
+.eventCapacity .form-control {
+    background-color: #EEE8F8;
+    border-radius: 8px;
+    padding: 12px;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #333;
+    width: 100%;
+}
+
+/***************** RECURRING *****************/
+.eventRecurring {
+    display: flex;
+    flex-direction: column; /* Ensure vertical stacking of items */
+    align-items: flex-start; /* Align items to the left */
+    gap: 15px; /* Add consistent spacing */
+    width: 100%; /* Ensure it uses the full width of the container */
+    box-sizing: border-box; /* Include padding and border in width */
+}
+
+.eventRecurring .frequency-container {
+    display: flex;
+    flex-direction: row; /* Align Frequency and Stop Date side-by-side */
+    gap: 20px; 
+    width: 100%;
+}
+
+.eventRecurring .MuiFormControl-root {
+    width: calc(50% - 10px); 
+    min-width: 150px;
+    flex: 1; 
+}
+
+/***************** EVENT DESCRIPTION *****************/
+.eventDescription {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    
+
+}
+
+.eventDescription h3{
+    font-size: 16px; 
+    font-weight: bold; 
+    color: #4A3F8C;
+    margin-bottom: 10px;
+    text-align: left; 
+    width: 100%;
+    align-items: flex-end;
+}
+
+.eventDescription .form-control {
+    background-color: #EEE8F8;
+    border-radius: 8px;
+    padding: 12px;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #333;
+    width: 100%;
+    height: 100%;
+}
+
+
+

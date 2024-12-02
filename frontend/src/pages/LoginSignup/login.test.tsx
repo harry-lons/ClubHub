@@ -1,12 +1,16 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+
 import App from '../../App';
+import LoginSignup from './LoginSignup';
 
 describe('Login', () => {
     test('Test login page render', () => {
         render(
-            <App />
+            <MemoryRouter initialEntries={['/login']}>
+                <App />
+            </MemoryRouter>
         );
 
         // Check that "LOG IN" is on the page twice
@@ -27,7 +31,9 @@ describe('Login', () => {
 
     test('Simulate successful login', async () => {
         render(
-            <App />
+            <MemoryRouter initialEntries={['/login']}>
+                <App />
+            </MemoryRouter>
         );
 
         // Enter 'username1@example.com' as email
@@ -45,7 +51,7 @@ describe('Login', () => {
 
         // Assert that navigation to the /events page happens upon successful login
         await waitFor(() => {
-            
+
             // Check for the existence of navbar
             const NavbarTexts = screen.getAllByText('SoCalSocial');
             expect(NavbarTexts).toHaveLength(2);
@@ -55,7 +61,7 @@ describe('Login', () => {
             expect(screen.getByText('RSVP Events')).toBeInTheDocument();
 
             // Check for the existence of Followed Events checkbox filter
-            expect(screen.getByText('Followed Events')).toBeInTheDocument();
+            expect(screen.getByText('Followed Clubs')).toBeInTheDocument();
         });
     });
 })

@@ -1,9 +1,8 @@
-
 .HomePageContainer {
     background: url('../../../public/gradientBackground.png');
-    background-size: cover;
+    background-size: cover; 
     background-position: center;
-    background-attachment: fixed;
+    background-attachment: scroll; 
     background-repeat: repeat-y;
     display: flex;
     flex-direction: column;
@@ -14,15 +13,15 @@
     color: #fff;
     font-family: Arial, sans-serif;
     overflow: auto;
-    
 }
+
 
 .navbarContainer {
     width: 100%;
     position: sticky;
     top: 0;
     z-index: 1000;
-    background-color: #4A3F8C; /* Matches NavBar color */
+    background-color: #4A3F8C;
     height: 4rem;
 }
 
@@ -47,55 +46,106 @@
     margin: 0 auto;
 }
 
-.web-instruction-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    margin-top: 20px;
+h2 {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
 }
 
-.web-instruction-container p {
-    font-size: 18px;
-    font-weight: bold;
-    color: #ffffff;
+.demo-button {
+    background-color: #007bff; /* Blue background */
+    color: #ffffff; /* White font */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 20px; /* Add padding */
+    font-size: 16px; /* Font size */
+    font-weight: bold; /* Bold text */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
 }
-.web-updates-container,
-.web-instruction-container {
+
+.demo-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+
+/* Tips styling */
+.tips-container {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 80%;
-    margin-top: 20px;
-    background-color: rgba(255, 255, 255, 0.1); /* White transparent background */
-    padding: 18px;
-    border-radius: 10px; /* Smooth rounded corners */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
-}
-.web-update-4,
-.web-clubs-container,
-.web-events-container,
-.web-profile-container {
-    display: block; /* Switch to block layout */
-    text-align: left; 
     justify-content: center;
-    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
     margin: 20px 0;
     width: 90%;
+}
+
+.tip {
     background-color: rgba(255, 255, 255, 0.1);
-    padding: 20px;
     border-radius: 10px;
+    text-align: center;
+    padding: 20px;
+    width: 280px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tip img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.tip h3 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.tip p {
+    font-size: 16px;
+    color: #e1e1e1;
+}
+
+/* Highlight active steps */
+.active-step {
+    outline: 3px solid #fbbf24;
+    box-shadow: 0 0 15px rgba(251, 191, 36, 0.6);
+    transition: outline 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    z-index: 9999;
+}
+
+/* Tooltip */
+.tour-tooltip {
+    position: absolute;
+    background: #fff;
+    color: #000;
+    padding: 10px 15px;
+    border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    text-align: center;
+    z-index: 10000;
 }
 
-.web-clubs-container {
-    flex-direction: column;
+.tour-tooltip p {
+    margin: 0;
 }
 
-.web-events-container {
-    flex-direction: column;
+.tour-tooltip button {
+    margin-top: 10px;
+    padding: 6px 12px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
 }
 
-.web-profile-container {
-    flex-direction: column;
+.tour-tooltip button:hover {
+    background-color: #0056b3;
 }

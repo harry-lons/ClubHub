@@ -12,10 +12,18 @@ export type Event =
 	recurrence_type: Number | null;
 	stop_date: Date|null;
 	summary: string;
-	pictures: { [key: string]: string };
+	pictures: string[];
 	type: EventType[];
 	capacity: Number | null;
 };
+
+export type EventListInfo =
+{
+	events: Event[]
+	clubs: Club[]
+    rsvp: Event[]
+    follow_id: string[]
+}
 
 export type EventType = 
     | "social"
@@ -45,6 +53,12 @@ export type RSVP =
 	user_id: string;
 	event_id: string;
 };
+
+export type RSVPInt = {
+		user_id: string;
+		event_id: Number;
+};
+
 export type Follow = {
 	user_id: string;
 	club_id: string;
@@ -96,4 +110,10 @@ export type loginResponse =
 	success: boolean,
     token: string,
     detail: string,
+};
+
+export type login =
+{
+	email: string,
+	password: string,
 }

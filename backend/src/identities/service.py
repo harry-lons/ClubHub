@@ -8,7 +8,7 @@ from fastapi.responses import FileResponse, Response
 from ..authentication import service as auth_service
 from ..authentication.schemas import User
 from ..database import DB
-from ..db_store.conversion import b_club_to_f_club, b_club_to_f_club_full
+from ..db_store.conversion import b_club_to_f_club_full
 from ..object_store import InMemoryFileStorage, IStorage
 from .constants import cat_club, cat_club_board_members
 from .schemas import AllClubs, Club, ClubWithBoardMembers, UserProfilePictureImgKey
@@ -50,7 +50,7 @@ async def upload_profile_picture(
 @app.get(
     "/myself/profile_picture",
     responses={200: {"content": {"image/png": {}}}},
-    response_class=FileResponse,
+    response_class=Response,
 )
 async def get_profile_picture(
     current_user: Annotated[User, Depends(auth_service.get_current_user)],

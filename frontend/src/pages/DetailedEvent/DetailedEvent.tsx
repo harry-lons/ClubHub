@@ -1,16 +1,16 @@
 import React, { useContext, useState,useEffect } from "react"
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import { useParams, useNavigate } from "react-router-dom";
-import { Event, Club, RSVP, User} from "../../types/types";
-import { exampleEvent, exampleClub, exampleUsers } from "../../constants/constants";
+import { Event, Club, RSVP, User, RSVPInt} from "../../types/types";
+import { emptyEvent, exampleUsers, emptyClub } from "../../constants/constants";
 import { TextField, Button, MenuItem } from '@mui/material';
 import "./DetailedEvent.css"
 import {AuthContext} from "../../context/AuthContext"
 import { fetchEventById } from "../../utils/event-utils";
-import { fetchClubById } from "../../utils/club-utils";
+import { fetchClubById, fetchClubWho } from "../../utils/club-utils";
 import { fetchRSVP, createRSVP, deleteRSVP, fetchCurrentAttendees } from "../../utils/RSVP-utils";
 import exampleFlyer from "../../constants/flyer.jpg";
-import {Alert, Box,ListItem,ListItemButton,ListItemText,AccordionDetails,Accordion,AccordionSummary} from '@mui/material';
+import {Alert, Box,ListItem,ListItemButton,ListItemText,AccordionDetails,Accordion,AccordionSummary, Backdrop, CircularProgress} from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
@@ -20,24 +20,48 @@ interface DetailedEventProps {
 }
 
 const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
+    console.log("Which is:", which);
     const { id } = useParams<{ id: string }>();
+    console.log("Web Page Event ID",id);
     const navigate = useNavigate();
-    const {token} = useContext(AuthContext);
-    // const { userId } = useContext(AuthContext);
-    
-    const [event, setEvent] = useState<Event> (exampleEvent);
-    const [club, setClub] = useState<Club> (exampleClub);
+    const context = useContext(AuthContext);
+    useEffect(() => {
+        console.log(context.token, context.accountType, context.id);
+    }, []);
+    const club_id = context.id;
+    const token = context.token;
+    const userId = context.id;
+    const [event, setEvent] = useState<Event> (emptyEvent);
+    const [club, setClub] = useState<Club> (emptyClub);
     const [rsvp, setRsvp] = useState(false);
-    const userId = "001";
     const [attendees, setAttendees] = useState<User[]>(exampleUsers);
+    const [loading, setLoading] = useState(true); 
+    const [owner,setOwner] = useState<Club>(emptyClub);
 
 
     useEffect(() => {
         if (!id) return;
-        loadEvent();
-        loadClub();
-        loadRSVP();
-        loadAttendees();
+        const loadData = async () => {
+            try {
+                const event_clubId_ = await loadEvent();
+                if (event_clubId_) {
+                    await loadClub(event_clubId_);
+                }
+                if (context.accountType === "user") {
+                    loadRSVP();
+                }
+                if (context.accountType === "club") {
+                    loadAttendees();
+                }
+            } catch (err) {
+                console.error("Error loading data:", err);
+            }
+            finally {
+                setLoading(false);
+            }
+        };
+        loadData();
+        if(context.accountType === "club") loadClubIdentity();
     }, [id]);
 
     const loadEvent = async () => {
@@ -46,6 +70,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                 const event_ = await fetchEventById(Number(id)); // `id` is already a string, so no conversion is needed
                 console.log("Fetched event:", event_);
                 setEvent(event_);
+                return event_.club_id;
             } else {
                 console.error("ID is undefined. Cannot fetch event.");
             }
@@ -53,11 +78,10 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
             console.error("Error loading event:", err.message);
         }
     };
-    
 
-    const loadClub = async () => {
+    const loadClub = async (clubId: string) => {
         try {
-            const club_ = await fetchClubById(event.club_id); // Convert id to a number
+            const club_ = await fetchClubById(clubId); 
             setClub(club_);
         } catch (err: any) {
             console.error("Error loading club:", err.message);
@@ -66,9 +90,11 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
     //load all the RSVP of the user 
     const loadRSVP = async () => {
         try {
+            // ! bug RSVPList is undefined
+            // ! bug RSVPList is undefined
             const RSVPList = await fetchRSVP(token); // Convert id to a number
-            
-            RSVPList.forEach((rl)=> {if(rl.event_id === event.id){setRsvp(true);}});
+            console.log("Detail Page RSVP list",RSVPList);
+            RSVPList.forEach((rl)=> {if(rl.event_id === id){setRsvp(true);}});
         } catch (err: any) {
             console.error("Error loading RSVP:", err.message);
         }
@@ -76,10 +102,18 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
     //load all the RSVP for the event
     const loadAttendees = async ()=>{
         try{
-            const AttendeeList = await fetchCurrentAttendees(Number(event.id));
+            const AttendeeList = await fetchCurrentAttendees(Number(id));
             setAttendees(AttendeeList);
         }catch(err:any){
             console.error("Error loading Attendee List:", err.message);
+        }
+    }
+    const loadClubIdentity = async () =>{
+        try{
+            const owner_ = await fetchClubWho(token);
+            setOwner(owner_);
+        }catch (err:any){
+            console.error("Error loading user:", err.message);
         }
     }
 
@@ -116,8 +150,8 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
         }
     }
     const handleRecur = (event: Event)=>{
-        if(event.recurrence){
-            return(<p>Yes. Recur {recurrenceDescription(event.recurrence_type as number)}. End Date {event.stop_date?.getFullYear()}-{event.stop_date?.getMonth()}-{event.stop_date?.getDate()}</p >);
+        if(event.recurrence && event.stop_date){
+            return(<p>Yes. Recur {recurrenceDescription(event.recurrence_type as number)}. End date: {event.stop_date.getFullYear()}-{event.stop_date.getMonth()+1}-{event.stop_date.getDate()}.</p >);
         }else{
             return (<p>Not a recurring event.</p >);
         }
@@ -178,40 +212,84 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
         );
     };
 
-    const RSVPButton : React.FC = () => {
+    const RSVPButton: React.FC = () => {
+        const [alert, setAlert] = useState<{ message: string; severity: 'success' | 'error' | null }>({
+            message: '',
+            severity: null,
+        });
+    
+        const [isRSVPing, setIsRSVPing] = useState(false); // Prevent race conditions
+        console.info("RSVP status:", rsvp);
+    
         const toggleRSVP = async () => {
-            setRsvp(!rsvp);
-
+            if (isRSVPing) return; // Prevent multiple toggles at once
+            setIsRSVPing(true);
+    
             if (!rsvp) {
-                const newRSVP: RSVP = {
+                const newRSVP: RSVPInt = {
                     user_id: userId,
-                    event_id: event.id
+                    event_id: Number(event.id),
                 };
-                const successful = await createRSVP(token,newRSVP);
-                if(successful){
-                    <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
-                        You have successfully RSVPed to this event! Looking forward to see you there!
-                    </Alert>
-                }else{
-                    <Alert severity="error">RSVP unsuccessful please contact webpage administrator</Alert>
+    
+                const successful = await createRSVP(token, newRSVP);
+    
+                if (successful) {
+                    setRsvp(true); // Update RSVP state
+                    setAlert({
+                        message: "You have successfully RSVPed to this event! Looking forward to seeing you there!",
+                        severity: 'success',
+                    });
+                } else {
+                    setAlert({
+                        message: "RSVP unsuccessful. Please contact the webpage administrator.",
+                        severity: 'error',
+                    });
                 }
             } else {
-                const successful = await deleteRSVP(token,event.id);
-                if(successful){
-                    <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
-                        You have successfully canceled RSVP to this event!
-                    </Alert>
-                }else{
-                    <Alert severity="error">Cancel RSVP unsuccessful please contact webpage administrator</Alert>
+                const successful = await deleteRSVP(token, event.id);
+    
+                if (successful) {
+                    setRsvp(false); // Update RSVP state
+                    setAlert({
+                        message: "You have successfully canceled your RSVP to this event!",
+                        severity: 'success',
+                    });
+                } else {
+                    setAlert({
+                        message: "Cancel RSVP unsuccessful. Please contact the webpage administrator.",
+                        severity: 'error',
+                    });
                 }
             }
-        }
+    
+            setIsRSVPing(false); // Allow toggling again
+    
+            // Automatically hide the alert after 3 seconds
+            setTimeout(() => {
+                setAlert({ message: '', severity: null });
+            }, 3000);
+        };
+    
         return (
-            <Button className="rsvp-button" variant="contained" onClick={toggleRSVP}>
-                {rsvp? 'Cancel RSVP' : 'RSVP' }
-            </Button>
+            <>
+                {alert.severity && (
+                    <Alert
+                        icon={<CheckIcon fontSize="inherit" />}
+                        severity={alert.severity}
+                        onClose={() => setAlert({ message: '', severity: null })} // Allow manual dismissal
+                        style={{ marginBottom: '16px' }}
+                    >
+                        {alert.message}
+                    </Alert>
+                )}
+    
+                <Button className="rsvp-button" variant="contained" onClick={toggleRSVP}>
+                    {rsvp ? 'Cancel RSVP' : 'RSVP'}
+                </Button>
+            </>
         );
     };
+    
 
     const EditButton : React.FC = () => {
         const handleEdit = () => {
@@ -224,9 +302,38 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
             </Button>
         );
     }
+
+    const eventTypes = [
+        { value: 'social', label: 'Social Event' },
+        { value: 'workshop', label: 'Workshop' },
+        { value: 'networking', label: 'Networking Event' },
+        { value: 'fundraiser', label: 'Fundraiser' },
+        { value: 'competition', label: 'Competition' },
+        { value: 'seminar', label: 'Educational Seminar' },
+        { value: 'communityService', label: 'Community Service' },
+        { value: 'cultural', label: 'Cultural Event' },
+        { value: 'recreational', label: 'Recreational Outing' },
+        { value: 'generalMeeting', label: 'General Meeting' },
+        { value: 'academic', label: 'Academic' },
+        { value: 'orientation', label: 'Orientation/Welcome Event' },
+        { value: 'careerDevelopment', label: 'Career Development' },
+        { value: 'volunteering', label: 'Volunteering' },
+        { value: 'panel', label: 'Panel Discussion' },
+        { value: 'celebration', label: 'Celebration/Festival' },
+        { value: 'sports', label: 'Sports Event' },
+        { value: 'arts', label: 'Arts & Performance' },
+        { value: 'training', label: 'Training Session' },
+        { value: 'research', label: 'Research Presentation' }
+    ];
     
     return (
         <div id="event-detail-container">
+            <Backdrop
+                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={loading} // Backdrop visible when loading is true
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <div className="event-detail-header">
                 <BackButton />
             </div>
@@ -236,16 +343,16 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                             <h2>{event.title}</h2>
                         </div>
                         {
-                            which == "CLUB" ?
+                            (context.accountType == "club")&&(owner.id===event.club_id) ?
                             <EditButton /> :
-                            which == "USER" ?
+                            context.accountType == "user" ?
                             <RSVPButton /> :
                             null
                         }
                 </div>
                 <div className="event-detail-club" style={{ display: 'flex', alignItems: 'center' }}>
                     <p style={{ display: 'inline-block',marginRight: '5px' }}>From  </p>
-                    <p className="event-detail-club-name-text">{club.name}</p>
+                    <p className="event-detail-club-name-text" onClick = {()=>navigate(`/clubDetail/${club.id}`)}>{club.name}</p>
                 </div>
                 
             </div>
@@ -256,7 +363,13 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                 </div>
                 <div className="event-detail-type">
                     <h3>Type</h3>
-                    <p>{event.type}</p >
+                    <p>{event.type
+                        .map(typeValue => {
+                            const matchingType = eventTypes.find(type => type.value === typeValue);
+                            return matchingType?.label;
+                        })
+                        .filter(Boolean)
+                        .join(', ')}</p >
                 </div>
                 <div className="event-detail-location">
                     <h3>Location</h3>
@@ -275,7 +388,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                     <h3>Recurring</h3>
                     {handleRecur(event)}
                 </div>
-                {(which === "CLUB") && 
+                {(context.accountType === "club") && 
                 <div className = "event-num-attendees">
                     <h3>Attendees</h3>
                     <p>Number of Current Attendees: {attendees.length}</p>

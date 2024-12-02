@@ -35,16 +35,23 @@
 
 .event-title-container {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5px; /* Add 5px padding on the left and right */
 }
 
+
 .rsvp-button {
-    margin-left: 10px !important;
-    font-size: 20px !important;
+    font-size: 16px !important;
     color: white !important;
     background-color: #43BD28 !important;
     border: none !important;
     border-radius: 8px !important;
-    width: 180px !important;
+    width: 150px !important;
+    height: 40px !important;
+    margin: 0 !important;
+    margin-right: 5px;
+    align-self: flex-start;
 }
 
 .edit-button {
@@ -78,4 +85,7 @@ p.event-detail-club-name-text{
   
 p.event-detail-club-name-text:hover{
     text-decoration: underline;
+}
+h2.event-detail-title{
+    margin-left: 0;
 }

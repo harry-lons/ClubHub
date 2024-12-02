@@ -25,9 +25,9 @@ def f_event_to_b_event(
         location=event.location,
         begin_time=event.begin_time,
         end_time=event.end_time,
-        recurrence=event.recurrence[0],
-        recurrence_type=event.recurrence[1],
-        recurrence_stop_date=event.recurrence[2],
+        recurrence=event.recurrence,
+        recurrence_type=event.recurrence_type,
+        recurrence_stop_date=event.stop_date,
         capacity=event.capacity,
         summary=event.summary,
         tags=[],
@@ -63,11 +63,9 @@ def b_event_to_f_event(db_event: DBEventObject) -> FrontendEventObject:
         location=db_event.location,
         begin_time=db_event.begin_time,
         end_time=db_event.end_time,
-        recurrence=(
-            db_event.recurrence,
-            db_event.recurrence_type,
-            db_event.recurrence_stop_date,
-        ),
+        recurrence=db_event.recurrence,
+        recurrence_type=db_event.recurrence_type,
+        stop_date=db_event.recurrence_stop_date,
         capacity=db_event.capacity,
         summary=db_event.summary,
         pictures=[image.object_id for image in db_event.images],
@@ -83,5 +81,9 @@ def b_club_to_f_club(club: DBClubObject) -> FrontendClubObject:
 def b_club_to_f_club_full(club: DBClubObject) -> FrontendClubBoardMembers:
     board_members = [user.id for user in club.members]
     return FrontendClubBoardMembers(
-        id=club.id, name=club.name, contact_email=club.email, board_members=board_members
+        id=club.id,
+        name=club.name,
+        contact_email=club.email,
+        board_members=board_members,
+        description=club.description,
     )
