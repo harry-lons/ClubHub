@@ -46,3 +46,24 @@ export const fetchClubList = async (): Promise<Club[]> => {//RETURN ALL existing
 	const clubs = result.clubs;
     return clubs;
 };
+export const fetchClubWho = async (token: string): Promise<Club> => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/club/whoami/`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error fetching user info: ${response.statusText}`);
+        }
+
+        const club = await response.json(); // Assuming the response is the `User` model
+        return club;
+    } catch (error) {
+        console.error("Failed to fetch user info:", error);
+        throw error;
+    }
+};

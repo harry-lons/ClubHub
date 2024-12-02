@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from ..authentication import service as auth_service
 from ..authentication.schemas import User
+from ..authentication.utils import useracc_to_user
 from ..database import DB
 from ..db_store.conversion import b_club_to_f_club_full, b_event_to_f_event
 from ..db_store.models import Events, UserRSVPs,UserIDList, UserInfo, UserList, ClubInfo, ClubList
@@ -15,7 +16,6 @@ from .rsvp import rsvp_user_create, rsvp_user_delete, rsvp_user_get
 # from ..app import app
 
 from .schemas import Event, ListOfEvents, EventID, EventIDList, RSVP, RSVPList, Follow,EventListInfo,ClubIDList
-#from ..identities.schemas import UserIDList, UserInfo, UserList, ClubInfo, ClubList
 
 
 app = APIRouter()
@@ -43,7 +43,8 @@ async def get_events(
     rsvp_events: List[Events] = user.events
     rsvp_events_api = [b_event_to_f_event(e) for e in rsvp_events]
     # Get followed club ids of user
-    follow_id = ["d1187ef4-3d91-4143-ac72-5b41d8f96c37"]
+    follows = DB.db.fetch_user_follows(user_id=current_user.id)
+    follow_id = [e[0] for e in follows]
     return EventListInfo(events=all_events_api, clubs=all_clubs_api, rsvp=rsvp_events_api, follow_id=follow_id)
 
 
@@ -88,17 +89,16 @@ async def rsvp_user(
     return rsvp_events
 
 @app.get("/RSVP/Attendees/{event_id}", response_model=UserList, tags=["user"])
-async def rsvp_event(
-    current_club: Annotated[Club, Depends(auth_service.get_current_logged_in_club)], event_id: int
-) -> UserList:
+
+async def rsvp_event(event_id: int) -> UserList:
+
     '''
     Fetches all attendees given a certain event
     '''
     attendees = UserList(users=[])
     users_rsvp = DB.db.fetch_rsvp_attendees(event_id=event_id)
-    if len(users_rsvp) != 0:
-        users_rsvp = [UserInfo(id=u[0], username=u[1], first_name=u[2], last_name=u[3], followed_clubs=u[4]) for u in users_rsvp]
-        attendees.users = users_rsvp
+
+    attendees.users = [useracc_to_user(DB.db.get_user_from_id(u[0])) for u in users_rsvp]
     return attendees
 
 @app.post("/Follow", tags=["user"])
@@ -130,9 +130,8 @@ async def user_followers(
     '''
     clubs_followed = ClubList(clubs=[])
     follows = DB.db.fetch_user_follows(user_id=current_user.id)
-    if len(follows) != 0:
-        follows = [ClubInfo()]
-        clubs_followed.clubs = follows
+
+    clubs_followed.clubs = [e[0] for e in follows]
     return clubs_followed
 
 
