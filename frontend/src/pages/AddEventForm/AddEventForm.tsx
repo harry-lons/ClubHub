@@ -195,53 +195,152 @@ export const AddEventForm= ()=>{
         <div className="background"></div>
         <div className="backButton-container"> <BackButton /> </div>
         <div className="eventDetail-Card">
-            <div className = "eventName">
-                <h3>Event Name</h3>
-                    <TextField
-                        type="text"
-                        className="form-control"
-                        name="title"
-                        value={formData.title}
-                        onChange={handleChange}
-                        error={errors.title}
-                        helperText={errors.title ? 'Event title is required' : ''}
-                        sx={{ width: '100%' }} // Makes it responsive
-                    ></TextField>
-            </div>
-
-            <div className="eventType">
-                    <h3>Event Type</h3>
-                    <FormControl sx={{ width: '36ch' }}>
-                        <Select
-                        labelId="demo-multiple-checkbox-label"
-                        id="demo-multiple-checkbox"
-                        multiple
-                        value={formData.type}
-                        onChange={handleTypeChange}
-                        input={<OutlinedInput/>}
-                        renderValue={(selected) => (
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                {selected.map((value) => {
-                                    const label = eventTypes.find((t) => t.value === value)?.label;
-                                    return <Chip key={value} label={label} />;
-                                })}
-                            </Box>
-                        )}
-                        MenuProps={MenuProps}
-                        >
-                        {eventTypes.map((t) => (
-                            <MenuItem key={t.label} value={t.value}>
-                            <Checkbox checked={formData.type.includes(t.label as EventType)} />
-                            <ListItemText primary={t.label} />
-                            </MenuItem>
-                        ))}
-                        </Select>
-                    </FormControl>
+            <div className="eventColumn1">
+                <div className = "eventName">
+                    <h3>Event Name</h3>
+                        <TextField
+                            type="text"
+                            className="form-control"
+                            name="title"
+                            value={formData.title}
+                            onChange={handleChange}
+                            error={errors.title}
+                            helperText={errors.title ? 'Event title is required' : ''}
+                            sx={{ width: '100%' }} // Makes it responsive
+                        ></TextField>
                 </div>
 
+                <div className="eventType">
+                        <h3>Event Type</h3>
+                        <FormControl sx={{ width: '36ch' }}>
+                            <Select
+                            labelId="demo-multiple-checkbox-label"
+                            id="demo-multiple-checkbox"
+                            multiple
+                            value={formData.type}
+                            onChange={handleTypeChange}
+                            input={<OutlinedInput/>}
+                            renderValue={(selected) => (
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    {selected.map((value) => {
+                                        const label = eventTypes.find((t) => t.value === value)?.label;
+                                        return <Chip key={value} label={label} />;
+                                    })}
+                                </Box>
+                            )}
+                            MenuProps={MenuProps}
+                            >
+                            {eventTypes.map((t) => (
+                                <MenuItem key={t.label} value={t.value}>
+                                <Checkbox checked={formData.type.includes(t.label as EventType)} />
+                                <ListItemText primary={t.label} />
+                                </MenuItem>
+                            ))}
+                            </Select>
+                        </FormControl>
+                    </div>
+
+                    <div className="eventLocation">
+                        <h3>Event Location</h3>
+                        <TextField
+                            type="text"
+                            className="form-control"
+                            name="location"
+                            value={formData.location}
+                            onChange={handleChange}
+                            error={errors.location}
+                            helperText={errors.location ? 'Event location is required' : ''}
+                            sx={{ width: '24ch' }}
+                        ></TextField>
+                    </div>
+
+                    <div className="eventCapacity">
+                        <h3>Capacity</h3>
+                        <TextField
+                            type="text"
+                            className="form-control"
+                            name="capacity"
+                            value={formData.capacity}
+                            onChange={handleChange}
+                            sx={{ width: '24ch' }}
+                        ></TextField>
+                    </div>
+
+            </div>
+            
+            <div className="eventColumn2">
+
+                <div className="eventTime">
+                        <h3>Date & Time</h3>
+                            <div className="time-picker-container">
+                                <DateTimePicker 
+                                    label="Begin Time" 
+                                    value={dayjs(formData.begin_time)}
+                                    onChange={(newValue) => newValue && handleBeginTimeChange(newValue)} 
+                                    sx={{ width: '100%' }}
+                                />
+                                
+                                <DateTimePicker 
+                                    label="End Time" 
+                                    value={dayjs(formData.end_time)}
+                                    onChange={(newValue) => newValue && handleEndTimeChange(newValue)}
+                                    sx={{ width: '100%' }}
+                                    minDateTime={dayjs(formData.begin_time)}
+                                />
+                            </div>
+                </div>
+
+                    <div className="eventRecurring">
+                        <h3>Recurring</h3>
+                        <FormGroup>
+                            <FormControlLabel control={<Switch color="secondary" onChange={()=>(setFormData({...formData, recur: !formData.recur}))}/>} label="Event Recurring" />
+                        </FormGroup>
+                        {formData.recur && 
+                        <div style={{ display: "flex", gap: "16px", alignItems: "center", marginTop: "16px" }}>
+                            <FormControl sx={{ m: 1, minWidth: 120 }}>
+                                <InputLabel id="demo-simple-select-label">Frequency</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    label="Frequency"
+                                    value={formData.frequency}
+                                    onChange={(e) => setFormData({ ...formData, frequency: Number(e.target.value) })}
+                                    variant="outlined"
+                                    style={{ width: '200px' }}
+                                >
+                                    <MenuItem value="" disabled>Select Frequency</MenuItem>
+                                    <MenuItem value="0">Weekly</MenuItem>
+                                    <MenuItem value="1">Biweekly</MenuItem>
+                                    <MenuItem value="2">Monthly</MenuItem>
+                                </Select>
+                            </FormControl>
+                            <DateTimePicker views={['year', 'month', 'day']}
+                                label="Stop Date" value={dayjs(formData.stop_date)}
+                                onChange={(newValue) => newValue&&handleStopDateChange(newValue)}
+                                sx={{ width: '24ch' }}
+                                minDateTime={dayjs(formData.begin_time)}/>
+                        </div>}
+                </div>
+
+                <div className="eventDescription">
+                        <h3>Event Description</h3>
+                            <TextField
+                            multiline
+                            rows={4}
+                            type="text"
+                            className="form-control"
+                            name="summary"
+                            value={formData.summary}
+                            onChange={handleChange}
+                            sx={{ width: '36ch' }}
+                        ></TextField>
+                    </div>
+             </div> 
+
+             <div className="submitButton"> 
+                <Button variant="contained" style={{ backgroundColor: '#43BD28', color: '#FFFFFF' }} onClick={handleSubmit}>Submit Event</Button>
+            </div>
 
         </div>
-
     </div>
     );
 }
