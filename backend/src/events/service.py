@@ -129,7 +129,7 @@ async def user_followers(
     '''
     clubs_followed = ClubIDList(clubs=[])
     follows = DB.db.fetch_user_follows(user_id=current_user.id)
-    clubs_followed.clubs = follows
+    clubs_followed.clubs = [e[0] for e in follows]
     return clubs_followed
 
 
