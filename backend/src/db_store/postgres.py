@@ -1,5 +1,5 @@
-import uuid
 import logging
+import uuid
 from typing import Any, Dict, List, Optional, Tuple, Type, TypeVar
 
 from sqlalchemy.exc import (
@@ -128,8 +128,13 @@ class PostgresDatabase(IAuth, IEvents):
             raise ValueError(f"Server error")
 
     def edit_event(self, event: FrontendEvent):
-        # ! TODO do not allow a club to edit the ID of an event
         parent_club = self.get_org_from_id(event.club_id)
+        original_event = self.get_f_event(event.id)
+
+        if original_event.club_id != parent_club.id:
+            # The club trying to edit the event is NOT the owner of this event
+            raise ValueError("Invalid Permissions to edit this event")
+
         new_event = f_event_to_b_event(self.session, parent_club, event)
         self._update(Events, new_event, id=new_event.id)
         self.session.commit()
