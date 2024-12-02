@@ -98,7 +98,7 @@ class PostgresDatabase(IAuth, IEvents):
         entries = self.session.query(ClubAccounts).all()
         return entries
 
-    def get_all_events(self) -> List[FrontendEvent]:
+    def get_all_events(self) -> List[Events]:
         entries = self.session.query(Events).all()
         return entries
 
