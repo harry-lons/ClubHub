@@ -95,7 +95,6 @@ async def rsvp_event(event_id: int) -> UserList:
     attendees = UserList(users=[])
     users_rsvp = DB.db.fetch_rsvp_attendees(event_id=event_id)
     attendees.users = [useracc_to_user(DB.db.get_user_from_id(u[0])) for u in users_rsvp]
-    print(attendees.users)
     return attendees
 
 @app.post("/Follow", tags=["user"])
