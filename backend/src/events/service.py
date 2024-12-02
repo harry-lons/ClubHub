@@ -104,7 +104,7 @@ async def rsvp_user(
     return rsvp_events
 
 
-@app.get("/RSVP/Attendees/{event_id}", response_model=UserList, tags=["user"])
+@app.get("/RSVP/Attendees/{event_id}", response_model=UserList, tags=["club"])
 async def rsvp_event(event_id: int) -> UserList:
     """
     Fetches all attendees given a certain event
