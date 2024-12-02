@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { NavBar } from '../NavBar/NavBar';
+import { NavBar } from '../common/NavBar';
 import './HomePage.css';
 
 export const HomePage = () => {

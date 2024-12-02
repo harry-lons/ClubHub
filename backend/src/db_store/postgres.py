@@ -217,22 +217,11 @@ class PostgresDatabase(IAuth, IEvents):
         '''
         #event = self._get_by(Events, id=event_id) ## fetch the event
         users = self.session.query(UserRSVPs.user_id).filter_by(event_id=event_id).all()
-        users = [u[0] for u in users]
-        if len(users)==0:
-            return []
-        user_info = self.session.query(UserAccounts.id, UserAccounts.email, UserAccounts.first_name, UserAccounts.last_name).filter(UserAccounts.id.in_(users)).all()
-        user_follows = []
-        for u in users:
-            uf = self.session.query(UserFollows.club_id).filter_by(user_id=u).all()
-            if len(uf) > 0:
-                uf = [uf[i][0] for i in range(len(uf))]
-            user_follows.append(uf)
-        user_info = [list(ui)+[user_follows[i]] for i,ui in enumerate(user_info)]
-        ## To be continued
-        print(user_info)
-        if len(user_info) == 0:
-            raise ValueError(f"Event is not an RSVP'd event")
-        return user_info
+
+        # if len(users) == 0:
+        #     raise ValueError(f"Event is not an RSVP'd event")
+        return users
+
 
 
 
@@ -278,19 +267,11 @@ class PostgresDatabase(IAuth, IEvents):
         Returns all the followed
         '''
         follows = self.session.query(UserFollows.club_id).filter_by(user_id=user_id).all()
-        follows = [f[0] for f in follows] #parsing the row objects
-        club_info = self.session.query(ClubAccounts.id, ClubAccounts.name, ClubAccounts.description, ClubAccounts.email)
-        board_members = []
-        for f in follows:
-            bm = self.session.query(ClubAccounts.members).filter_by(club_id=f).all()
-            if len(bm) > 0:
-                bm = [m.id for m in bm]
-            board_members.append(bm)
-        club_info = [list(ci)+[board_members[i]] for i,ci in enumerate(club_info)]
-        print(club_info)
-        if len(club_info) == 0:
-            raise ValueError(f"User follows no club!")
-        return club_info
+
+        # if len(follows) == 0:
+        #     raise ValueError(f"User follows no club!")
+        return follows
+
 
     def fetch_follow_status(self, user_id:str, club_id: str )-> bool:
         '''

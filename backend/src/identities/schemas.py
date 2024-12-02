@@ -48,6 +48,10 @@ class UserList(BaseModel):
     users: List[UserInfo]
 
 
+class UserList(BaseModel):
+    users: List[User]
+
+
 class UserAndClubs(User):
     # list of club ids
     followed_clubs: List[ClubID]

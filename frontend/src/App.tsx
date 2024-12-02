@@ -9,7 +9,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 import './App.css';
 import { AuthProvider } from './context/AuthContext'
-import { NavBar } from './pages/NavBar/NavBar';
+import { NavBar } from './pages/common/NavBar';
 import { UserProfile } from './pages/UserProfile/UserProfile';
 import Clubs from './pages/ClubSearch/Clubs';
 import { EditEventForm } from './pages/AddEventForm/EditEventForm';
