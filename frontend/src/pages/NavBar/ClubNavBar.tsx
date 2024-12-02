@@ -14,11 +14,11 @@ import MenuItem from '@mui/material/MenuItem';
 import Diversity2Icon from '@mui/icons-material/Diversity2';
 import { AuthContext } from '../../context/AuthContext';
 
-const pages = ['Events', 'Clubs', 'Profile', 'Log Out'];
+const pages = ['Events', 'Profile', 'Log Out'];
 
-export const NavBar = () => {
+export const ClubNavBar = () => {
   const navigate = useNavigate();
-  const { removeToken, accountType } = useContext(AuthContext);
+  const { removeToken, accountType, id } = useContext(AuthContext);
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -43,8 +43,11 @@ export const NavBar = () => {
     if(page === 'Log Out') { 
       handleLogOut(); 
     }
-    else{
-      navigate(`/${page}`);
+    else if(page === 'Events') {
+        navigate('/club/events')
+    }
+    else if(page === 'Profile') {
+        navigate(`/clubProfile/${id}`)
     }
   };
 
