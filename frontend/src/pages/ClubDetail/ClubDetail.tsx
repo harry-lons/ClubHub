@@ -12,7 +12,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Backdrop, CircularProgress, Button,Typography } from "@mui/material";
 import FollowButton from "./FollowButton";
-import "./ClubDets.css";
+import "./ClubDetail.css";
 
 interface ClubDetailProps {
     which: string; 
@@ -120,147 +120,7 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
     const goToDetailPage = (event_id: string) =>{
         navigate(`/events/${event_id}`);
     }
-
-    // return (
-    //     <div className="clubDetail-container">
-    //         <div className="background"></div>
-    //         <div className="backButton-container">
-    //             <BackButton />
-    //         </div>
-    //         <div className="clubDetail-Card">
-                
-    //             <div className="club-identity-container">
-    //                 <div className="club-name-container">
-    //                     <h2>{club.name}</h2>
-    //                     {context.accountType === "user" && 
-    //                     <FollowButton
-    //                         follow={follow}
-    //                         setFollow={setFollow}
-    //                         club_id={id || ""}
-    //                         showMessages={true}
-    //                     />}
-                        
-    //                 </div>
-    //             </div>
-
-    //             <div className="clubRow">
-                    
-    //                 <div className="club-contact">
-    //                     <h3>Contact Information</h3>
-    //                 {Array.isArray(club.contact_email) ? (
-    //                     club.contact_email.map((email, index) => <p key={index}>{email}</p>)
-    //                     ) : (
-    //                         <p>{club.contact_email}</p>
-    //                     )}
-    //                 </div>
-
-    //                 <div className = "club-description-container">
-    //                     <h3>Club Description</h3>
-    //                     <p className="club-description">{club.description}</p>
-    //                 </div>
-
-    //                 <div className="club-board">
-    //                     <Accordion>
-    //                         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-    //                             <h3>Board Members</h3>
-    //                         </AccordionSummary>
-    //                         <AccordionDetails>
-    //                             {club.board_members.length === 0 ? (
-    //                                 <Typography style={{ textAlign: 'center', margin: '16px 0' }}>
-    //                                     No Board Members Listed
-    //                                 </Typography>
-    //                             ) : (
-    //                                 <List
-    //                                     style={{
-    //                                         height: club.board_members.length < 10 ? 'auto' : '300px', // Adjust height dynamically
-    //                                         overflowY: club.board_members.length < 10 ? 'visible' : 'auto', // Avoid scrollbars for short lists
-    //                                     }}
-    //                                 >
-    //                                     {club.board_members.map((member) => (
-    //                                         <ListItem key={member}>
-    //                                             <ListItemText primary={<Typography>{member}</Typography>} />
-    //                                         </ListItem>
-    //                                     ))}
-    //                                 </List>
-    //                             )}
-    //                         </AccordionDetails>
-    //                     </Accordion>
-    //                 </div>
-    //             </div>
-
-            
-    //             <div className="club-events-container">
-    //                 <Accordion defaultExpanded>
-    //                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-    //                         <h3>Upcoming Events</h3>
-    //                     </AccordionSummary>
-    //                     <AccordionDetails>
-    //                         <List style = {{maxHeight:'400px', overflowY: 'auto'}}>
-    //                             {nextEvents.map(event => (
-    //                                 <ListItem key={event.id} style={{backgroundColor: '#f3e5f5', margin: '8px 0', borderRadius: '8px', padding: '16px',}}>
-    //                                     <ListItemText primary={
-    //                                         <Typography onClick={() => goToDetailPage(event.id)} className="club-event-clickable-title">
-    //                                                 {event.title}
-    //                                         </Typography>} 
-    //                                             secondary={event.summary} />
-    //                                 </ListItem>
-    //                             ))}
-    //                         </List>
-    //                     </AccordionDetails>
-    //                 </Accordion>
-
-    //                 <Accordion defaultExpanded>
-    //                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-    //                         <h3>Past Events</h3>
-    //                     </AccordionSummary>
-    //                     <AccordionDetails>
-    //                         <List style = {{maxHeight:'400px', overflowY: 'auto'}}>
-    //                             {pastEvents.map(event => (
-    //                                 <ListItem
-    //                                     key={event.id}
-    //                                     style={{
-    //                                         backgroundColor: '#f3e5f5',
-    //                                         margin: '8px 0',
-    //                                         borderRadius: '8px',
-    //                                         padding: '16px',
-    //                                     }}
-    //                                 >
-    //                                     <ListItemText primary={
-    //                                             <Typography
-    //                                                 onClick={() => goToDetailPage(event.id)}
-    //                                                 className="club-event-clickable-title"
-    //                                             >
-    //                                                 {event.title}
-    //                                             </Typography>
-    //                                         }
-    //                                         secondary={event.summary} />
-    //                                 </ListItem>
-    //                             ))}
-    //                         </List>
-    //                     </AccordionDetails>
-    //                 </Accordion>
-    //             </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //         </div>
-    //     </div>
-    // );
-
+    
     return (
         <div className="clubDetail-container">
             <div className="background"></div>
