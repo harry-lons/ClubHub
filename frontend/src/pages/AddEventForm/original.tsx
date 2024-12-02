@@ -26,26 +26,11 @@ export const AddEventForm= ()=>{
     const token = context.token;
     
     const navigate = useNavigate();
-    const BackButton = () => {
-        const navigate = useNavigate();
-    
-        const handleBack = () => {
-            navigate(-1); // Navigate to the previous page
-        };
-    
-        return (
-            <button className="backButton" onClick={handleBack}>
-                <img
-                    src="/backButton.png" // Ensure this path is correct
-                    alt="Back"
-                    className="backButtonImage"
-                    width="30" // Explicitly set width
-                    height="30" // Explicitly set height
-                />
-            </button>
-        );
+    const BackButton: React.FC = () => {
+        const handleBack = () => { navigate(-1); };
+        // Navigates to the previous page
+        return (<button onClick={handleBack} className="back-button">&lt;</button>);
     };
-    
 
     const [formData, setFormData] = useState({
         title: "",
@@ -191,12 +176,13 @@ export const AddEventForm= ()=>{
     };
     
     return(
-        <div className="eventDetail-container">
-        <div className="background"></div>
-        <div className="backButton-container"> <BackButton /> </div>
-        <div className="eventDetail-Card">
-            <div className = "eventName">
-                <h3>Event Name</h3>
+        <div id="event-detail-container">
+            <div className="event-detail-header">
+                <BackButton />
+            </div>
+            <div className="event-info-container">
+                <div className = "add-event-title">
+                    <h3>Event Title</h3>
                     <TextField
                         type="text"
                         className="form-control"
@@ -205,11 +191,23 @@ export const AddEventForm= ()=>{
                         onChange={handleChange}
                         error={errors.title}
                         helperText={errors.title ? 'Event title is required' : ''}
-                        sx={{ width: '100%' }} // Makes it responsive
+                        sx={{ width: '24ch' }}
                     ></TextField>
-            </div>
-
-            <div className="eventType">
+                </div>
+                <div className="add-event-description">
+                    <h3>Event Summary</h3>
+                        <TextField
+                        multiline
+                        rows={4}
+                        type="text"
+                        className="form-control"
+                        name="summary"
+                        value={formData.summary}
+                        onChange={handleChange}
+                        sx={{ width: '36ch' }}
+                    ></TextField>
+                </div>
+                <div className="add-event-type">
                     <h3>Event Type</h3>
                     <FormControl sx={{ width: '36ch' }}>
                         <Select
@@ -238,10 +236,80 @@ export const AddEventForm= ()=>{
                         </Select>
                     </FormControl>
                 </div>
-
-
+                <div className="add-event-location">
+                    <h3>Location</h3>
+                    <TextField
+                        type="text"
+                        className="form-control"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleChange}
+                        error={errors.location}
+                        helperText={errors.location ? 'Event location is required' : ''}
+                        sx={{ width: '24ch' }}
+                    ></TextField>
+                </div>
+                <div className="add-event-time">
+                        <h3>Date & Time</h3>
+                        <div style={{ display: "flex", gap: "16px", marginBottom: "16px" }}>
+                        <DateTimePicker label="Begin Time" value={dayjs(formData.begin_time)}
+                            onChange={(newValue) => newValue&&handleBeginTimeChange(newValue)} 
+                            sx={{ width: '24ch' }}/>
+                        
+                        <DateTimePicker label="End Time" value={dayjs(formData.end_time)}
+                            onChange={(newValue) => newValue&&handleEndTimeChange(newValue)}
+                            sx={{ width: '24ch' }}
+                            minDateTime={dayjs(formData.begin_time)}/>
+                        </div>
+                </div>
+                <div className="add-event-recurring">
+                    <h3>Recurring</h3>
+                    <FormGroup>
+                        <FormControlLabel control={<Switch color="secondary" onChange={()=>(setFormData({...formData, recur: !formData.recur}))}/>} label="Event Recurring" />
+                    </FormGroup>
+                    {formData.recur && 
+                    <div style={{ display: "flex", gap: "16px", alignItems: "center", marginTop: "16px" }}>
+                        <FormControl sx={{ m: 1, minWidth: 120 }}>
+                            <InputLabel id="demo-simple-select-label">Frequency</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                label="Frequency"
+                                value={formData.frequency}
+                                onChange={(e) => setFormData({ ...formData, frequency: Number(e.target.value) })}
+                                variant="outlined"
+                                style={{ width: '200px' }}
+                            >
+                                <MenuItem value="" disabled>Select Frequency</MenuItem>
+                                <MenuItem value="0">Weekly</MenuItem>
+                                <MenuItem value="1">Biweek</MenuItem>
+                                <MenuItem value="2">Monthly</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <DateTimePicker views={['year', 'month', 'day']}
+                            label="Stop Date" value={dayjs(formData.stop_date)}
+                            onChange={(newValue) => newValue&&handleStopDateChange(newValue)}
+                            sx={{ width: '24ch' }}
+                            minDateTime={dayjs(formData.begin_time)}/>
+                    </div>}
+                </div>
+                <div className="add-event-capacity">
+                    <h3>Capacity</h3>
+                    <TextField
+                        type="text"
+                        className="form-control"
+                        name="capacity"
+                        value={formData.capacity}
+                        onChange={handleChange}
+                        sx={{ width: '24ch' }}
+                    ></TextField>
+                </div>
+                {/* Pictures */}
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", marginTop: "24px" }}>
+                    <Button variant="contained" style={{ backgroundColor: '#43BD28', color: '#FFFFFF' }} onClick={handleSubmit}>Submit Event</Button>
+                </div>
+                
+                <div></div>
+            </div>
         </div>
-
-    </div>
     );
 }

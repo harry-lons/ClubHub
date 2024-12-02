@@ -1,0 +1,94 @@
+.background {
+    background: url('../../../public/gradientBackground.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: repeat-y;
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    z-index: -1;
+ }
+
+.eventDetail-container{
+    display: flex;
+    width: 100%; 
+    overflow: visible;
+    position: relative;
+}
+
+.backButton-container {
+    position: absolute; /* To position within the container */
+    top: 35px; /* Adjust as needed */
+    left: 35px;
+    z-index: 2; /* Ensure it's above other elements */
+}
+
+.backButton {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.backButtonImage {
+    width: 80px; /* Set a fixed width */
+    height: 30px; /* Set a fixed height */
+    display: block;
+}
+
+.backButton:hover {
+    transform: scale(1.1); /* Optional: Slightly enlarge on hover */
+}
+
+.eventDetail-Card{
+    width: 75%;
+    height: 75%;
+    background-color: white;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    margin-top: 120px;
+    margin-left: 250px;
+    margin-right: 250px;
+}
+
+
+.eventName {
+    display: flex; 
+    flex-direction: column;
+    align-items: flex-start; 
+    margin-bottom: 20px;
+    margin-right:350px; 
+
+}
+
+.eventName h3 {
+    font-size: 16px; 
+    font-weight: bold; 
+    color: #4A3F8C;
+    margin-bottom: 10px; 
+}
+
+.form-control {
+    background-color: #DDD5F3; 
+    border: none; 
+    border-radius: 6px; 
+    padding: 10px;
+    font-size: 14px; 
+    color: #4A3F8C; 
+    width: 100%; 
+    box-sizing: border-box; 
+}
+
+.form-control:focus {
+    outline: none; 
+    box-shadow: 0 0 4px #4A3F8C; 
+    border: 1px solid #DDD5F3; 
+}
+
+.helperText {
+    font-size: 12px; 
+    color: #4A3F8C;
+}
