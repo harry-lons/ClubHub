@@ -1,6 +1,5 @@
-import { Club, Event, RSVP } from "../../types/types";
+import { Club, Event } from "../../types/types";
 import { useNavigate } from "react-router-dom";
-import { exampleEventList } from "../../constants/constants";
 import { useState, useEffect, useContext } from "react";
 import "./Events.css";
 import { Grid, FormGroup, FormControlLabel, Checkbox, Button } from '@mui/material';
@@ -32,47 +31,41 @@ const Events: React.FC = () => {
 
     const loadEvents = async () => {
         if (context.token) {
-            // Load RSVP Events List
             try {
-                console.log("RSVP");
+                // Load RSVP Events List
                 const eventInfo = await fetchEventListInfo(context.token);
                 const clubList = eventInfo.clubs;
                 const rsvpList = eventInfo.rsvp;
-                console.log(rsvpList);
-                const result = await processEvents(rsvpList, rsvpList, clubList);
-                setRsvpEventsList(result);
-                // Load All other lists and compare with RSVP
-                // Load Total Events List
-                try {
-                    console.log("Events");
-                    const eventsList = eventInfo.events;
-                    const result = await processEvents(eventsList, rsvpList, clubList);
-                    setEventsList(result);
-                    // Load Followed Events List
-                    try {
-                        console.log("Followed");
-                        const followedClubs = eventInfo.follow_id;
-                        const followedList = eventsList.filter(event => followedClubs.find(id => id === event.club_id));
-                        const result = await processEvents(followedList, rsvpList, clubList);
-                        setFollowedEventsList(result);
-                        setRenderedEvents(result);
-                        // Load RSVP and Followed Events List
-                        try {
-                            console.log("RSVP/Followed");
-                            const combinedList = Array.from(new Map(rsvpList.concat(followedList).map(event => [event.id, event])).values());
-                            const result = await processEvents(combinedList, rsvpList, clubList);
-                            setCombinedEventsList(result);
-                        } catch (err: any) {
-                            console.error("Error loading RSVP/Followed event list:", err.message);
-                        }
-                    } catch (err: any) {
-                        console.error("Error loading Followed event list:", err.message);
-                    }
-                } catch (err: any) {
-                    console.error("Error loading event list:", err.message);
+                const rsvpFinal = await processEvents(rsvpList, rsvpList, clubList);
+                setRsvpEventsList(rsvpFinal);
+                // Load Full Events List
+                const eventsList = eventInfo.events;
+                const eventsFinal = await processEvents(eventsList, rsvpList, clubList);
+                setEventsList(eventsFinal);
+                // Load Followed Events List
+                const followedClubs = eventInfo.follow_id;
+                const followedList = eventsList.filter(event => followedClubs.find(id => id === event.club_id));
+                const followedFinal = await processEvents(followedList, rsvpList, clubList);
+                setFollowedEventsList(followedFinal);
+                // Load RSVP and Followed Events List
+                const combinedList = Array.from(new Map(rsvpList.concat(followedList).map(event => [event.id, event])).values());
+                const combinedFinal = await processEvents(combinedList, rsvpList, clubList);
+                setCombinedEventsList(combinedFinal);
+                
+                // Render all events if no clubs followed
+                if (Object.keys(followedFinal).length === 0) {
+                    setChecked({
+                        RSVP: false,
+                        Followed: false,
+                    });
+                    setRenderedEvents(eventsFinal);
+                }
+                // Render followed clubs' events
+                else {
+                    setRenderedEvents(followedFinal);
                 }
             } catch (err: any) {
-                console.error("Error loading RSVP event list:", err.message);
+                console.error("Error loading event list:", err.message);
             }
         }
     }

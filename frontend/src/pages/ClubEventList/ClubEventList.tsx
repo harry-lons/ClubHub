@@ -7,6 +7,7 @@ import { deleteEvent, fetchClubEvents, fetchRSVPEvents } from "../../utils/event
 import { AuthContext } from "../../context/AuthContext";
 import "./ClubEventList.css";
 import { ClubNavBar } from "../common/ClubNavBar";
+import { fetchCurrentAttendees } from "../../utils/RSVP-utils";
 import LoadingSpinner from "../common/LoadingSpinner";
 
 interface ClubEventListProps {
@@ -15,7 +16,7 @@ interface ClubEventListProps {
 
 const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
     const navigate = useNavigate();
-    const [eventList, setEventList] = useState<Record<string, [string, Event][]>>();
+    const [eventList, setEventList] = useState<Record<string, [Event, number][]>>();
     const [loading, setLoading] = useState(true);
     const { token, id } = useContext(AuthContext); // Retrieve the token from AuthContext
 
@@ -25,7 +26,7 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
                 const eList = await fetchClubEvents(id).catch(() => exampleClubEventList); // Pass token here
 
                 // Group events by date and set the state
-                const groupedEvents = groupEventsByDate(eList);
+                const groupedEvents = await groupEventsByDate(eList);
                 setEventList(groupedEvents);
             } catch (error) {
                 console.error("Error loading events:", error);
@@ -36,23 +37,28 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
 
         loadEvents();
     }, []);
-
-    const groupEventsByDate = (events: Event[]): Record<string, [string, Event][]> => {
-        return events.reduce((acc, event) => {
+ 
+    const groupEventsByDate = async (events: Event[]): Promise<Record<string, [Event, number][]>> => {
+        const result = await events.reduce(async (accPromise, event) => {
+            const acc = await accPromise;
             // Get the month name (e.g., "January")
             const month = event.begin_time.toLocaleString("default", { month: "long" });
 
             // Ensure the month key exists in the accumulator
             acc[month] = acc[month] || [];
 
+            // Get number of RSVPs to event
+            const rsvps = await fetchCurrentAttendees(Number(event.id));
+    
             // Add the event to the appropriate month group with a placeholder club name
-            acc[month].push(["Unknown Club", event]);
-
+            acc[month].push([event, rsvps.length]);
+    
             // Sort events within the month by date and time
-            acc[month].sort((a, b) => a[1].begin_time.getTime() - b[1].begin_time.getTime());
-
+            acc[month].sort((a, b) => a[0].begin_time.getTime() - b[0].begin_time.getTime());
+    
             return acc;
-        }, {} as Record<string, [string, Event][]>);
+        }, Promise.resolve({} as Record<string, [Event, number][]>));
+        return result;
     };
 
     const goToDetailPage = (event_id: string) => {
@@ -82,56 +88,7 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
                     <div className="events-created-header-container">
                         <h1 className="header-title">Events Created</h1>
                     </div>
-                    {
-                        loading ?
-                            <LoadingSpinner />
-                            :
-                            <Grid item xs={12}>
-                                <Grid container rowSpacing={4} className="events-list">
-                                    {Object.entries(eventList || {}).map(([month, events]) => (
-                                        <Grid item xs={12} key={month} className="month-row">
-                                            <h2>{month}</h2>
-                                            <div className="event-cards-container">
-                                                <button
-                                                    className="arrow-button left"
-                                                    onClick={() => scrollRow(`${month}-row`, "left")}
-                                                >
-                                                    &#8249;
-                                                </button>
-                                                <div id={`${month}-row`} className="event-cards-row">
-                                                    {(events as [string, Event][]).map(([clubName, event]) => (
-                                                        <Card key={event.id} className="event-card">
-                                                            <CardContent>
-                                                                <h3 onClick={() => goToDetailPage(event.id)}>{event.title}</h3>
-                                                                <p>{event.location}</p>
-                                                                <p>{event.begin_time.toLocaleDateString()}</p>
-                                                                <p>{event.begin_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                                                                <p>{exampleRSVPList[event.id] || 0} RSVPs</p>
-                                                                <div className="event-buttons">
-                                                                    <Button className="edit-club-button" variant="contained" onClick={() => handleEdit(event.id)}>
-                                                                        Edit
-                                                                    </Button>
-                                                                    <Button className="delete-club-button" variant="contained" onClick={() => handleDelete(event.id)}>
-                                                                        Delete
-                                                                    </Button>
-                                                                </div>
-                                                            </CardContent>
-                                                        </Card>
-                                                    ))}
-                                                </div>
-                                                <button
-                                                    className="arrow-button right"
-                                                    onClick={() => scrollRow(`${month}-row`, "right")}
-                                                >
-                                                    &#8250;
-                                                </button>
-                                            </div>
-                                            <hr className="month-divider"></hr>
-                                        </Grid>
-                                    ))}
-                                </Grid>
-                            </Grid>
-                    }
+                    <LoadingSpinner />
                 </Grid>
             </div>
         );
@@ -156,13 +113,13 @@ const ClubEventList: React.FC<ClubEventListProps> = ({ which }) => {
                                 <div className="event-cards-container">
                                     <button className="arrow-button left" onClick={() => scrollRow(`${month}-row`, "left")}>&#8249;</button>
                                     <div id={`${month}-row`} className="event-cards-row">
-                                        {(events as [string, Event][]).map(([clubName, event]) => (
+                                        {(events as [Event, number][]).map(([event, rsvp]) => (
                                             <Card key={event.id} className="event-card">
                                                 <CardContent>
                                                     <h3 onClick={() => goToDetailPage(event.id)}>{event.title}</h3>
                                                     <p>{event.location}</p>
                                                     <p>{`${event.begin_time.toLocaleDateString()} at ${event.begin_time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}</p>
-                                                    <p>{exampleRSVPList[event.id] || 0} RSVPed</p>
+                                                    <p>{rsvp} RSVPed</p>
                                                     <div className="event-buttons">
                                                         <Button className="edit-club-button" variant="contained" onClick={() => handleEdit(event.id)}>
                                                             Edit
