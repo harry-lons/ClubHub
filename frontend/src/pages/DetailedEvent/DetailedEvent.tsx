@@ -47,10 +47,10 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                 if (event_clubId_) {
                     await loadClub(event_clubId_);
                 }
-                if (which === "USER") {
+                if (context.accountType === "user") {
                     loadRSVP();
                 }
-                if (which === "CLUB") {
+                if (context.accountType === "club") {
                     loadAttendees();
                 }
             } catch (err) {
@@ -343,9 +343,9 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                             <h2>{event.title}</h2>
                         </div>
                         {
-                            (which == "CLUB")&&(owner.id===event.club_id) ?
+                            (context.accountType == "club")&&(owner.id===event.club_id) ?
                             <EditButton /> :
-                            which == "USER" ?
+                            context.accountType == "user" ?
                             <RSVPButton /> :
                             null
                         }
@@ -388,7 +388,7 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                     <h3>Recurring</h3>
                     {handleRecur(event)}
                 </div>
-                {(which === "CLUB") && 
+                {(context.accountType === "club") && 
                 <div className = "event-num-attendees">
                     <h3>Attendees</h3>
                     <p>Number of Current Attendees: {attendees.length}</p>
