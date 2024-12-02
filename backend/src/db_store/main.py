@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.engine import URL
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-from .. import ENV
+from ..__init__ import ENV
 from ..db_store.models import ClubBoardMembers, UserRSVPs
 from ..events.constants import fake_event_1, fake_event_2
 from .models import (
@@ -15,6 +15,7 @@ from .models import (
     EventTags,
     UserAccounts,
     UserRSVPs,
+    UserFollows
 )
 from .postgres import PostgresDatabase
 
@@ -127,6 +128,10 @@ def init_test_data(db: PostgresDatabase):
     fake_event_1.club_id = test_club_1
     db.create_event(fake_event_1, test_club_1)  # should have id 1
 
+    print(test_user_1)
+    user_3_follow_club = UserFollows(user_id=test_user_3, club_id=test_club_1)
+    db.session.add(user_3_follow_club)
+    
     user_4_rsvp_event_1 = UserRSVPs(user_id=test_user_1, event_id=1)
     db.session.add(user_4_rsvp_event_1)
 

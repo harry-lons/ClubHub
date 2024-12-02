@@ -1,6 +1,6 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom";
-import { Event, EventType } from "../../types/types";
+import { Event, EventType} from "../../types/types";
 import { Club } from "../../types/types";
 import DatePicker from "react-datepicker";
 import { DateField, DateTimePicker} from "@mui/x-date-pickers";
@@ -13,17 +13,39 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import "react-datepicker/dist/react-datepicker.css";
 import { createEvent } from "../../utils/event-utils";
 import {AuthContext} from "../../context/AuthContext"
+import "./AddEventForm.css"
 
 
 export const AddEventForm= ()=>{
 
-    const {token} = useContext(AuthContext);
+    const context = useContext(AuthContext);
+    useEffect(() => {
+        console.log(context.token, context.accountType, context.id);
+    }, []);
+    const club_id = context.id;
+    const token = context.token;
+    
     const navigate = useNavigate();
-    const BackButton: React.FC = () => {
-        const handleBack = () => { navigate(-1); };
-        // Navigates to the previous page
-        return (<button onClick={handleBack} className="back-button">&lt;</button>);
+    const BackButton = () => {
+        const navigate = useNavigate();
+    
+        const handleBack = () => {
+            navigate(-1); // Navigate to the previous page
+        };
+    
+        return (
+            <button className="backButton" onClick={handleBack}>
+                <img
+                    src="/backButton.png" // Ensure this path is correct
+                    alt="Back"
+                    className="backButtonImage"
+                    width="30" // Explicitly set width
+                    height="30" // Explicitly set height
+                />
+            </button>
+        );
     };
+    
 
     const [formData, setFormData] = useState({
         title: "",
@@ -33,9 +55,9 @@ export const AddEventForm= ()=>{
         summary: "",
         type: [] as EventType[],
         recur: false,
-        frequency: -1,
+        frequency: 1,
         stop_date: new Date(),
-        capacity:null
+        capacity: null as Number | null
 	    // pictures: { [key: string]: string };
     });
 
@@ -47,7 +69,7 @@ export const AddEventForm= ()=>{
         stop_date: false,
     });
 
-    const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
 
         const newErrors = {
@@ -65,9 +87,9 @@ export const AddEventForm= ()=>{
             // club id should be a context
             const newEvent: Event =
             {
-                id: `${formData.title}-${Date.now()}`,
+                id: "0",
                 title: formData.title,
-                club_id : "CLUB ID PLACE HOLDER",
+                club_id : club_id,
                 location: formData.location,
                 begin_time: formData.begin_time,
                 end_time: formData.end_time,
@@ -75,12 +97,13 @@ export const AddEventForm= ()=>{
                 recurrence_type: formData.frequency,
                 stop_date: formData.stop_date,
                 summary: formData.summary,
-                pictures: { },
+                pictures: [],
                 type: formData.type,
                 capacity:formData.capacity||null
             };
-            const eventID = createEvent(token, newEvent);
+            const eventID = await createEvent(token, newEvent);
             navigate(`/club/events/${eventID}`);
+            // navigate(`/testpage`);
         }
     
         const newFormData = {
@@ -96,10 +119,10 @@ export const AddEventForm= ()=>{
             capacity: null
         };
         setFormData(newFormData);
-      };
+    };
     
 
-      const eventTypes = [
+    const eventTypes = [
         { value: 'social', label: 'Social Event' },
         { value: 'workshop', label: 'Workshop' },
         { value: 'networking', label: 'Networking Event' },
@@ -125,7 +148,7 @@ export const AddEventForm= ()=>{
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
             ...formData,
-            [event.target.name]: event.target.value,
+            [event.target.name]: event.target.name === 'capacity' ? (event.target.value === '' ? null : Number(event.target.value)) : event.target.value,
         });
     };
 
@@ -168,139 +191,158 @@ export const AddEventForm= ()=>{
     };
     
     return(
-        <div id="event-detail-container">
-            <div className="event-detail-header">
-                <BackButton />
-            </div>
-            <div className="event-info-container">
-                <div className = "add-event-title">
-                    <h3>Event Title</h3>
-                    <TextField
-                        type="text"
-                        className="form-control"
-                        name="title"
-                        value={formData.title}
-                        onChange={handleChange}
-                        error={errors.title}
-                        helperText={errors.title ? 'Event title is required' : ''}
-                        sx={{ width: '24ch' }}
-                    ></TextField>
-                </div>
-                <div className="add-event-description">
-                    <h3>Event Summary</h3>
+        <div className="eventDetail-container">
+        <div className="background"></div>
+        <div className="backButton-container"> <BackButton /> </div>
+        <div className="eventDetail-Card">
+            <div className="eventColumn1">
+                <div className = "eventName">
+                    <h3>Event Name</h3>
                         <TextField
-                        multiline
-                        rows={4}
-                        type="text"
-                        className="form-control"
-                        name="summary"
-                        value={formData.summary}
-                        onChange={handleChange}
-                        sx={{ width: '36ch' }}
-                    ></TextField>
+                            type="text"
+                            className="form-control"
+                            name="title"
+                            value={formData.title}
+                            onChange={handleChange}
+                            error={errors.title}
+                            helperText={errors.title ? 'Event title is required' : ''}
+                            sx={{ width: '100%' }} // Makes it responsive
+                            data-testid="event-name-input"
+                        ></TextField>
                 </div>
-                <div className="add-event-type">
-                    <h3>Event Type</h3>
-                    <FormControl sx={{ width: '36ch' }}>
-                        <Select
-                        labelId="demo-multiple-checkbox-label"
-                        id="demo-multiple-checkbox"
-                        multiple
-                        value={formData.type}
-                        onChange={handleTypeChange}
-                        input={<OutlinedInput/>}
-                        renderValue={(selected) => (
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                {selected.map((value) => (
-                                    <Chip key={value} label={value} />
-                                ))}
-                            </Box>
-                        )}
-                        MenuProps={MenuProps}
-                        >
-                        {eventTypes.map((t) => (
-                            <MenuItem key={t.label} value={t.label}>
-                            <Checkbox checked={formData.type.includes(t.label as EventType)} />
-                            <ListItemText primary={t.label} />
-                            </MenuItem>
-                        ))}
-                        </Select>
-                    </FormControl>
-                </div>
-                <div className="add-event-location">
-                    <h3>Location</h3>
-                    <TextField
-                        type="text"
-                        className="form-control"
-                        name="location"
-                        value={formData.location}
-                        onChange={handleChange}
-                        error={errors.location}
-                        helperText={errors.location ? 'Event location is required' : ''}
-                        sx={{ width: '24ch' }}
-                    ></TextField>
-                </div>
-                <div className="add-event-time">
-                        <h3>Date & Time</h3>
-                        <div style={{ display: "flex", gap: "16px", marginBottom: "16px" }}>
-                        <DateTimePicker label="Begin Time" value={dayjs(formData.begin_time)}
-                            onChange={(newValue) => newValue&&handleBeginTimeChange(newValue)} 
-                            sx={{ width: '24ch' }}/>
-                        
-                        <DateTimePicker label="End Time" value={dayjs(formData.end_time)}
-                            onChange={(newValue) => newValue&&handleEndTimeChange(newValue)}
-                            sx={{ width: '24ch' }}
-                            minDateTime={dayjs(formData.begin_time)}/>
-                        </div>
-                </div>
-                <div className="add-event-recurring">
-                    <h3>Recurring</h3>
-                    <FormGroup>
-                        <FormControlLabel control={<Switch color="secondary" onChange={()=>(setFormData({...formData, recur: !formData.recur}))}/>} label="Event Recurring" />
-                    </FormGroup>
-                    {formData.recur && 
-                    <div style={{ display: "flex", gap: "16px", alignItems: "center", marginTop: "16px" }}>
-                        <FormControl sx={{ m: 1, minWidth: 120 }}>
-                            <InputLabel id="demo-simple-select-label">Frequency</InputLabel>
+
+                <div className="eventType">
+                        <h3>Event Type</h3>
+                        <FormControl sx={{ width: '36ch' }}>
                             <Select
-                                labelId="demo-simple-select-label"
-                                label="Frequency"
-                                value={formData.frequency}
-                                onChange={(e) => setFormData({ ...formData, frequency: Number(e.target.value) })}
-                                variant="outlined"
-                                style={{ width: '200px' }}
+                            labelId="demo-multiple-checkbox-label"
+                            id="demo-multiple-checkbox"
+                            multiple
+                            value={formData.type}
+                            onChange={handleTypeChange}
+                            input={<OutlinedInput/>}
+                            renderValue={(selected) => (
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    {selected.map((value) => {
+                                        const label = eventTypes.find((t) => t.value === value)?.label;
+                                        return <Chip key={value} label={label} />;
+                                    })}
+                                </Box>
+                            )}
+                            MenuProps={MenuProps}
                             >
-                                <MenuItem value="" disabled>Select Frequency</MenuItem>
-                                <MenuItem value="0">Weekly</MenuItem>
-                                <MenuItem value="1">Biweek</MenuItem>
-                                <MenuItem value="2">Monthly</MenuItem>
+                            {eventTypes.map((t) => (
+                                <MenuItem key={t.label} value={t.value}>
+                                <Checkbox checked={formData.type.includes(t.label as EventType)} />
+                                <ListItemText primary={t.label} />
+                                </MenuItem>
+                            ))}
                             </Select>
                         </FormControl>
-                        <DateTimePicker views={['year', 'month', 'day']}
-                            label="Stop Date" value={dayjs(formData.stop_date)}
-                            onChange={(newValue) => newValue&&handleStopDateChange(newValue)}
+                    </div>
+
+                    <div className="eventLocation">
+                        <h3>Event Location</h3>
+                        <TextField
+                            type="text"
+                            className="form-control"
+                            name="location"
+                            value={formData.location}
+                            onChange={handleChange}
+                            error={errors.location}
+                            helperText={errors.location ? 'Event location is required' : ''}
                             sx={{ width: '24ch' }}
-                            minDateTime={dayjs(formData.begin_time)}/>
-                    </div>}
-                </div>
-                <div className="add-event-capacity">
-                    <h3>Capacity</h3>
-                    <TextField
-                        type="text"
-                        className="form-control"
-                        name="capacity"
-                        value={formData.capacity}
-                        onChange={handleChange}
-                        sx={{ width: '24ch' }}
-                    ></TextField>
-                </div>
-                {/* Pictures */}
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", marginTop: "24px" }}>
-                    <Button variant="contained" style={{ backgroundColor: '#43BD28', color: '#FFFFFF' }} onClick={handleSubmit}>Submit Event</Button>
-                </div>
-                
-                <div></div>
+                            data-testid="event-location-input"
+                        ></TextField>
+                    </div>
+
+                    <div className="eventCapacity">
+                        <h3>Capacity</h3>
+                        <TextField
+                            type="text"
+                            className="form-control"
+                            name="capacity"
+                            value={formData.capacity}
+                            onChange={handleChange}
+                            sx={{ width: '24ch' }}
+                        ></TextField>
+                    </div>
+
             </div>
+            
+            <div className="eventColumn2">
+
+                <div className="eventTime">
+                        <h3>Date & Time</h3>
+                            <div className="time-picker-container">
+                                <DateTimePicker 
+                                    label="Begin Time" 
+                                    value={dayjs(formData.begin_time)}
+                                    onChange={(newValue) => newValue && handleBeginTimeChange(newValue)} 
+                                    sx={{ width: '100%' }}
+                                />
+                                
+                                <DateTimePicker 
+                                    label="End Time" 
+                                    value={dayjs(formData.end_time)}
+                                    onChange={(newValue) => newValue && handleEndTimeChange(newValue)}
+                                    sx={{ width: '100%' }}
+                                    minDateTime={dayjs(formData.begin_time)}
+                                />
+                            </div>
+                </div>
+
+                    <div className="eventRecurring">
+                        <h3>Recurring</h3>
+                        <FormGroup>
+                            <FormControlLabel control={<Switch color="secondary" onChange={()=>(setFormData({...formData, recur: !formData.recur}))}/>} label="Event Recurring" />
+                        </FormGroup>
+                        {formData.recur && 
+                        <div style={{ display: "flex", gap: "16px", alignItems: "center", marginTop: "16px" }}>
+                            <FormControl sx={{ m: 1, minWidth: 120 }}>
+                                <InputLabel id="demo-simple-select-label">Frequency</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    label="Frequency"
+                                    value={formData.frequency}
+                                    onChange={(e) => setFormData({ ...formData, frequency: Number(e.target.value) })}
+                                    variant="outlined"
+                                    style={{ width: '200px' }}
+                                >
+                                    <MenuItem value="" disabled>Select Frequency</MenuItem>
+                                    <MenuItem value="0">Weekly</MenuItem>
+                                    <MenuItem value="1">Biweekly</MenuItem>
+                                    <MenuItem value="2">Monthly</MenuItem>
+                                </Select>
+                            </FormControl>
+                            <DateTimePicker views={['year', 'month', 'day']}
+                                label="Stop Date" value={dayjs(formData.stop_date)}
+                                onChange={(newValue) => newValue&&handleStopDateChange(newValue)}
+                                sx={{ width: '24ch' }}
+                                minDateTime={dayjs(formData.begin_time)}/>
+                        </div>}
+                </div>
+
+                <div className="eventDescription">
+                        <h3>Event Description</h3>
+                            <TextField
+                            multiline
+                            rows={4}
+                            type="text"
+                            className="form-control"
+                            name="summary"
+                            value={formData.summary}
+                            onChange={handleChange}
+                            sx={{ width: '36ch' }}
+                        ></TextField>
+                    </div>
+             </div> 
+
+             <div className="submitButton"> 
+                <Button variant="contained" style={{ backgroundColor: '#43BD28', color: '#FFFFFF' }} onClick={handleSubmit}>Submit Event</Button>
+            </div>
+
         </div>
+    </div>
     );
 }

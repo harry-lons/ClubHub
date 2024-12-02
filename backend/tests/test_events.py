@@ -119,3 +119,20 @@ def test_create_event(client, club_auth_header):
     assert event.location == fake_event_2.location
     assert event.capacity == fake_event_2.capacity
     assert len(event.tags) == len(fake_event_1.type)
+
+
+def test_get_club_events(client):
+    """Test `get_club_events`"""
+    parent_club = DB.db.get_org_from_email("cats@example.com")
+
+    resp = client.get(f"/club/{parent_club.id}/events")
+
+    assert resp.status_code == 200
+    resp_data = resp.json()
+    assert len(resp_data) == 1  # only 1 key: "events"
+    events = resp_data["events"]
+
+    assert len(events) == 1  # only 1 event
+    item1 = events[0]
+
+    assert item1["title"] == fake_event_1.title

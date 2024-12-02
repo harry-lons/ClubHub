@@ -20,6 +20,11 @@
  
  
  .navbar-container {
+   background: url('../../../public/gradientBackground.png');
+   background-size: cover;
+   background-position: center;
+   background-attachment: fixed;
+   background-repeat: repeat-y;
    width: 100%;
    position: sticky;
    top: 0px;
@@ -91,6 +96,12 @@
     width: 80%;
  }
  
+
+ .event-rsvpd {
+   text-align: center;
+   width: 10%;
+}
+
  
  /* Event title styling */
  .event-title {
@@ -117,6 +128,11 @@
    text-decoration: underline;
  }
  
- 
+ #logsign-submit-button {
+   background-color: #A556EE;
+   color: white;
+   padding-top: 10px;
+   padding-bottom: 10px;
+}
  
  

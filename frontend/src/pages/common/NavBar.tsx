@@ -18,7 +18,7 @@ const pages = ['Events', 'Clubs', 'Profile', 'Log Out'];
 
 export const NavBar = () => {
   const navigate = useNavigate();
-  const { removeToken } = useContext(AuthContext);
+  const { removeToken, accountType } = useContext(AuthContext);
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {

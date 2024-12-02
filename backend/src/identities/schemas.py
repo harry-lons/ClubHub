@@ -18,11 +18,19 @@ class UserID(BaseModel):
     id: str
 
 
+class UserIDList(BaseModel):
+    users: List[str]
+
+
 class User(UserID):
     # id: int
     username: str
     first_name: str
     last_name: str
+
+
+class UserList(BaseModel):
+    users: List[User]
 
 
 class UserAndClubs(User):
@@ -32,6 +40,7 @@ class UserAndClubs(User):
 
 class ClubWithBoardMembers(Club):
     board_members: List[str]  # List of UserIDs
+    description: str
 
 
 class UserProfilePictureImgKey(BaseModel):

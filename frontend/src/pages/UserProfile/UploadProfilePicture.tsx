@@ -1,10 +1,14 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext,useEffect } from 'react';
 import { Button, Input, CircularProgress, Snackbar } from '@mui/material';
 import { AuthContext } from '../../context/AuthContext';
 
 
 const UploadProfilePicture: React.FC = () => {
-  const { token } = useContext(AuthContext);
+  const context = useContext(AuthContext);
+    useEffect(() => {
+        console.log(context.token, context.accountType, context.id);
+    }, []);
+    const token = context.token;
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);  
