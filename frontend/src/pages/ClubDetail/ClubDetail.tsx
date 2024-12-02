@@ -11,6 +11,7 @@ import {Alert, Box,List,ListItem,ListItemText,AccordionDetails,Accordion,Accordi
 import CheckIcon from '@mui/icons-material/Check';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Backdrop, CircularProgress, Button,Typography } from "@mui/material";
+import FollowButton from "./FollowButton";
 import "./ClubDetail.css";
 
 interface ClubDetailProps {
@@ -107,71 +108,6 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
         </button>
         );
     };
-    const FollowButton : React.FC = () => {
-        const [alert, setAlert] = useState<{ message: string; severity: 'success' | 'error' | null }>({
-            message: '',
-            severity: null,
-        });
-        const toggleFollow = async () => {
-            setFollow(!follow);
-            if (!follow) {
-                const newFollow: Follow = {
-                    user_id: userId,
-                    club_id: id as string,
-                };
-    
-                const successful = await createFollow(token, newFollow);
-                console.log("followed: ", successful)
-                if (successful) {
-                    setAlert({
-                        message: "You have successfully followed this club! We're very happy to have you here!",
-                        severity: 'success',
-                    });
-                } else {
-                    setAlert({
-                        message: 'Follow action unsuccessful. Please contact the webpage administrator.',
-                        severity: 'error',
-                    });
-                }
-            } else {
-                const successful = await deleteFollow(token, id as string);
-                console.log("unfollowed: ", successful)
-                if (successful) {
-                    setAlert({
-                        message: 'You have successfully unfollowed this club!',
-                        severity: 'success',
-                    });
-                } else {
-                    setAlert({
-                        message: 'Unfollow action unsuccessful. Please contact the webpage administrator.',
-                        severity: 'error',
-                    });
-                }
-            }
-            console.log(alert.message)
-            // Automatically hide the alert after 3 seconds
-            setTimeout(() => {
-                setAlert({ message: '', severity: null });
-            }, 3000); // 3000ms = 3 seconds
-        }
-        
-        return (
-            <>
-            {alert.severity && (
-                <Alert
-                    icon={<CheckIcon fontSize="inherit" />}
-                    severity={alert.severity}
-                    onClose={() => setAlert({ message: '', severity: null })} // Allow closing the alert
-                >
-                    {alert.message}
-                </Alert>
-            )}
-            <Button className="follow-button" variant="contained" onClick={toggleFollow}>
-                {follow? 'unFOLLOW' : 'FOLLOW' }
-            </Button>
-            </>
-        );
-    };
     const goToDetailPage = (event_id: string) =>{
         navigate(`/events/${event_id}`);
     }
@@ -193,7 +129,13 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
             <div className="club-identity-container">
                 <div className="club-name-container">
                     <h2>{club.name}</h2>
-                    {context.accountType === "user" && <FollowButton/>}
+                    {context.accountType === "user" && 
+                    <FollowButton
+                        follow={follow}
+                        setFollow={setFollow}
+                        club_id={id || ""}
+                        showMessages={true}
+                    />}
                     
                 </div>
                 <div className = "club-description-container">
