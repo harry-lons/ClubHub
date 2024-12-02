@@ -96,7 +96,7 @@ const LoginCard: React.FC<LoginCardProps> = ({ typeAccount }) => {
             navigate('/club/events');
         }
         else {
-            navigate('/events');     // Redirect to /events page
+            navigate('/homepage');     // Redirect to /events page
         }
 
     };
