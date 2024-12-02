@@ -217,8 +217,8 @@ class PostgresDatabase(IAuth, IEvents):
         '''
         #event = self._get_by(Events, id=event_id) ## fetch the event
         users = self.session.query(UserRSVPs.user_id).filter_by(event_id=event_id).all()
-        if len(users) == 0:
-            raise ValueError(f"Event is not an RSVP'd event")
+        # if len(users) == 0:
+        #     raise ValueError(f"Event is not an RSVP'd event")
         return users
 
 

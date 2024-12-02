@@ -29,6 +29,10 @@ class User(UserID):
     last_name: str
 
 
+class UserList(BaseModel):
+    users: List[User]
+
+
 class UserAndClubs(User):
     # list of club ids
     followed_clubs: List[ClubID]
