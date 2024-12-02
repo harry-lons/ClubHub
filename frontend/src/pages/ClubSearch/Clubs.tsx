@@ -53,8 +53,6 @@ const Clubs: React.FC = () => {
         <div className="navbar-container">
           <NavBar />
         </div>
-        {
-          !loading &&
           <div className="search-bar">
             <input
               type="text"
@@ -63,7 +61,6 @@ const Clubs: React.FC = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-        }
 
       </div>
       {
