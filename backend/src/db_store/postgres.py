@@ -273,7 +273,7 @@ class PostgresDatabase(IAuth, IEvents):
         if not follows:
             return []  # Return an empty list if no follows exist
         # Extract the `club_id` values from the `Row` objects
-        return [follow[0] for follow in follows]
+        return follows
 
     def fetch_follow_status(self, user_id:str, club_id: str )-> bool:
         '''
