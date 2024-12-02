@@ -4,7 +4,8 @@ import { exampleEventList } from "../../constants/constants";
 import { useState, useEffect, useContext } from "react";
 import "./Events.css";
 import { Grid, FormGroup, FormControlLabel, Checkbox, Button } from '@mui/material';
-import { NavBar } from "../NavBar/NavBar";
+import { NavBar } from "../common/NavBar";
+import LoadingSpinner from "../common/LoadingSpinner";
 import { fetchEvents, fetchEventById, fetchRSVPEvents, fetchEventListInfo } from "../../utils/event-utils";
 import { fetchClubById, fetchClubList } from "../../utils/club-utils";
 import { fetchRSVP } from "../../utils/RSVP-utils";
@@ -170,7 +171,7 @@ const Events: React.FC = () => {
                     <div className="navbar-container">
                         <NavBar />
                     </div>
-                    <h1 style={{color: "white"}}>Loading Events...</h1>
+                    <LoadingSpinner />
                 </div>
             )
         }
