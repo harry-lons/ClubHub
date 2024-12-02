@@ -41,7 +41,6 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
         loadClub();
         if(context.accountType === "user") loadFollowStatus();
         if(context.accountType === "club") loadFollowerList();
-        
     }, [id]);
 
     const loadEvent = async () => {
