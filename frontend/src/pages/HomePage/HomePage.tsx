@@ -6,43 +6,48 @@ import './HomePage.css';
 export const HomePage = () => {
     const navigate = useNavigate();
 
-    // State for tracking the current step in the tour
-    const [currentStep, setCurrentStep] = useState<number>(-1); // Initialize to -1 (tour inactive)
+    const [currentStep, setCurrentStep] = useState<number>(-1);
 
-    // Tour steps definition
     const tourSteps = [
-        { id: "tour-step-navbar", text: "This is the navigation bar where you can navigate the app." },
-        { id: "tour-step-identity", text: "Welcome to SoCalSocial! Here's what we aim to do." },
-        { id: "tour-step-tips", text: "These are tips for getting started with the platform!" },
-        { id: "tour-step-clubs", text: "Find clubs that match your interests here." },
-        { id: "tour-step-events", text: "RSVP to events from your favorite clubs in this section." },
-        { id: "tour-step-profile", text: "Update your profile to stay connected with friends." },
+        { id: "tour-step-navbar", text: "This is the navigation bar where you can navigate the app. You can check out your events, discover clubs, and your profile here." },
+        { id: "tour-step-header", text:  <>
+            Here is SoCalSocial's vision!
+            <br />
+            *TLDR: SoCalSocial is designed to simplify and personalize event discovery for UCSD students by centralizing event information in one platform.
+        </> },
+        { id: "tour-step-tips-header", text: "These are the tips for getting started with the platform." },
+        { id: "tour-step-create", text: <>At this page, you can add to your profile, <br/>
+                                          set privacy preference, and view your past event history. </> },
+        { id: "tour-step-explore", text: <>Navigate to the Clubs Page to find and <br/>
+                                           explore clubs. Follow clubs that match your interests." </> },
+        { id: "tour-step-rsvp", text: <>Discover exciting events and RSVP directly from  <br/>
+                                        the Events Page to stay connected and engaged. </> },
     ];
 
-    // Function to handle moving to the next step
     const nextStep = () => {
         if (currentStep < tourSteps.length - 1) {
             setCurrentStep(currentStep + 1);
         } else {
-            // End the tour
             setCurrentStep(-1);
         }
     };
 
-    // Function to start the tour
     const startTour = () => {
-        setCurrentStep(0); // Start the tour from the first step
+        setCurrentStep(0);
     };
 
-    // Get the current step element and calculate tooltip position
-    const getTooltipPosition = (id: string) => {
-        const element = document.getElementById(id);
-        if (!element) return { top: 0, left: 0 }; // Fallback if element is not found
+    const isActiveStep = (id: string) => currentStep >= 0 && tourSteps[currentStep]?.id === id;
+
+    const getTooltipStyle = () => {
+        const stepId = tourSteps[currentStep]?.id;
+        const element = document.getElementById(stepId);
+        if (!element) return { top: '0px', left: '0px', display: 'none' };
 
         const rect = element.getBoundingClientRect();
         return {
-            top: rect.top + window.scrollY + rect.height + 10, // Position below the element
-            left: rect.left + window.scrollX + rect.width / 2, // Center horizontally
+            top: `${rect.top + window.scrollY + rect.height + 10}px`,
+            left: `${rect.left + window.scrollX + rect.width / 2}px`,
+            transform: 'translateX(-50%)',
         };
     };
 
@@ -55,22 +60,11 @@ export const HomePage = () => {
         }
     }, [currentStep]);
 
-    const currentTooltipPosition =
-        currentStep >= 0 ? getTooltipPosition(tourSteps[currentStep]?.id) : null;
-
     return (
         <div className="HomePageContainer">
-            {/* Overlay for guided tour */}
             {currentStep >= 0 && (
                 <div className="tour-overlay">
-                    <div
-                        className="tour-tooltip"
-                        style={{
-                            top: currentTooltipPosition?.top,
-                            left: currentTooltipPosition?.left,
-                            position: 'absolute',
-                        }}
-                    >
+                    <div className="tour-tooltip" style={getTooltipStyle()}>
                         <p>{tourSteps[currentStep]?.text}</p>
                         <button onClick={nextStep}>
                             {currentStep < tourSteps.length - 1 ? "Next" : "Finish"}
@@ -79,46 +73,67 @@ export const HomePage = () => {
                 </div>
             )}
 
-            <div className="navbarContainer" id="tour-step-navbar">
+            <div
+                className={`navbarContainer ${isActiveStep("tour-step-navbar") ? "active-step" : ""}`}
+                id="tour-step-navbar"
+            >
                 <NavBar />
             </div>
-            <div className="web-identity-container" id="tour-step-identity">
+            <div
+                className={`web-identity-container ${isActiveStep("tour-step-header") ? "active-step" : ""}`}
+                id="tour-step-header"
+            >
                 <h1>SoCalSocial: Your Personalized Hub for UCSD Events</h1>
                 <p>
-                    SoCalSocial is designed to simplify and personalize event discovery for UCSD
-                    students by centralizing event information in one platform.
+                    With countless flyers, social media posts, and invitations flooding your day, 
+                    it’s easy to feel lost in the noise. SoCalSocial tackles this challenge by 
+                    centralizing event information and personalizing it just for you, showcasing events 
+                    that truly matter based on your interests. By cutting through the clutter, SoCalSocial 
+                    helps reduce the stress of information overload, so you can focus on the experiences 
+                    that are most important to you: discovering new clubs and joining fun events!
+
                 </p>
             </div>
-            <h2 id="tour-step-tips">Tips for Getting Started 🤩</h2>
-            <div className="web-instruction-container">
-                <div className="web-clubs-container" id="tour-step-clubs">
-                    <h3>Let's Start by Exploring Clubs That Match Your Interests 😻</h3>
-                    <p>Tutorials waiting to be written at the end of Sprint 5</p>
-                </div>
-                <div className="web-events-container" id="tour-step-events">
-                    <h3>Next Step: RSVP to Events from Your Favorite Clubs 🫶🏻</h3>
-                    <p>Tutorials waiting to be written at the end of Sprint 5</p>
-                </div>
-                <div className="web-profile-container" id="tour-step-profile">
-                    <h3>Update Your Profile to Stay Connected with Friends 💃🏻</h3>
-                    <p>Tutorials waiting to be written at the end of Sprint 5</p>
-                </div>
-            </div>
 
-            {/* Demo Button */}
-            <div className="demo-button-container">
+            <div className="header-and-button-container">
+                <h2
+                    className={`${isActiveStep("tour-step-tips-header") ? "active-step" : ""}`}
+                    id="tour-step-tips-header"
+                >
+                    ✏️ Tips to Get Started 
+                </h2>
                 <button className="demo-button" onClick={startTour}>
                     Start Demo
                 </button>
             </div>
 
-            <h2>Latest Updates on Our Progress ⌨️</h2>
-            <div className="web-updates-container">
-                <div className="web-update-4">
-                    <h3>Sprint 4</h3>
-                    <p>Things waiting to be filled</p>
+            <div className="tips-container">
+                <div
+                    className={`tip ${isActiveStep("tour-step-create") ? "active-step" : ""}`}
+                    id="tour-step-create"
+                >
+                    <img src="/profile.png" alt="Profile" />
+                    <h3>Create & Personalize</h3>
+                    <p>Check out your profile and personalize it to your liking!</p>
+                </div>
+                <div
+                    className={`tip ${isActiveStep("tour-step-explore") ? "active-step" : ""}`}
+                    id="tour-step-explore"
+                >
+                    <img src="/clubSearch.png" alt="Clubs" />
+                    <h3>Explore. Match. Follow.</h3>
+                    <p>Find clubs that match your interests and connect with peers.</p>
+                </div>
+                <div
+                    className={`tip ${isActiveStep("tour-step-rsvp") ? "active-step" : ""}`}
+                    id="tour-step-rsvp"
+                >
+                    <img src="/eventsList.png" alt="Events" />
+                    <h3>RSVP Now and Join the Fun</h3>
+                    <p>Discover events and RSVP to stay in the loop with your favorite clubs.</p>
                 </div>
             </div>
         </div>
     );
 };
+
