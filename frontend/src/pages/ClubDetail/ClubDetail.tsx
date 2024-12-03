@@ -131,7 +131,7 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
                 
                 <div className="club-identity-container">
                     <div className="club-name-container">
-                        <h2 className="club-name">{club.name}</h2>
+                        <h2 className="club-detail-name">{club.name}</h2>
                         {context.accountType === "user" && 
                         <FollowButton
                             follow={follow}
