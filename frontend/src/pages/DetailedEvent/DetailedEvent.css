@@ -1,9 +1,16 @@
 #event-detail-container {
     width: 100%;
+
 }
 
 #event-detail-container h2, p {
     margin: 0;
+}
+
+.data-container {
+    width: 960px;           /* Set the width to 1040px */
+    margin: 0 auto;          /* Center the container horizontally */
+    box-sizing: border-box;
 }
 
 .event-detail-header {
@@ -37,7 +44,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 5px; /* Add 5px padding on the left and right */
+    padding: 0.25rem 0; /* Add 5px padding on the left and right */
 }
 
 

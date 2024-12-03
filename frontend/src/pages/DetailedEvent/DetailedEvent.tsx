@@ -337,80 +337,82 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
             <div className="event-detail-header">
                 <BackButton />
             </div>
-            <div className="event-identity-container">
-                <div className="event-title-container">
-                        <div className="event-detail-title">
-                            <h2>{event.title}</h2>
-                        </div>
-                        {
-                            (context.accountType == "club")&&(owner.id===event.club_id) ?
-                            <EditButton /> :
-                            context.accountType == "user" ?
-                            <RSVPButton /> :
-                            null
-                        }
+            <div className="data-container">
+                <div className="event-identity-container">
+                    <div className="event-title-container">
+                            <div className="event-detail-title">
+                                <h2>{event.title}</h2>
+                            </div>
+                            {
+                                (context.accountType == "club")&&(owner.id===event.club_id) ?
+                                <EditButton /> :
+                                context.accountType == "user" ?
+                                <RSVPButton /> :
+                                null
+                            }
+                    </div>
+                    <div className="event-detail-club" style={{ display: 'flex', alignItems: 'center' }}>
+                        <p style={{ display: 'inline-block',marginRight: '5px' }}>From  </p>
+                        <p className="event-detail-club-name-text" onClick = {()=>navigate(`/clubDetail/${club.id}`)}>{club.name}</p>
+                    </div>
+                    
                 </div>
-                <div className="event-detail-club" style={{ display: 'flex', alignItems: 'center' }}>
-                    <p style={{ display: 'inline-block',marginRight: '5px' }}>From  </p>
-                    <p className="event-detail-club-name-text" onClick = {()=>navigate(`/clubDetail/${club.id}`)}>{club.name}</p>
+                <div className="event-info-container">
+                    <div className="event-description">
+                        <h3>Description</h3>
+                        <p>{event.summary}</p >
+                    </div>
+                    <div className="event-detail-type">
+                        <h3>Type</h3>
+                        <p>{event.type
+                            .map(typeValue => {
+                                const matchingType = eventTypes.find(type => type.value === typeValue);
+                                return matchingType?.label;
+                            })
+                            .filter(Boolean)
+                            .join(', ')}</p >
+                    </div>
+                    <div className="event-detail-location">
+                        <h3>Location</h3>
+                        <p>{event.location}</p >
+                    </div>
+                    <div className="event-detail-time">
+                        <h3>Date & Time</h3>
+                        {handleTime(event.begin_time, event.end_time)}
+                    </div>
+                    
+                    <div className="event-detail-capacity">
+                        <h3>Capacity</h3>
+                        <p>{event.capacity ? event.capacity.toString() : "No Capacity"}</p >
+                    </div>
+                    <div className="event-recurring">
+                        <h3>Recurring</h3>
+                        {handleRecur(event)}
+                    </div>
+                    {(context.accountType === "club") && 
+                    <div className = "event-num-attendees">
+                        <h3>Attendees</h3>
+                        <p>Number of Current Attendees: {attendees.length}</p>
+                        <VirtualizedAccordion />
+                    </div>}
+                    <div className="event-detail-pictures">
+                        <h3>Pictures</h3>
+                        <img src={exampleFlyer} className="event-picture"/>
+                    </div>
+                    <div className = "event-detail-contact">
+                        <h3>Contact Information</h3>
+                        {Array.isArray(club.contact_email) ? (
+                            club.contact_email.map((email, index) => (
+                            <p key={index}>{email}</p>
+                            ))
+                        ) : (
+                        <p>{club.contact_email}</p>
+                        )}
+                    </div>
+                    <div className="event-detail-attendees"></div>
+                    
+                    <div></div>
                 </div>
-                
-            </div>
-            <div className="event-info-container">
-                <div className="event-description">
-                    <h3>Description</h3>
-                    <p>{event.summary}</p >
-                </div>
-                <div className="event-detail-type">
-                    <h3>Type</h3>
-                    <p>{event.type
-                        .map(typeValue => {
-                            const matchingType = eventTypes.find(type => type.value === typeValue);
-                            return matchingType?.label;
-                        })
-                        .filter(Boolean)
-                        .join(', ')}</p >
-                </div>
-                <div className="event-detail-location">
-                    <h3>Location</h3>
-                    <p>{event.location}</p >
-                </div>
-                <div className="event-detail-time">
-                    <h3>Date & Time</h3>
-                    {handleTime(event.begin_time, event.end_time)}
-                </div>
-                
-                <div className="event-detail-capacity">
-                    <h3>Capacity</h3>
-                    <p>{event.capacity ? event.capacity.toString() : "No Capacity"}</p >
-                </div>
-                <div className="event-recurring">
-                    <h3>Recurring</h3>
-                    {handleRecur(event)}
-                </div>
-                {(context.accountType === "club") && 
-                <div className = "event-num-attendees">
-                    <h3>Attendees</h3>
-                    <p>Number of Current Attendees: {attendees.length}</p>
-                    <VirtualizedAccordion />
-                </div>}
-                <div className="event-detail-pictures">
-                    <h3>Pictures</h3>
-                    <img src={exampleFlyer} className="event-picture"/>
-                </div>
-                <div className = "event-detail-contact">
-                    <h3>Contact Information</h3>
-                    {Array.isArray(club.contact_email) ? (
-                        club.contact_email.map((email, index) => (
-                        <p key={index}>{email}</p>
-                        ))
-                    ) : (
-                    <p>{club.contact_email}</p>
-                    )}
-                </div>
-                <div className="event-detail-attendees"></div>
-                
-                <div></div>
             </div>
         </div>
     );
