@@ -69,7 +69,7 @@ export const ClubNavBar = () => {
               color: 'inherit',
               textDecoration: 'none',
             }}
-            onClick={()=>navigate('/homepage')}
+            onClick={()=>navigate('/club/homepage')}
           >
             SoCalSocial
           </Typography>
