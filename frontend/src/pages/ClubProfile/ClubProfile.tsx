@@ -1,25 +1,23 @@
-
-
-
 import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ClubNavBar } from "../common/ClubNavBar";
-import { exampleClub, exampleClubEventList } from "../../constants/constants";
+import { emptyClub, exampleClub, exampleClubEventList } from "../../constants/constants";
 import { AuthContext } from "../../context/AuthContext";
-import { Event } from "../../types/types";
+import { Club, Event } from "../../types/types";
 import "./ClubProfile.css";
+import { fetchClubById } from "../../utils/club-utils";
 
 interface ClubProfileProps {
     which?: string; // Optional `which` prop
 }
 
 export const ClubProfile: React.FC<ClubProfileProps> = ({ which }) => {
-    const { id: club_id } = useParams<{ id: string }>(); // Get club ID from route params
+    const { id } = useParams<{ id: string }>(); // Get club ID from route params
     const navigate = useNavigate();
     const context = useContext(AuthContext);
     const [clubEvents, setClubEvents] = useState<Event[]>([]);
     const club = exampleClub; // Example club data
-
+   //const [club, setClub] = useState<Club> (emptyClub);
     useEffect(() => {
         console.log(context.token, context.accountType, context.id, which);
     }, [which, context]);
@@ -29,11 +27,22 @@ export const ClubProfile: React.FC<ClubProfileProps> = ({ which }) => {
     useEffect(() => {
         if (!token) return;
         loadEvents();
+        //loadClub();
     }, [token]);
+
+    // const loadClub = async () => {
+    //     try {
+    //         const club_ = await fetchClubById(id as string); // Convert id to a number
+    //         setClub(club_);
+    //     } catch (err: any) {
+    //         console.error("Error loading club:", err.message);
+    //     }
+    // };
+
 
     const loadEvents = async () => {
         try {
-            const filteredEvents = exampleClubEventList.filter(event => event.club_id === club_id); // Example filtering
+            const filteredEvents = exampleClubEventList.filter(event => event.club_id === id); // Example filtering
             setClubEvents(filteredEvents);
         } catch (err: any) {
             console.error("Error loading events:", err.message);

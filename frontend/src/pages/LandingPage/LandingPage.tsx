@@ -17,7 +17,7 @@ export const LandingPage = () => {
     // will be able to use a css file to style MUI stuff
     // See https://github.com/mui/material-ui/issues/38142
     const cache = createCache({
-        key: 'css',
+        key: 'landing-page',
         prepend: true,
     });
 

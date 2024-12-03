@@ -1,28 +1,66 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { NavBar } from '../common/NavBar';
 import './HomePage.css';
+import { AuthContext } from '../../context/AuthContext';
 
 export const HomePage = () => {
     const navigate = useNavigate();
-
+    const context = useContext(AuthContext);
+    useEffect(() => {
+        console.log(context.token, context.accountType, context.id);
+    }, []);
     const [currentStep, setCurrentStep] = useState<number>(-1);
 
-    const tourSteps = [
+    // const tourSteps = [
+    //     { id: "tour-step-navbar", text: "This is the navigation bar where you can navigate the app. You can check out your events, discover clubs, and your profile here." },
+    //     { id: "tour-step-header", text:  <>
+    //         Here is SoCalSocial's vision!
+    //         <br />
+    //         *TLDR: SoCalSocial is designed to simplify and personalize event discovery for UCSD students by centralizing event information in one platform.
+    //     </> },
+    //     { id: "tour-step-tips-header", text: "These are the tips for getting started with the platform." },
+    //     { id: "tour-step-create", text: <>At this page, you can add to your profile, <br/>
+    //                                       set privacy preference, and view your past event history. </> },
+    //     { id: "tour-step-explore", text: <>Navigate to the Clubs Page to find and <br/>
+    //                                        explore clubs. Follow clubs that match your interests." </> },
+    //     { id: "tour-step-rsvp", text: <>Discover exciting events and RSVP directly from  <br/>
+    //                                     the Events Page to stay connected and engaged. </> },
+    // ];
+
+    const tourSteps = context.accountType === "user"
+    ? [
         { id: "tour-step-navbar", text: "This is the navigation bar where you can navigate the app. You can check out your events, discover clubs, and your profile here." },
-        { id: "tour-step-header", text:  <>
+        { id: "tour-step-header", text: <>
             Here is SoCalSocial's vision!
             <br />
             *TLDR: SoCalSocial is designed to simplify and personalize event discovery for UCSD students by centralizing event information in one platform.
         </> },
         { id: "tour-step-tips-header", text: "These are the tips for getting started with the platform." },
         { id: "tour-step-create", text: <>At this page, you can add to your profile, <br/>
-                                          set privacy preference, and view your past event history. </> },
+                                          set privacy preferences, and view your past event history. </> },
         { id: "tour-step-explore", text: <>Navigate to the Clubs Page to find and <br/>
-                                           explore clubs. Follow clubs that match your interests." </> },
-        { id: "tour-step-rsvp", text: <>Discover exciting events and RSVP directly from  <br/>
+                                           explore clubs. Follow clubs that match your interests. </> },
+        { id: "tour-step-rsvp", text: <>Discover exciting events and RSVP directly from <br/>
                                         the Events Page to stay connected and engaged. </> },
+    ]
+    : [
+        { id: "tour-step-navbar", text: "This is the navigation bar where you can navigate the app. You can manage your club, add events, and check RSVPs here." },
+        { id: "tour-step-header", text: <>
+            Here is SoCalSocial's vision for clubs!
+            <br />
+            *TLDR: SoCalSocial helps clubs manage events and connect with students in a streamlined platform.
+        </> },
+        { id: "tour-step-tips-header", text: "These are the tips for getting started with managing your club." },
+        { id: "tour-step-create", text: <>Build your club’s profile, <br/>
+                                          showcase the club's vision, and keep followers updated. </> },
+        { id: "tour-step-explore", text: <>Navigate to the Events Page to add <br/>
+                                           and manage events for your club. </> },
+        { id: "tour-step-rsvp", text: <>Manage RSVPs and track engagement <br/>
+                                        directly from the Events Page. </> },
     ];
+
+
 
     const nextStep = () => {
         if (currentStep < tourSteps.length - 1) {
@@ -107,6 +145,7 @@ export const HomePage = () => {
                 </button>
             </div>
 
+            {context.accountType === "user"&& // if you dont have time remove this line
             <div className="tips-container">
                 <div
                     className={`tip ${isActiveStep("tour-step-create") ? "active-step" : ""}`}
@@ -133,6 +172,39 @@ export const HomePage = () => {
                     <p>Discover events and RSVP to stay in the loop with your favorite clubs.</p>
                 </div>
             </div>
+            }
+
+            {context.accountType === "club"&& // if you dont have time remove this line
+            <div className="tips-container">
+                <div
+                    className={`tip ${isActiveStep("tour-step-create") ? "active-step" : ""}`}
+                    id="tour-step-create"
+                >
+                    <img src="/clubProfile.png" alt="Profile" />
+                    <h3>Show Off Your Club's Personality</h3>
+                    <p>Build a profile that stands out—share your mission, add board members, and let your followers stay updated.</p>
+                </div>
+                <div
+                    className={`tip ${isActiveStep("tour-step-explore") ? "active-step" : ""}`}
+                    id="tour-step-explore"
+                >
+                    <img src="/addEvent.png" alt="Clubs" />
+                    <h3>Add Events!</h3>
+                    <p>Add events that bring your club’s vision to life and engage your community.</p>
+                </div>
+                <div
+                    className={`tip ${isActiveStep("tour-step-rsvp") ? "active-step" : ""}`}
+                    id="tour-step-rsvp"
+                >
+                    <img src="/clubEvents.png" alt="Events" />
+                    <h3>Plan and Promote Like a Pro</h3>
+                    <p>Easily create and manage events to connect with peers and grow your community.</p>
+                </div>
+            </div>
+            }
+
+
+
         </div>
     );
 };
