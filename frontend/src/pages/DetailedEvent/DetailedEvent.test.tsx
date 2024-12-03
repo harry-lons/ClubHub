@@ -111,10 +111,11 @@ describe('User-side DetailedEvent Component', () => {
           token: 'fake-token',
           id: '123',
           accountType: 'user',
-          saveToken: jest.fn(),
+          setToken: jest.fn(),
           setAccountType: jest.fn(),
           setId: jest.fn(),
           removeToken: jest.fn(),
+          saveAuthenticationData: jest.fn()
         };
 
         (RSVPUtils.fetchRSVP as jest.Mock).mockResolvedValue([]);
@@ -139,10 +140,11 @@ describe('User-side DetailedEvent Component', () => {
           token: 'fake-token',
           id: '123',
           accountType: 'user',
-          saveToken: jest.fn(),
+          setToken: jest.fn(),
           setAccountType: jest.fn(),
           setId: jest.fn(),
           removeToken: jest.fn(),
+          saveAuthenticationData: jest.fn()
         };
 
         (RSVPUtils.fetchRSVP as jest.Mock).mockResolvedValue([
@@ -169,10 +171,11 @@ describe('User-side DetailedEvent Component', () => {
           token: 'fake-token',
           id: '123',
           accountType: 'user',
-          saveToken: jest.fn(),
+          setToken: jest.fn(),
           setAccountType: jest.fn(),
           setId: jest.fn(),
           removeToken: jest.fn(),
+          saveAuthenticationData: jest.fn()
         };
 
         (RSVPUtils.fetchRSVP as jest.Mock).mockResolvedValue([]);
@@ -204,10 +207,11 @@ describe('User-side DetailedEvent Component', () => {
           token: 'fake-token',
           id: '123',
           accountType: 'user',
-          saveToken: jest.fn(),
+          setToken: jest.fn(),
           setAccountType: jest.fn(),
           setId: jest.fn(),
           removeToken: jest.fn(),
+          saveAuthenticationData: jest.fn()
         };
         
         (RSVPUtils.fetchRSVP as jest.Mock).mockResolvedValue([
@@ -339,10 +343,11 @@ describe('User-side DetailedEvent Component', () => {
           token: 'fake-token',
           id: '001',
           accountType: 'club',
-          saveToken: jest.fn(),
+          setToken: jest.fn(),
           setAccountType: jest.fn(),
           setId: jest.fn(),
           removeToken: jest.fn(),
+          saveAuthenticationData: jest.fn()
         };
 
         await act(async () => {
@@ -368,10 +373,11 @@ describe('User-side DetailedEvent Component', () => {
           token: 'fake-token',
           id: '001',
           accountType: 'club',
-          saveToken: jest.fn(),
+          setToken: jest.fn(),
           setAccountType: jest.fn(),
           setId: jest.fn(),
           removeToken: jest.fn(),
+          saveAuthenticationData: jest.fn()
         };
     
         await act(async () => {

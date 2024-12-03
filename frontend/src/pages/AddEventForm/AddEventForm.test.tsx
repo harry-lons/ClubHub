@@ -31,10 +31,11 @@ describe('Add Event Form', () => {
         token: 'fake-token',
         id: '001',
         accountType: 'club',
-        saveToken: jest.fn(),
+        setToken: jest.fn(),
         setAccountType: jest.fn(),
         setId: jest.fn(),
         removeToken: jest.fn(),
+        saveAuthenticationData: jest.fn()
       };
 
     test('rendering basic components', async () => {
