@@ -6,6 +6,12 @@
     margin: 0;
 }
 
+.data-container {
+    width: 960px;           /* Set the width to 1040px */
+    margin: 0 auto;          /* Center the container horizontally */
+    box-sizing: border-box;
+}
+
 .club-detail-header {
     display: block;
     width: 100%;
