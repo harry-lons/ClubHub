@@ -1,0 +1,207 @@
+.background {
+    background: url('../../../public/gradientBackground.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: repeat-y;
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    z-index: -1;
+}
+
+.eventDetail-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh; /* Ensure the form centers vertically */
+    padding: 20px; /* Add padding for small screens */
+    box-sizing: border-box;
+}
+
+.eventDetail-Card {
+    display: flex;
+    flex-direction: row; 
+    justify-content: space-between; 
+    align-items: flex-start; 
+    gap: 20px; 
+    width: 80%;
+    max-width: 900px; 
+    padding: 20px; 
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
+    overflow: hidden; /* Prevent overflow */
+    position: relative; /* Enable positioning for the submit button */
+}
+
+.eventColumn1, .eventColumn2 {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Adjust spacing between form sections */
+    width: 48%; /* Ensure both columns take equal space */
+    align-items: stretch; /* Make children stretch to fit column width */
+    padding: 10px; /* Add padding inside each column */
+    box-sizing: border-box;
+}
+
+.eventColumn1 {
+    align-items: flex-start; 
+}
+
+
+/* Form Section Titles */
+.add-event-title h3,
+.add-event-type h3,
+.add-event-location h3,
+.add-event-capacity h3,
+.add-event-time h3,
+.add-event-recurring h3,
+.add-event-description h3 {
+    font-size: 16px;
+    font-weight: bold;
+    color: #4A3F8C; /* Purple for headings */
+    margin-bottom: 5px; /* Add spacing below the title */
+    text-align: left;
+}
+
+/* Input and Select Styling */
+.form-control {
+    width: 100%;
+    border-radius: 8px;
+    background-color: #EEE8F8; /* Light purple background */
+    padding: 12px;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #333;
+    border: none;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #4A3F8C; /* Purple border on focus */
+    box-shadow: 0 0 4px #4A3F8C; /* Add focus shadow */
+}
+
+.add-event-type .MuiFormControl-root {
+    width: 100%;
+    font-size: 14px;
+    border-radius: 8px;
+    background-color: #EEE8F8;
+}
+
+/* Date & Time Section */
+.add-event-time {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Space between Begin and End Time pickers */
+}
+
+.add-event-time .MuiFormControl-root {
+    width: 100%;
+}
+
+.add-event-time div {
+    display: flex;
+    flex-direction: row; /* Align Begin and End Time pickers side-by-side */
+    gap: 16px;
+}
+
+/* Recurring Section */
+.add-event-recurring {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+}
+
+.add-event-recurring .MuiFormControl-root {
+    width: 100%;
+    min-width: 120px;
+}
+
+.add-event-recurring .frequency-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px; /* Space between Frequency and Stop Date */
+    align-items: center;
+}
+
+/* Event Description Section */
+.add-event-description .form-control {
+    width: 100%;
+    height: 100%;
+    background-color: #EEE8F8;
+    border-radius: 8px;
+    padding: 12px;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #333;
+    max-width: 75ch; 
+}
+
+/* Capacity Section */
+.add-event-capacity .form-control {
+    background-color: #EEE8F8;
+    border-radius: 8px;
+    padding: 12px;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #333;
+    width: 100%;
+}
+
+.add-event-capacity p {
+    margin: 0 0 10px 0;
+    font-size: 12px;
+    color: #555;
+}
+
+/* Button Styling */
+.updateButton {
+    position: absolute;
+    bottom: 20px; /* Adjust spacing from the bottom */
+    right: 20px; /* Adjust spacing from the right */
+}
+
+
+.updateButton button {
+    background-color: #43BD28; /* Green background */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.updateButton button:hover {
+    background-color: #36A421; /* Darker green on hover */
+}
+
+/* Back Button */
+.backButton-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 2;
+}
+
+.backButton {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.backButtonImage {
+    width: 30px;
+    height: auto;
+    display: block;
+}
+
+.backButton:hover {
+    transform: scale(1.1);
+}

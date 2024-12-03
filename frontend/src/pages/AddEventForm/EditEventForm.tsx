@@ -15,6 +15,7 @@ import { updateEvent, fetchEventById } from "../../utils/event-utils";
 import { fetchCurrentAttendees } from "../../utils/RSVP-utils";
 import { exampleEvent,exampleUsers } from "../../constants/constants";
 import {AuthContext} from "../../context/AuthContext"
+import "./EditEventForm.css"
 //NOTICE: NEED to ADD
 // When the changed capacity is smaller than the current attendees, error message: 
 //"capacity cannot be less than current attendees, please change the number to be greater than ${attendees....}"
@@ -29,12 +30,25 @@ export const EditEventForm = ()=>{
     const token = context.token;
     const navigate = useNavigate();
     const [attendees,setAttendees] = useState<User[]>(exampleUsers);
-    const BackButton: React.FC = () => {
-        const handleBack = () => { navigate(-1); };
-        // Navigates to the previous page
-        return (<button onClick={handleBack} className="back-button">&lt;</button>);
+    const BackButton = () => {
+        const navigate = useNavigate();
+    
+        const handleBack = () => {
+            navigate(-1); // Navigate to the previous page
+        };
+    
+        return (
+            <button className="backButton" onClick={handleBack}>
+                <img
+                    src="/backButton.png" // Ensure this path is correct
+                    alt="Back"
+                    className="backButtonImage"
+                    width="30" // Explicitly set width
+                    height="30" // Explicitly set height
+                />
+            </button>
+        );
     };
-
     const [formData, setFormData] = useState({
         title: "",
         location: "",
@@ -218,78 +232,84 @@ export const EditEventForm = ()=>{
     
     
     return(
-        <div id="event-detail-container">
-            <div className="event-detail-header">
-                <BackButton />
-            </div>
-            <div className="event-info-container">
-                <div className = "add-event-title">
-                    <h3>Event Title</h3>
-                    <TextField
-                        type="text"
-                        className="form-control"
-                        name="title"
-                        value={formData.title}
-                        onChange={handleChange}
-                        error={errors.title}
-                        helperText={errors.title ? 'Event title is required' : ''}
-                        sx={{ width: '24ch' }}
-                    ></TextField>
-                </div>
-                <div className="add-event-description">
-                    <h3>Event Summary</h3>
+        <div className="eventDetail-container"> 
+            <div className="background"></div>
+            <div className="backButton-container"> <BackButton /> </div>
+            <div className="eventDetail-Card"> 
+                <div className="eventColumn1"> 
+                    <div className = "add-event-title">
+                            <h3>Event Name</h3>
+                            <TextField
+                                type="text"
+                                className="form-control"
+                                name="title"
+                                value={formData.title}
+                                onChange={handleChange}
+                                error={errors.title}
+                                helperText={errors.title ? 'Event title is required' : ''}
+                                sx={{ width: '24ch' }}
+                            ></TextField>
+                        </div>
+
+                        <div className="add-event-type">
+                        <h3>Event Type</h3>
+                        <FormControl sx={{ width: '36ch' }}>
+                            <Select
+                            labelId="demo-multiple-checkbox-label"
+                            id="demo-multiple-checkbox"
+                            multiple
+                            value={formData.type}
+                            onChange={handleTypeChange}
+                            input={<OutlinedInput/>}
+                            renderValue={(selected) => (
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    {selected.map((value) => (
+                                        <Chip key={value} label={value} />
+                                    ))}
+                                </Box>
+                            )}
+                            MenuProps={MenuProps}
+                            >
+                            {eventTypes.map((t) => ( 
+                                <MenuItem key={t.label} value={t.label}>
+                                <Checkbox checked={formData.type.includes(t.label as EventType)} />
+                                <ListItemText primary={t.label} />
+                                </MenuItem>
+                            ))}
+                            </Select>
+                        </FormControl>
+                    </div>
+
+                    <div className="add-event-location">
+                        <h3>Event Location</h3>
                         <TextField
-                        multiline
-                        rows={4}
-                        type="text"
-                        className="form-control"
-                        name="summary"
-                        value={formData.summary}
-                        onChange={handleChange}
-                        sx={{ width: '36ch' }}
-                    ></TextField>
+                            type="text"
+                            className="form-control"
+                            name="location"
+                            value={formData.location}
+                            onChange={handleChange}
+                            error={errors.location}
+                            helperText={errors.location ? 'Event location is required' : ''}
+                            sx={{ width: '24ch' }}
+                        ></TextField>
+                    </div>
+
+                    <div className="add-event-capacity">
+                        <h3>Capacity</h3>
+                        <p>Capacity cannot be less than the current number of attendees: {attendees.length}</p>
+                        <TextField
+                            type="text"
+                            className="form-control"
+                            name="capacity"
+                            value={formData.capacity}
+                            onChange={handleChange}
+                            sx={{ width: '24ch', marginTop: 2}}
+                        ></TextField>
+                    </div>
                 </div>
-                <div className="add-event-type">
-                    <h3>Event Type</h3>
-                    <FormControl sx={{ width: '36ch' }}>
-                        <Select
-                        labelId="demo-multiple-checkbox-label"
-                        id="demo-multiple-checkbox"
-                        multiple
-                        value={formData.type}
-                        onChange={handleTypeChange}
-                        input={<OutlinedInput/>}
-                        renderValue={(selected) => (
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                {selected.map((value) => (
-                                    <Chip key={value} label={value} />
-                                ))}
-                            </Box>
-                        )}
-                        MenuProps={MenuProps}
-                        >
-                        {eventTypes.map((t) => (
-                            <MenuItem key={t.label} value={t.label}>
-                            <Checkbox checked={formData.type.includes(t.label as EventType)} />
-                            <ListItemText primary={t.label} />
-                            </MenuItem>
-                        ))}
-                        </Select>
-                    </FormControl>
-                </div>
-                <div className="add-event-location">
-                    <h3>Location</h3>
-                    <TextField
-                        type="text"
-                        className="form-control"
-                        name="location"
-                        value={formData.location}
-                        onChange={handleChange}
-                        error={errors.location}
-                        helperText={errors.location ? 'Event location is required' : ''}
-                        sx={{ width: '24ch' }}
-                    ></TextField>
-                </div>
+
+                <div className="eventColumn2">
+
                 <div className="add-event-time">
                         <h3>Date & Time</h3>
                         <div style={{ display: "flex", gap: "16px", marginBottom: "16px" }}>
@@ -303,6 +323,7 @@ export const EditEventForm = ()=>{
                             minDateTime={dayjs(formData.begin_time)}/>
                         </div>
                 </div>
+
                 <div className="add-event-recurring">
                     <h3>Recurring</h3>
                     <FormGroup>
@@ -322,7 +343,7 @@ export const EditEventForm = ()=>{
                             >
                                 <MenuItem value="" disabled>Select Frequency</MenuItem>
                                 <MenuItem value="0">Weekly</MenuItem>
-                                <MenuItem value="1">Biweek</MenuItem>
+                                <MenuItem value="1">Biweekly</MenuItem>
                                 <MenuItem value="2">Monthly</MenuItem>
                             </Select>
                         </FormControl>
@@ -332,26 +353,35 @@ export const EditEventForm = ()=>{
                             sx={{ width: '24ch' }}
                             minDateTime={dayjs(formData.begin_time)}/>
                     </div>}
-                </div>
-                <div className="add-event-capacity">
-                    <h3>Capacity</h3>
-                    <p>Capacity cannot be set to a value less than the current number of attendees: {attendees.length}</p>
-                    <TextField
+
+                    <div className="add-event-description" >
+                    <h3>Event Description</h3>
+                        <TextField
+                        multiline
+                        rows={4}
                         type="text"
                         className="form-control"
-                        name="capacity"
-                        value={formData.capacity}
+                        name="summary"
+                        value={formData.summary}
                         onChange={handleChange}
-                        sx={{ width: '24ch', marginTop: 2}}
-                    ></TextField>
-                </div>
-                {/* Pictures */}
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", marginTop: "24px" }}>
-                    <Button variant="contained" style={{ backgroundColor: '#43BD28', color: '#FFFFFF' }} onClick={handleSubmit}>Update Event</Button>
+                        sx={{ width: '50ch' }}
+                        ></TextField>
+                    </div>
+
+                <div className="updateButton"> 
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", marginTop: "24px" }}>
+                        <Button variant="contained" style={{ backgroundColor: '#43BD28', color: '#FFFFFF' }} onClick={handleSubmit}>Update Event</Button>
+                    </div>
                 </div>
                 
-                <div></div>
+                
+
+            </div>
             </div>
         </div>
+    </div>
+    
+        
+
     );
 }

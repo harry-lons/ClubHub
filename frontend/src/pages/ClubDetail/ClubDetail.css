@@ -1,72 +1,157 @@
-#club-detail-container {
-    width: 100%;
-}
-
-#club-detail-container h2, p {
-    margin: 0;
-}
-
-.club-detail-header {
-    display: block;
-    width: 100%;
-    height: 200px;
-    background-image: url('../../../public/gradientBackground.png');
+/* Background Styling */
+.background {
+    background: url('../../../public/gradientBackground.png');
     background-size: cover;
     background-position: center;
-    position: relative;
-}
-.back-button {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    font-size: 26px;
-    color: white;
-    background-color: transparent;
-    border: none;
+    background-attachment: fixed;
+    background-repeat: repeat-y;
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    z-index: -1;
 }
 
-.club-identity-container {
+/* Main Container Styling */
+.clubDetail-container {
     display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
     flex-direction: column;
-    text-align: left;
-    padding: 20px;
 }
 
-.club-title-container {
+/* Card Styling */
+.clubDetail-Card {
     display: flex;
+    flex-direction: row;
+    justify-content: space-between; /* Align content to the top */
+    align-items: flex-start; /* Align items to the left */
+    width: 80%;
+    height: 80%;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-sizing: border-box;
+    position: relative;
+    padding: 20px; /* Add padding inside the card */
+    overflow: hidden; 
 }
-.club-description {
-    margin-top: 10px;
-    font-size: 16px;
-    font-style: italic;
-    color: gray;
-    margin-left: 20px;
-    margin-right: 20px;
+
+/* Club Identity Section */
+.club-identity-container {
+    position: absolute;
+    top: 25px;
+    left: 30px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
+
 .club-name-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 10px;
+    gap: 25px;
+    width: 100%;
+    position: relative;
+    margin-bottom: 20px;
 }
+
+h2 {
+    margin: 0;
+    font-size: 2.3rem;
+    color: #4A4A4A;
+}
+
 .follow-button {
     font-size: 16px !important;
     color: white !important;
     background-color: #43BD28 !important;
     border: none !important;
     border-radius: 8px !important;
-    width: 150px !important;
-    height: 40px !important;
+    width: 135px !important;
+    height: 30px !important;
     margin: 0 !important;
     margin-right: 5px;
-    align-self: flex-start;
+    align-items: center;
+    justify-content: center;
+    display: flex;
 }
-p.club-event-clickable-title {
-    text-decoration: none;
+
+/* Back Button */
+.backButton-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 2;
+}
+
+.backButton {
+    background-color: transparent;
+    border: none;
+    padding: 0;
     cursor: pointer;
-    margin: 0;
-  }
-  
-p.club-event-clickable-title:hover {
-    text-decoration: underline;
+}
+
+.backButtonImage {
+    width: 80px;
+    height: auto;
+    display: block;
+}
+
+.backButton:hover {
+    transform: scale(1.1);
+}
+
+/* Club Information Row */
+.clubRow {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 7px;
+    position: absolute;
+    left: 25px;
+    top: 90px;
+    text-align: left;
+}
+
+/* Club Description Header */
+.club-description-container h3 {
+    padding-left: 15px;
+}
+
+/* Events Container Styling */
+.club-events-container {
+    margin-top: 20px;
+    width: 60%; 
+    align-items: flex-end;
+    position: absolute;
+    left: 35%;
+    top: 70px;
+    flex:1;
+}
+
+
+.events-box {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.events-box .MuiAccordion-root {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.events-box .MuiAccordionDetails-root {
+    max-height: 200px; /* Limit height of the scrollable section */
+    overflow-y: auto; /* Enable scrolling for overflowing content */
 }
