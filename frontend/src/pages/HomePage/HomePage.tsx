@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { NavBar } from '../common/NavBar';
 import './HomePage.css';
 import { AuthContext } from '../../context/AuthContext';
+import { ClubNavBar } from '../common/ClubNavBar';
 
 export const HomePage = () => {
     const navigate = useNavigate();
@@ -115,7 +116,8 @@ export const HomePage = () => {
                 className={`navbarContainer ${isActiveStep("tour-step-navbar") ? "active-step" : ""}`}
                 id="tour-step-navbar"
             >
-                <NavBar />
+                {context.accountType==="user"&&<NavBar />}
+                {context.accountType==="club"&&<ClubNavBar />}
             </div>
             <div
                 className={`web-identity-container ${isActiveStep("tour-step-header") ? "active-step" : ""}`}

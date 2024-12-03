@@ -45,6 +45,7 @@ function App() {
             <Route path = "/club/clubDetail/:id" element = {<ClubDetail which="CLUB"/>}/>
             <Route path = "/club/profile" element = {<ClubProfile which="CLUB"/>}/>
             <Route path = "/homepage" element = {<HomePage/>}/>
+            <Route path = "/club/homepage" element = {<HomePage/>}/>
             {/* <Route path = "/testpage" element = {<TestPage/>}/> */}
             <Route path="/club/events" element={<ClubEventList which="CLUB"/>} />
             <Route path="/clubProfile/:id" element={<ClubProfile which="CLUB"/>} />
