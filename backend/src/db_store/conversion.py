@@ -11,6 +11,7 @@ from .models import ClubAccounts as DBClubObject
 from .models import EventImages
 from .models import Events as DBEventObject
 from .models import EventTags
+from ..authentication.utils import useracc_to_user
 
 
 def f_event_to_b_event(
@@ -79,7 +80,7 @@ def b_club_to_f_club(club: DBClubObject) -> FrontendClubObject:
 
 
 def b_club_to_f_club_full(club: DBClubObject) -> FrontendClubBoardMembers:
-    board_members = [user.id for user in club.members]
+    board_members = [useracc_to_user(user) for user in club.members]
     return FrontendClubBoardMembers(
         id=club.id,
         name=club.name,

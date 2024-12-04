@@ -171,8 +171,8 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
                                 ) : (
                                     <List>
                                         {club.board_members.map((member) => (
-                                            <ListItem key={member}>
-                                                <ListItemText primary={<Typography>{member}</Typography>} />
+                                            <ListItem key={member.id}>
+                                                <ListItemText primary={<Typography>{member.first_name} {member.last_name}</Typography>} />
                                             </ListItem>
                                         ))}
                                     </List>
