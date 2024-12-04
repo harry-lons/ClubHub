@@ -97,6 +97,7 @@ export type userSignup = signupInfo & {
 // Extend signupInfo for club-specific signup
 export type clubSignup = signupInfo & {
     name: string;
+	description: string;
 };
 
 export type signupResponse =

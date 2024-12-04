@@ -48,7 +48,7 @@ class PostgresDatabase(IAuth, IEvents):
                 f"Error creating account. Does {email} already exist in the database?"
             )
 
-    def add_organization(self, email: str, hashed_pass: str, name: str):
+    def add_organization(self, email: str, hashed_pass: str, name: str, desc:str):
         try:
             account_id = str(uuid.uuid4())
             # TODO add default profile picture
@@ -58,7 +58,7 @@ class PostgresDatabase(IAuth, IEvents):
                 hashed_password=hashed_pass,
                 profile_picture="",
                 name=name,
-                description=""
+                description=desc
             )
 
             self.session.add(account)

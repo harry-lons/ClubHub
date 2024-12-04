@@ -49,3 +49,4 @@ class ClubSignup(BaseModel):
     email: str
     password: str
     name: str
+    description: str
