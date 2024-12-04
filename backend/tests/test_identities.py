@@ -29,4 +29,4 @@ def test_get_club(client):
     assert resp_data, resp_data
     assert resp_data["id"] == test_club_1.id
     assert resp_data["contact_email"] == test_club_1.email
-    assert resp_data["description"] == ""
+    assert resp_data["description"] == "cat club description"
