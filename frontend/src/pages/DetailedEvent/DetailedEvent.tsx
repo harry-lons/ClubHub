@@ -395,10 +395,6 @@ const DetailedEvent: React.FC<DetailedEventProps> = ({ which }) => {
                         <p>Number of Current Attendees: {attendees.length}</p>
                         <VirtualizedAccordion />
                     </div>}
-                    <div className="event-detail-pictures">
-                        <h3>Pictures</h3>
-                        <img src={exampleFlyer} className="event-picture"/>
-                    </div>
                     <div className = "event-detail-contact">
                         <h3>Contact Information</h3>
                         {Array.isArray(club.contact_email) ? (
