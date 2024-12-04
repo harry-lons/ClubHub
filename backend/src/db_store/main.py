@@ -118,6 +118,7 @@ def init_test_data(db: PostgresDatabase):
         "cats@example.com",
         "$argon2id$v=19$m=65536,t=3,p=4$7b03BgAgZEwJwVhLCYHwPg$6rjLJCluu2ezwN7zqYRYZ4XG6BaLP38GNgIKXVZJgJM",
         "Cat Club",
+        "cat club description"
     )
 
     board_member_user_3_club_1 = ClubBoardMembers(
