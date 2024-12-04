@@ -191,7 +191,7 @@ async def club_signup(info: ClubSignup):
         pass
 
     hashed_pw = get_password_hash(info.password)
-    club_uuid = DB.db.add_organization(info.email, hashed_pw, info.name)
+    club_uuid = DB.db.add_organization(info.email, hashed_pw, info.name, info.description)
     return ClubID(id=club_uuid)
 
 

@@ -25,6 +25,7 @@ const SignupCard: React.FC<SignupCardProps> = ({ typeAccount, signupURL }) => {
     const [clubNameWarning, setClubNameWarning] = useState<string | null>(null);
     const [accountType, setTypeAccount] = useState<string | null>(typeAccount ?? null);
     const [error, setError] = useState<string | null>(null);
+    const [clubDescription, setClubDescription] = useState("");
 
     const { saveAuthenticationData } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -37,6 +38,10 @@ const SignupCard: React.FC<SignupCardProps> = ({ typeAccount, signupURL }) => {
 
     const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setEnteredEmail(event.target.value);
+    };
+
+    const handleClubDescription = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setClubDescription(event.target.value);
     };
 
     const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,7 +101,8 @@ const SignupCard: React.FC<SignupCardProps> = ({ typeAccount, signupURL }) => {
         const info: clubSignup = {
             email: enteredEmail,
             password: enteredPassword,
-            name: clubName
+            name: clubName,
+            description: clubDescription
         }
         const validation = validateClubSignupInput(info);
         if (!validation.success) {
@@ -251,22 +257,33 @@ const SignupCard: React.FC<SignupCardProps> = ({ typeAccount, signupURL }) => {
                                         </Grid>
                                     </>
                                     :
-
-                                    <Grid item xs={12}>
-                                        <div className='loginsignup-input-wrap'>
-                                            <p className='roboto-regular'>Club Name</p>
-                                            <OutlinedInput
-                                                fullWidth
-                                                value={clubName}
-                                                onChange={handleClubNameChange}
-                                            />
-                                            {clubNameWarning &&
-                                                <p
-                                                    style={{ color: "red", marginTop: 10 }}
-                                                > {clubNameWarning}</p>
-                                            }
-                                        </div>
-                                    </Grid>
+                                    <>
+                                        <Grid item xs={12}>
+                                            <div className='loginsignup-input-wrap'>
+                                                <p className='roboto-regular'>Club Name</p>
+                                                <OutlinedInput
+                                                    fullWidth
+                                                    value={clubName}
+                                                    onChange={handleClubNameChange}
+                                                />
+                                                {clubNameWarning &&
+                                                    <p
+                                                        style={{ color: "red", marginTop: 10 }}
+                                                    > {clubNameWarning}</p>
+                                                }
+                                            </div>
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <div className='loginsignup-input-wrap'>
+                                                <p className='roboto-regular'>Club Description</p>
+                                                <OutlinedInput
+                                                    fullWidth
+                                                    value={clubDescription}
+                                                    onChange={handleClubDescription}
+                                                />
+                                            </div>
+                                        </Grid>
+                                    </>
                             }
                         </Grid>
                         {/* Submit Button */}
