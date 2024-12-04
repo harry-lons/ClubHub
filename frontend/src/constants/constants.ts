@@ -136,7 +136,7 @@ export const emptyClub =
 {
 	id : "",
 	name: "",
-	board_members: [""],
+	board_members: [],
 	contact_email: [""],
   description: ""
 }

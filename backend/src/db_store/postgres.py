@@ -289,10 +289,11 @@ class PostgresDatabase(IAuth, IEvents):
         '''
         Fetches all the users who have followed a club
         '''
-        users = self.session.query(UserFollows.user_id).filter_by(club_id=club_id).all()
-        if len(users) == 0:
-            raise ValueError(f"Club has no followers!")
-        return users
+        users = self.session.query(UserFollows).filter_by(club_id=club_id).all()
+        # if len(users) == 0:
+        #     raise ValueError(f"Club has no followers!")
+        x = [user.user_id for user in users]
+        return x
 
 
     def _get_by(self, model: Type[M], **filters) -> M:

@@ -1,11 +1,14 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ClubNavBar } from "../common/ClubNavBar";
-import { emptyClub, exampleClub, exampleClubEventList } from "../../constants/constants";
+import { emptyClub, emptyUsers, exampleClub, exampleClubEventList, exampleUsers } from "../../constants/constants";
 import { AuthContext } from "../../context/AuthContext";
-import { Club, Event } from "../../types/types";
+import { Club, Event, User } from "../../types/types";
 import "./ClubProfile.css";
-import { fetchClubById } from "../../utils/club-utils";
+import { fetchClubById, fetchClubWho } from "../../utils/club-utils";
+import { List } from "@mui/material";
+import { fetchFollowers } from "../../utils/follow-utils";
+
 
 interface ClubProfileProps {
     which?: string; // Optional `which` prop
@@ -16,17 +19,24 @@ export const ClubProfile: React.FC<ClubProfileProps> = ({ which }) => {
     const navigate = useNavigate();
     const context = useContext(AuthContext);
     const [clubEvents, setClubEvents] = useState<Event[]>([]);
-    const club = exampleClub; // Example club data
-   //const [club, setClub] = useState<Club> (emptyClub);
+    //const club = exampleClub; // Example club data
+    const [club, setClub] = useState<Club> (emptyClub);
     useEffect(() => {
         console.log(context.token, context.accountType, context.id, which);
     }, [which, context]);
+    const [numFollowers,setNumFollowers] = useState(0);
+    const [follower, setFollower] = useState<User[]>(emptyUsers);
+
+
+
 
     const token = context.token;
 
     useEffect(() => {
         if (!token) return;
         loadEvents();
+        loadClubIdentity();
+        loadFollowerList();
         //loadClub();
     }, [token]);
 
@@ -38,7 +48,14 @@ export const ClubProfile: React.FC<ClubProfileProps> = ({ which }) => {
     //         console.error("Error loading club:", err.message);
     //     }
     // };
-
+    const loadClubIdentity = async () =>{
+        try{
+            const owner_ = await fetchClubWho(token);
+            setClub(owner_);
+        }catch (err:any){
+            console.error("Error loading user:", err.message);
+        }
+    }
 
     const loadEvents = async () => {
         try {
@@ -48,6 +65,17 @@ export const ClubProfile: React.FC<ClubProfileProps> = ({ which }) => {
             console.error("Error loading events:", err.message);
         }
     };
+
+    const loadFollowerList = async()=>{
+        try{
+            const followers_ = await fetchFollowers(token);
+            setFollower(followers_);
+            console.log("Followers:", follower);
+            setNumFollowers(followers_.length)
+        }catch(err: any){
+            console.error("Error in loading Follower List",err.message)
+        }
+    }
 
     const goToEventDetail = (event_id: string) => {
         navigate(`/events/${event_id}`);
@@ -72,7 +100,7 @@ export const ClubProfile: React.FC<ClubProfileProps> = ({ which }) => {
                         {/* Club Name */}
                         <h2 className="clubName">{club.name}</h2>
 
-                        <h3 className="followerCount"> 1234 Followers </h3>
+                        <h3 className="followerCount"> {numFollowers} Followers </h3>
 
                         <hr
                         style={{
@@ -99,10 +127,9 @@ export const ClubProfile: React.FC<ClubProfileProps> = ({ which }) => {
                     {club.board_members.map((member, index) => (
                         <div key={index} className="boardMember">
                             <p className="boardMemberRole">
-                            <span className="roleLabel">Role {index + 1}:</span>
-                            <span className="memberName"> {member}</span>
+                            <span className="memberName"> {member.first_name} {member.last_name}</span>
                             </p>
-                            <p className="boardMemberEmail">student{index + 1}@gmail.com</p>
+                            <p className="boardMemberEmail">{member.username}</p>
                         </div>
                         ))}
                     </div>
@@ -112,7 +139,7 @@ export const ClubProfile: React.FC<ClubProfileProps> = ({ which }) => {
                 <div className="aboutUsSection">
                     <h3 className="sectionTitle">About Us</h3>
                     <div className="aboutUsContainer" contentEditable="true" suppressContentEditableWarning={true}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                        {club.description}
                     </div>
                 </div>
             </div>

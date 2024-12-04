@@ -39,7 +39,7 @@ class UserAndClubs(User):
 
 
 class ClubWithBoardMembers(Club):
-    board_members: List[str]  # List of UserIDs
+    board_members: List[User]  # List of UserIDs
     description: str
 
 
