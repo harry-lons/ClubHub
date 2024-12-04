@@ -184,7 +184,6 @@ async def club_login(
 async def club_signup(info: ClubSignup):
     """Create a new club account."""
     try:
-        print(info)
         DB.db.get_org_from_email(info.email)
         raise SIGNUP_EMAIL_EXISTS
     except ValueError:
