@@ -119,20 +119,32 @@
     text-align: left;
 }
 
+.club-contact{
+    margin-right: 55%;
+}
+
 /* Club Description Header */
 .club-description-container h3 {
     padding-left: 15px;
 }
 
+.club-description{
+    color: black;
+    margin-right: 40%;
+    padding-bottom: 15px;
+
+}
+
 /* Events Container Styling */
 .club-events-container {
     margin-top: 20px;
-    width: 60%; 
+    width: 55%; 
     align-items: flex-end;
     position: absolute;
-    left: 35%;
+    left: 40%;
     top: 70px;
     flex:1;
+   
 }
 
 
