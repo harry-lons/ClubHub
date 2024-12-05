@@ -53,16 +53,16 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ user }) =>{
             /> */}
             <AccountCircleIcon 
                 sx={{
-                    fontSize: 260, 
+                    fontSize: 400, 
                     color:  'gray',
                     margin : '8px auto', 
                     marginTop: '8px auto',
                     marginBottom: '-16px',
-                    height: '100px'
+                    height: '250px'
                 }} 
             />
 
-            <UploadProfilePicture />
+            {/* <UploadProfilePicture /> */}
 
             <CardContent>
                 <Typography gutterBottom variant="h5" component="div" textAlign="center">
