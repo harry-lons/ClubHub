@@ -101,6 +101,11 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
             console.error("Error in loading Follower List",err.message)
         }
     }
+    const [expanded, setExpanded] = React.useState<string | false>('panel1');
+    const handleChange =
+    (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
+      setExpanded(newExpanded ? panel : false);
+    };
     const BackButton = () => {
         const navigate = useNavigate();
     
@@ -164,7 +169,7 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
 
                 <div className="club-right-column">
                     <div className="club-board">
-                        <Accordion>
+                        <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                 <h3>Board Members</h3>
                             </AccordionSummary>
@@ -174,7 +179,7 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
                                         No Board Members Listed
                                     </Typography>
                                 ) : (
-                                    <List>
+                                    <List style={{ maxHeight: "200px", overflowY: "auto" }}>
                                         {club.board_members.map((member) => (
                                             <ListItem key={member.id}>
                                                 <ListItemText primary={<Typography>{member.first_name} {member.last_name}</Typography>} />
@@ -188,7 +193,7 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
 
                     <div className="club-events-container">
                         <div className="events-box">
-                            <Accordion>
+                            <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
                                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                     <h4>Upcoming Events</h4>
                                 </AccordionSummary>
@@ -203,7 +208,7 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
                                 </AccordionDetails>
                             </Accordion>
 
-                            <Accordion>
+                            <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
                                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                     <h4>Past Events</h4>
                                 </AccordionSummary>
