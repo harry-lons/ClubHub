@@ -101,6 +101,11 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
             console.error("Error in loading Follower List",err.message)
         }
     }
+    const [expanded, setExpanded] = React.useState<string | false>('panel1');
+    const handleChange =
+    (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
+      setExpanded(newExpanded ? panel : false);
+    };
     const BackButton = () => {
         const navigate = useNavigate();
     
@@ -128,46 +133,43 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
     return (
         <div className="clubDetail-container">
             <div className="background"></div>
-            <div className="backButton-container">
-                <BackButton />
-            </div>
+            <div className="backButton-container"> <BackButton /> </div>
             <div className="clubDetail-Card">
-                
                 <div className="club-identity-container">
-                    <div className="club-name-container">
-                        <h2 className="club-detail-name">{club.name}</h2>
-                        {context.accountType === "user" && 
+                    <h2 className="club-detail-name">{club.name}</h2>
+                    {context.accountType === "user" && 
                         <FollowButton
                             follow={follow}
                             setFollow={setFollow}
                             club_id={id || ""}
                             showMessages={true}
                         />}
-                    </div>
                 </div>
-    
-                <div className="clubRow">
-                    
-                    <div className="club-contact">
-                        <h3>Contact Information</h3>
-                    {Array.isArray(club.contact_email) ? (
-                        club.contact_email.map((email, index) => <p key={index}>{email}</p>)
-                        ) : (
-                            <p>{club.contact_email}</p>
-                        )}
+
+                <div className="club-columns">
+                    <div className="club-info-column">
+                        <div className="club-contact">
+                            <h3>Contact Information</h3>
+                            {Array.isArray(club.contact_email) ? (
+                                club.contact_email.map((email, index) => <p key={index}>{email}</p>)
+                            ) : (
+                                <p>{club.contact_email}</p>
+                            )}
+                        </div>
+
+                        <div className="club-description-container">
+                            <div className="clubHeader">
+                                <h3>Club Description</h3>
+                            </div>
+                            <p className={`club-description ${isClubDetailPage ? 'white-description' : 'black-description'}`}>
+                                {club.description}
+                            </p>
+                        </div>
                     </div>
-                    
-                   
-                    <div className="club-description-container">
-                        <h3>Club Description</h3>
-                        <p className={`club-description ${isClubDetailPage ? 'white-description' : 'black-description'}`}>
-                {club.description}
-            </p>
-                    </div>
-                    
-    
+
+                <div className="club-right-column">
                     <div className="club-board">
-                        <Accordion>
+                        <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                 <h3>Board Members</h3>
                             </AccordionSummary>
@@ -177,7 +179,7 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
                                         No Board Members Listed
                                     </Typography>
                                 ) : (
-                                    <List>
+                                    <List style={{ maxHeight: "200px", overflowY: "auto" }}>
                                         {club.board_members.map((member) => (
                                             <ListItem key={member.id}>
                                                 <ListItemText primary={<Typography>{member.first_name} {member.last_name}</Typography>} />
@@ -188,86 +190,45 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
                             </AccordionDetails>
                         </Accordion>
                     </div>
-                </div>
-    
-                <div className="club-events-container">
-                    <Accordion defaultExpanded>
-                        <AccordionDetails>
-                            <div className="events-box">
-                                <Accordion>
-                                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                        <h4>Upcoming Events</h4>
-                                    </AccordionSummary>
-                                    <AccordionDetails>
-                                        <List style={{ maxHeight: "200px", overflowY: "auto" }}>
-                                            {nextEvents.map((event) => (
-                                                <ListItem
-                                                    key={event.id}
-                                                    style={{
-                                                        backgroundColor: "#f3e5f5",
-                                                        margin: "8px 0",
-                                                        borderRadius: "8px",
-                                                        padding: "16px",
-                                                    }}
-                                                >
-                                                    <ListItemText
-                                                        primary={
-                                                            <Typography
-                                                                onClick={() => goToDetailPage(event.id)}
-                                                                className="club-event-clickable-title"
-                                                            >
-                                                                {event.title}
-                                                            </Typography>
-                                                        }
-                                                        secondary={event.summary}
-                                                    />
-                                                </ListItem>
-                                            ))}
-                                        </List>
-                                    </AccordionDetails>
-                                </Accordion>
-    
-                                <Accordion>
-                                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                        <h4>Past Events</h4>
-                                    </AccordionSummary>
-                                    <AccordionDetails>
-                                        <List style={{ maxHeight: "200px", overflowY: "auto" }}>
-                                            {pastEvents.map((event) => (
-                                                <ListItem
-                                                    key={event.id}
-                                                    style={{
-                                                        backgroundColor: "#f3e5f5",
-                                                        margin: "8px 0",
-                                                        borderRadius: "8px",
-                                                        padding: "16px",
-                                                    }}
-                                                >
-                                                    <ListItemText
-                                                        primary={
-                                                            <Typography
-                                                                onClick={() => goToDetailPage(event.id)}
-                                                                className="club-event-clickable-title"
-                                                            >
-                                                                {event.title}
-                                                            </Typography>
-                                                        }
-                                                        secondary={event.summary}
-                                                    />
-                                                </ListItem>
-                                            ))}
-                                        </List>
-                                    </AccordionDetails>
-                                </Accordion>
+
+                    <div className="club-events-container">
+                        <div className="events-box">
+                            <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+                                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                    <h4>Upcoming Events</h4>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <List style={{ maxHeight: "200px", overflowY: "auto" }}>
+                                        {nextEvents.map((event) => (
+                                            <ListItem key={event.id}>
+                                                <ListItemText primary={event.title} secondary={event.summary} />
+                                            </ListItem>
+                                        ))}
+                                    </List>
+                                </AccordionDetails>
+                            </Accordion>
+
+                            <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+                                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                    <h4>Past Events</h4>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <List style={{ maxHeight: "200px", overflowY: "auto" }}>
+                                        {pastEvents.map((event) => (
+                                            <ListItem key={event.id}>
+                                                <ListItemText primary={event.title} secondary={event.summary} />
+                                            </ListItem>
+                                        ))}
+                                    </List>
+                                </AccordionDetails>
+                            </Accordion>
                             </div>
-                        </AccordionDetails>
-                    </Accordion>
+                        </div>
+                     </div>
                 </div>
             </div>
         </div>
-    );
-    
-    
+    ); 
 };
 
 export default ClubDetail;
