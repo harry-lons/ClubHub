@@ -1,5 +1,5 @@
 import React, { useContext, useState,useEffect } from "react"
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Event, Club, RSVP, User} from "../../types/types";
 import {exampleClub, exampleUsers, exampleEventList, emptyClub, emptyEventList } from "../../constants/constants";
 import {AuthContext} from "../../context/AuthContext"
@@ -35,6 +35,12 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
     const [follow, setFollow] = useState(false);
     const [loading, setLoading] = useState(true); // New loading state
     const [numFollowers,setNumFollowers] = useState(0);
+    
+    const location = useLocation();
+    const isClubDetailPage = location.pathname.includes("/clubDetail");
+
+    console.log("Current path:", location.pathname);
+    console.log("Is ClubDetail page:", isClubDetailPage)
 
     useEffect(() => {
         if (!id) return;
@@ -66,8 +72,6 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
             console.error("Error loading event:", err.message);
         }
     };
-
-
     const loadClub = async () => {
         try {
             const club_ = await fetchClubById(id as string); // Convert id to a number
@@ -152,11 +156,15 @@ const ClubDetail: React.FC<ClubDetailProps> = ({which}) => {
                             <p>{club.contact_email}</p>
                         )}
                     </div>
-    
+                    
+                   
                     <div className="club-description-container">
                         <h3>Club Description</h3>
-                        <p className="club-description">{club.description}</p>
+                        <p className={`club-description ${isClubDetailPage ? 'white-description' : 'black-description'}`}>
+                {club.description}
+            </p>
                     </div>
+                    
     
                     <div className="club-board">
                         <Accordion>

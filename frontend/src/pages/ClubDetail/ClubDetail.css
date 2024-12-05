@@ -129,11 +129,20 @@
 }
 
 .club-description{
-    color: black;
+    /* color: black; */
     margin-right: 40%;
     padding-bottom: 15px;
-
 }
+
+/* Higher specificity to ensure the styles apply */
+.club-description.white-description {
+    color: black !important;
+  }
+  
+  .club-description.black-description {
+    color: black !important;
+  }
+  
 
 /* Events Container Styling */
 .club-events-container {
