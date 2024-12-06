@@ -66,7 +66,7 @@ const SignupCard: React.FC<SignupCardProps> = ({ typeAccount, signupURL }) => {
         }
 
         // Determine the specific backend endpoint based on what type of account this is
-        const tokenURL = `${baseURL}/${signupURL}`;
+        const tokenURL = `${baseURL}/${accountType?.toLowerCase()}/signup`;
 
         const result = await signupCall(info, tokenURL);
         if (result.success) { setSignupSuccess(true); }
