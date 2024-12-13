@@ -29,5 +29,11 @@ Then restart the vscode
 If you still encounter the issue 
 try `npm install --save-dev @types/some_module_name`
 
-## Demo Video
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/m3Xlao0JmpI/0.jpg)](https://www.youtube.com/watch?v=m3Xlao0JmpI)
+## Walkthrough Demo Video
+[![Walkthrough demo](https://img.youtube.com/vi/m3Xlao0JmpI/0.jpg)](https://www.youtube.com/watch?v=m3Xlao0JmpI)
+
+## Live In-Person Demo Video
+Presentation to 100+ students on the last day of the quarter:
+
+[![In-person demo](https://img.youtube.com/vi/ZsWwgNoCHX8/0.jpg)](https://www.youtube.com/watch?v=ZsWwgNoCHX8)
+
